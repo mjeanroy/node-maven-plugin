@@ -46,45 +46,45 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public class CleanMojoTest extends AbstractMojoTest {
+public class LintMojoTest extends AbstractMojoTest {
 
 	@Rule
 	public ExpectedException thrown = none();
 
 	@Override
 	protected String mojoName() {
-		return "clean";
+		return "lint";
 	}
 
 	@Test
 	public void test_should_create_mojo() throws Exception {
-		CleanMojo cleanMojo = createMojo("clean-mojo", false);
-		assertThat(cleanMojo).isNotNull();
+		LintMojo mojo = createMojo("clean-mojo", false);
+		assertThat(mojo).isNotNull();
 	}
 
 	@Test
 	public void test_should_create_mojo_with_configuration() throws Exception {
-		CleanMojo cleanMojo = createMojo("clean-mojo-with-parameters", true);
-		assertThat(cleanMojo).isNotNull();
-		assertThat((Boolean) readField(cleanMojo, "color", true)).isTrue();
-		assertThat((File) readField(cleanMojo, "workingDirectory", true)).isNotNull();
+		LintMojo mojo = createMojo("clean-mojo-with-parameters", true);
+		assertThat(mojo).isNotNull();
+		assertThat((Boolean) readField(mojo, "color", true)).isTrue();
+		assertThat((File) readField(mojo, "workingDirectory", true)).isNotNull();
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
-		CleanMojo cleanMojo = createMojo("clean-mojo-with-parameters", true);
+		LintMojo mojo = createMojo("clean-mojo-with-parameters", true);
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(cleanMojo, "executor", executor, true);
+		writeField(mojo, "executor", executor, true);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
 
 		Log logger = createLogger();
-		writeField(cleanMojo, "log", logger, true);
+		writeField(mojo, "log", logger, true);
 
-		cleanMojo.execute();
+		mojo.execute();
 
 		verify(executor).execute(any(File.class), any(Command.class));
 
@@ -93,29 +93,29 @@ public class CleanMojoTest extends AbstractMojoTest {
 		assertThat(cmd.getExecutable()).isEqualTo("npm");
 		assertThat(cmd.getArguments()).contains(
 				"run-script",
-				"clean"
+				"lint"
 		);
 
-		verify(logger).info("Running: npm run-script clean");
+		verify(logger).info("Running: npm run-script lint");
 		verify(logger, never()).error(anyString());
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
-		CleanMojo cleanMojo = createMojo("clean-mojo-with-parameters", true);
-		writeField(cleanMojo, "failOnError", false, true);
+		LintMojo mojo = createMojo("clean-mojo-with-parameters", true);
+		writeField(mojo, "failOnError", false, true);
 
 		CommandResult result = createResult(false);
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(cleanMojo, "executor", executor, true);
+		writeField(mojo, "executor", executor, true);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
 
 		Log logger = createLogger();
-		writeField(cleanMojo, "log", logger, true);
+		writeField(mojo, "log", logger, true);
 
-		cleanMojo.execute();
+		mojo.execute();
 
 		verify(executor).execute(any(File.class), any(Command.class));
 
@@ -124,10 +124,10 @@ public class CleanMojoTest extends AbstractMojoTest {
 		assertThat(cmd.getExecutable()).isEqualTo("npm");
 		assertThat(cmd.getArguments()).contains(
 				"run-script",
-				"clean"
+				"lint"
 		);
 
-		verify(logger).error("Error during execution of: npm run-script clean");
+		verify(logger).error("Error during execution of: npm run-script lint");
 		verify(logger).error("Exit status: 1");
 	}
 
@@ -135,19 +135,19 @@ public class CleanMojoTest extends AbstractMojoTest {
 	public void it_should_execute_mojo_in_failure_and_throw_exception() throws Exception {
 		thrown.expect(MojoExecutionException.class);
 
-		CleanMojo cleanMojo = createMojo("clean-mojo-with-parameters", true);
-		writeField(cleanMojo, "failOnError", true, true);
+		LintMojo mojo = createMojo("clean-mojo-with-parameters", true);
+		writeField(mojo, "failOnError", true, true);
 
 		CommandResult result = createResult(false);
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(cleanMojo, "executor", executor, true);
+		writeField(mojo, "executor", executor, true);
 
 		Log logger = createLogger();
-		writeField(cleanMojo, "log", logger, true);
+		writeField(mojo, "log", logger, true);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
 
-		cleanMojo.execute();
+		mojo.execute();
 	}
 }
