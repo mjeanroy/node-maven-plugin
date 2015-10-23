@@ -1,6 +1,3 @@
-package com.github.mjeanroy.maven.plugins.node.mojos;
-
-import org.apache.maven.plugins.annotations.LifecyclePhase;
 /**
  * The MIT License (MIT)
  *
@@ -24,6 +21,9 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
+package com.github.mjeanroy.maven.plugins.node.mojos;
+
+import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 /**
