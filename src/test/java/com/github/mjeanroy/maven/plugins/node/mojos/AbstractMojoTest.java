@@ -32,6 +32,7 @@ import org.junit.Rule;
 
 import java.io.File;
 
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -58,6 +59,8 @@ public abstract class AbstractMojoTest {
 		Mojo mojo = hasConfiguration ?
 				mojoRule.lookupMojo(mojoName(), pom) :
 				mojoRule.lookupEmptyMojo(mojoName(), pom);
+
+		writeField(mojo, "workingDirectory", baseDir, true);
 
 		return (T) mojo;
 	}
