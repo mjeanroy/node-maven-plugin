@@ -32,11 +32,41 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.HashSet;
+import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
+import static java.util.Collections.unmodifiableSet;
 
 public abstract class AbstractNpmMojo extends AbstractMojo {
+
+	/**
+	 * Store standard npm commands.
+	 * Theses commands do not need to be prefixed by "run-script"
+	 * argument.
+	 */
+	private static final Set<String> BASIC_COMMANDS;
+
+	// Initialize commands
+	static {
+		Set<String> cmds = new HashSet<String>();
+		cmds.add("install");
+		cmds.add("test");
+		cmds.add("publish");
+		BASIC_COMMANDS = unmodifiableSet(cmds);
+	}
+
+	/**
+	 * Check if given command need to be prefixed by "run-script"
+	 * argument.
+	 *
+	 * @param command Command to check.
+	 * @return True if command si a custom command and need to be prefixed by "run-script" argument, false otherwise.
+	 */
+	private static boolean needRunScript(String command) {
+		return !BASIC_COMMANDS.contains(command);
+	}
 
 	/**
 	 * Get the project base directory.
@@ -82,7 +112,12 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	@Override
 	public final void execute() throws MojoExecutionException, MojoFailureException {
 		Command cmd = npm();
-		cmd.addArgument("run-script");
+
+		// Append "run-script" if needed.
+		if (needRunScript(script)) {
+			cmd.addArgument("run-script");
+		}
+
 		cmd.addArgument(script);
 
 		if (!color) {
