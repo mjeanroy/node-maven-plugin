@@ -46,6 +46,11 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	 * Create Mojo.
 	 */
 	public LintMojo() {
-		super("lint");
+		super();
+	}
+
+	@Override
+	protected String getScript() {
+		return "lint";
 	}
 }

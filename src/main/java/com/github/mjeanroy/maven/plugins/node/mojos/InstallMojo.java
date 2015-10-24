@@ -46,6 +46,11 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	 * Create Mojo.
 	 */
 	public InstallMojo() {
-		super("install");
+		super();
+	}
+
+	@Override
+	protected String getScript() {
+		return "install";
 	}
 }

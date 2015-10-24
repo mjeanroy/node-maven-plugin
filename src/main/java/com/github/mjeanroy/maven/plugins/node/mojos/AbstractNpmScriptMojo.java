@@ -82,10 +82,6 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	@Parameter(defaultValue = "true")
 	private boolean failOnError;
 
-	/**
-	 * Npm script command.
-	 */
-	private final String script;
 
 	/**
 	 * Executor used to run command line.
@@ -95,16 +91,18 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Default Constructor.
 	 */
-	protected AbstractNpmScriptMojo(String script) {
+	protected AbstractNpmScriptMojo() {
 		super();
-		this.script = script;
 		this.executor = newExecutor();
 	}
 
 	@Override
 	public final void execute() throws MojoExecutionException, MojoFailureException {
 		PackageJson packageJson = getPackageJson();
+
+		String script = getScript();
 		boolean isCustom = needRunScript(script);
+
 		if (isCustom && !packageJson.hasScript(script)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
@@ -129,6 +127,13 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		getLog().info("Running: " + cmd.toString());
 		executeCommand(cmd);
 	}
+
+	/**
+	 * Return script to execute.
+	 *
+	 * @return Script to execute.
+	 */
+	protected abstract String getScript();
 
 	private void executeCommand(Command cmd) throws MojoExecutionException {
 		CommandResult result = executor.execute(getWorkingDirectory(), cmd);

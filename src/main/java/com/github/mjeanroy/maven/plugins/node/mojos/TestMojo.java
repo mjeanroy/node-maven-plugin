@@ -42,6 +42,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class TestMojo extends AbstractNpmScriptMojo {
 
 	public TestMojo() {
-		super("test");
+		super();
+	}
+
+	@Override
+	protected String getScript() {
+		return "test";
 	}
 }

@@ -45,6 +45,11 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	 * Create Mojo.
 	 */
 	public CleanMojo() {
-		super("clean");
+		super();
+	}
+
+	@Override
+	protected String getScript() {
+		return "clean";
 	}
 }

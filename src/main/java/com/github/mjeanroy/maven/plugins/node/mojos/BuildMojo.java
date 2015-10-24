@@ -42,6 +42,11 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class BuildMojo extends AbstractNpmScriptMojo {
 
 	public BuildMojo() {
-		super("build");
+		super();
+	}
+
+	@Override
+	protected String getScript() {
+		return "build";
 	}
 }
