@@ -36,6 +36,7 @@ import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
+import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
 import static java.util.Collections.unmodifiableSet;
 
 public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
@@ -100,7 +101,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		PackageJson packageJson = getPackageJson();
 
-		String script = getScript();
+		String script = notNull(getScript(), "Npm Script command must not be null");
 		boolean isCustom = needRunScript(script);
 
 		if (isCustom && !packageJson.hasScript(script)) {

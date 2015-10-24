@@ -31,6 +31,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.JsonUtils.parseJson;
+import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
 
 public abstract class AbstractNpmMojo extends AbstractMojo {
 
@@ -63,7 +64,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return Instance of package.json content.
 	 */
 	protected PackageJson getPackageJson() {
-		File workingDirectory = getWorkingDirectory();
+		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
 		getLog().debug("Searching for package.json file in: " + workingDirectory);
 
 		File packageJson = new File(workingDirectory, "package.json");
