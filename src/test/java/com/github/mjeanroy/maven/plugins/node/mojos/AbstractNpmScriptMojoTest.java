@@ -56,13 +56,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void test_should_create_mojo() throws Exception {
-		T mojo = createMojo("clean-mojo", false);
+		T mojo = createMojo("mojo", false);
 		assertThat(mojo).isNotNull();
 	}
 
 	@Test
 	public void test_should_create_mojo_with_configuration() throws Exception {
-		T mojo = createMojo("clean-mojo-with-parameters", true);
+		T mojo = createMojo("mojo-with-parameters", true);
 		assertThat(mojo).isNotNull();
 		assertThat((Boolean) readField(mojo, "color", true)).isTrue();
 		assertThat((File) readField(mojo, "workingDirectory", true)).isNotNull();
@@ -70,7 +70,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
-		T mojo = createMojo("clean-mojo-with-parameters", true);
+		T mojo = createMojo("mojo-with-parameters", true);
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
@@ -93,7 +93,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
-		T mojo = createMojo("clean-mojo-with-parameters", true);
+		T mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "failOnError", false, true);
 
 		CommandResult result = createResult(false);
@@ -119,7 +119,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_failure_and_throw_exception() throws Exception {
 		thrown.expect(MojoExecutionException.class);
 
-		T mojo = createMojo("clean-mojo-with-parameters", true);
+		T mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "failOnError", true, true);
 
 		CommandResult result = createResult(false);
@@ -137,7 +137,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 			thrown.expectMessage("Cannot execute npm " + join(defaultArguments()) + " command: it is not defined in package.json");
 		}
 
-		T mojo = createMojo("clean-mojo-without-scripts", false);
+		T mojo = createMojo("mojo-without-scripts", false);
 
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
@@ -154,15 +154,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		thrown.expect(PackageJsonNotFoundException.class);
 		thrown.expectMessage("File " + new File(workingDirectory.getAbsolutePath(), "package.json") + " does not exist");
 
-		T mojo = createMojo("clean-mojo-with-parameters", true);
+		T mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "failOnError", false, true);
 		writeField(mojo, "workingDirectory", workingDirectory, true);
 
 		mojo.execute();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	protected <T> T createMojo(String projectName, boolean hasConfiguration) throws Exception {
+	protected T createMojo(String projectName, boolean hasConfiguration) throws Exception {
 		T mojo = super.createMojo(projectName, hasConfiguration);
 
 		CommandExecutor executor = mock(CommandExecutor.class);

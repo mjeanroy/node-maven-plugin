@@ -48,7 +48,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 
 	@Test
 	public void it_should_execute_mojo() throws Exception {
-		DependenciesMojo mojo = createMojo("clean-mojo", false);
+		DependenciesMojo mojo = createMojo("mojo", false);
 
 		Log logger = createLogger();
 		writeField(mojo, "log", logger, true);
@@ -65,7 +65,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 
 	@Test
 	public void it_should_execute_mojo_without_dependencies() throws Exception {
-		DependenciesMojo mojo = createMojo("clean-mojo-without-dependencies", false);
+		DependenciesMojo mojo = createMojo("mojo-without-dependencies", false);
 
 		Log logger = createLogger();
 		writeField(mojo, "log", logger, true);
@@ -83,7 +83,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 	public void it_should_fail_if_package_json_does_not_exist() throws Exception {
 		thrown.expect(PackageJsonNotFoundException.class);
 
-		DependenciesMojo mojo = createMojo("clean-mojo-with-parameters", false);
+		DependenciesMojo mojo = createMojo("mojo-with-parameters", false);
 		writeField(mojo, "workingDirectory", new File("."), true);
 
 		Log logger = createLogger();
