@@ -84,10 +84,33 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
 		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments());
+		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(true));
 
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger).info("Running: npm " + join(defaultArguments()));
+		verify(logger).info("Running: npm " + join(defaultArguments(true)));
+		verify(logger, never()).error(anyString());
+	}
+
+	@Test
+	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
+		T mojo = createMojo("mojo", false);
+
+		CommandResult result = createResult(true);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
+
+		mojo.execute();
+
+		verify(executor).execute(any(File.class), any(Command.class));
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.getExecutable()).isEqualTo("npm");
+		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(false));
+
+		Log logger = (Log) readField(mojo, "log", true);
+		verify(logger).info("Running: npm " + join(defaultArguments(false)));
 		verify(logger, never()).error(anyString());
 	}
 
@@ -135,10 +158,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
 		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments());
+		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(true));
 
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger).error("Error during execution of: npm " + join(defaultArguments()));
+		verify(logger).error("Error during execution of: npm " + join(defaultArguments(true)));
 		verify(logger).error("Exit status: 1");
 	}
 
@@ -161,7 +184,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_throw_exception_if_scripts_does_not_exist() throws Exception {
 		if (!isStandardNpm()) {
 			thrown.expect(MojoExecutionException.class);
-			thrown.expectMessage("Cannot execute npm " + join(defaultArguments()) + " command: it is not defined in package.json");
+			thrown.expectMessage("Cannot execute npm " + join(defaultArguments(true)) + " command: it is not defined in package.json");
 		}
 
 		T mojo = createMojo("mojo-without-scripts", false);
@@ -204,7 +227,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return mojoName.equals("test") || mojoName.equals("install");
 	}
 
-	private List<String> defaultArguments() {
+	private List<String> defaultArguments(boolean withColors) {
 		List<String> arguments = new ArrayList<String>();
 
 		String mojoName = mojoName();
@@ -213,6 +236,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		arguments.add(mojoName);
+
+		if (!withColors) {
+			arguments.add("--no-color");
+		}
+
 		return arguments;
 	}
 
