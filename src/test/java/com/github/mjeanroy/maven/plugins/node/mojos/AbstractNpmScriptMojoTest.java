@@ -142,6 +142,20 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
+	public void it_should_skip_mojo_execution() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+		writeField(mojo, "skip", true, true);
+
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		Log logger = (Log) readField(mojo, "log", true);
+
+		mojo.execute();
+
+		verify(executor, never()).execute(any(File.class), any(Command.class));
+		verify(logger).info(String.format("Npm %s is skipped.", mojoName()));
+	}
+
+	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "failOnError", false, true);

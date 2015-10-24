@@ -99,6 +99,12 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		if (isSkipped()) {
+			// Skip execution.
+			getLog().info(getSkippedMessage());
+			return;
+		}
+
 		PackageJson packageJson = getPackageJson();
 
 		String script = notNull(getScript(), "Npm Script command must not be null");
@@ -135,6 +141,22 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * @return Script to execute.
 	 */
 	protected abstract String getScript();
+
+	/**
+	 * Check if mojo execution should be skipped.
+	 *
+	 * @return True if mojo execution should be skipped, false otherwise.
+	 */
+	protected abstract boolean isSkipped();
+
+	/**
+	 * Message logged when mojo execution is skipped.
+	 *
+	 * @return Message.
+	 */
+	protected String getSkippedMessage() {
+		return String.format("Npm %s is skipped.", getScript());
+	}
 
 	private void executeCommand(Command cmd) throws MojoExecutionException {
 		CommandResult result = executor.execute(getWorkingDirectory(), cmd);

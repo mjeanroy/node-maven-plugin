@@ -51,6 +51,12 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	private String script;
 
 	/**
+	 * Flag to skip mojo execution.
+	 */
+	@Parameter(defaultValue = "${npm.skip.clean}", required = false)
+	private boolean skip;
+
+	/**
 	 * Create Mojo.
 	 */
 	public CleanMojo() {
@@ -60,5 +66,10 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	@Override
 	protected String getScript() {
 		return firstNonNull(script, "clean");
+	}
+
+	@Override
+	protected boolean isSkipped() {
+		return skip;
 	}
 }

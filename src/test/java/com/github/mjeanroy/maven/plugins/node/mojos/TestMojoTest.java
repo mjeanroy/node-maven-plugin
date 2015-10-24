@@ -54,6 +54,6 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 		mojo.execute();
 
 		verify(executor, never()).execute(any(File.class), any(Command.class));
-		verify(logger).info("Tests are skipped.");
+		verify(logger).info("Npm test is skipped.");
 	}
 }

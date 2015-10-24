@@ -52,6 +52,12 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	private String script;
 
 	/**
+	 * Flag to skip mojo execution.
+	 */
+	@Parameter(defaultValue = "${npm.skip.lint}", required = false)
+	private boolean skip;
+
+	/**
 	 * Create Mojo.
 	 */
 	public LintMojo() {
@@ -61,5 +67,10 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	@Override
 	protected String getScript() {
 		return firstNonNull(script, "lint");
+	}
+
+	@Override
+	protected boolean isSkipped() {
+		return skip;
 	}
 }

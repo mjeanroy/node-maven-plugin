@@ -23,8 +23,6 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -47,6 +45,12 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 public class TestMojo extends AbstractNpmScriptMojo {
 
 	/**
+	 * Set test mojo to custom npm script.
+	 */
+	@Parameter(defaultValue = "${npm.script.test}", required = false)
+	private String script;
+
+	/**
 	 * Check if unit tests must be skipped.
 	 * By default, unit tests are skipped if maven.test.skip property is set to true.
 	 */
@@ -54,10 +58,10 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	private boolean skipTests;
 
 	/**
-	 * Set test mojo to custom npm script.
+	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.script.test}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.skip.test}", required = false)
+	private boolean skip;
 
 	/**
 	 * Create Mojo.
@@ -72,11 +76,7 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (!skipTests) {
-			super.execute();
-		} else {
-			getLog().info("Tests are skipped.");
-		}
+	protected boolean isSkipped() {
+		return skipTests || skip;
 	}
 }

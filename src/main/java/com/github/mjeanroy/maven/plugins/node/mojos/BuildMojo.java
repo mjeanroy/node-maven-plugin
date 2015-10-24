@@ -51,6 +51,12 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	private String script;
 
 	/**
+	 * Flag to skip mojo execution.
+	 */
+	@Parameter(defaultValue = "${npm.skip.build}", required = false)
+	private boolean skip;
+
+	/**
 	 * Create Mojo.
 	 */
 	public BuildMojo() {
@@ -60,5 +66,10 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	@Override
 	protected String getScript() {
 		return firstNonNull(script, "build");
+	}
+
+	@Override
+	protected boolean isSkipped() {
+		return skip;
 	}
 }

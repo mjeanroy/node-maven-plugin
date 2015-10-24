@@ -52,6 +52,12 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	private String script;
 
 	/**
+	 * Flag to skip mojo execution.
+	 */
+	@Parameter(defaultValue = "${npm.skip.install}", required = false)
+	private boolean skip;
+
+	/**
 	 * Create Mojo.
 	 */
 	public InstallMojo() {
@@ -61,5 +67,10 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	@Override
 	protected String getScript() {
 		return firstNonNull(script, "install");
+	}
+
+	@Override
+	protected boolean isSkipped() {
+		return skip;
 	}
 }
