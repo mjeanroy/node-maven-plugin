@@ -40,7 +40,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 		defaultPhase = LifecyclePhase.INITIALIZE,
 		requiresOnline = true
 )
-public class InstallMojo extends AbstractNpmMojo {
+public class InstallMojo extends AbstractNpmScriptMojo {
 
 	/**
 	 * Create Mojo.

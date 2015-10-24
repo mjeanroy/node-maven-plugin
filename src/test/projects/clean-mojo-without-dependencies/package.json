@@ -1,4 +1,9 @@
 {
   "name": "test-project",
-  "version": "1.0"
+  "version": "1.0",
+  "scripts": {
+    "clean": "gulp clean",
+    "lint": "gulp lint",
+    "build": "gulp build"
+  }
 }

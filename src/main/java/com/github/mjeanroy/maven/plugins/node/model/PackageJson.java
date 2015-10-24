@@ -26,6 +26,8 @@ package com.github.mjeanroy.maven.plugins.node.model;
 import java.util.HashMap;
 import java.util.Map;
 
+import static java.util.Collections.unmodifiableMap;
+
 public class PackageJson {
 
 	/**
@@ -49,11 +51,17 @@ public class PackageJson {
 	private Map<String, String> devDependencies;
 
 	/**
+	 * List of available scripts.
+	 */
+	private Map<String, String> scripts;
+
+	/**
 	 * Create default package json representation.
 	 */
 	PackageJson() {
 		dependencies = new HashMap<String, String>();
 		devDependencies = new HashMap<String, String>();
+		scripts = new HashMap<String, String>();
 	}
 
 	/**
@@ -80,7 +88,7 @@ public class PackageJson {
 	 * @return {@link #dependencies}
 	 */
 	public Map<String, String> getDependencies() {
-		return dependencies;
+		return unmodifiableMap(dependencies);
 	}
 
 	/**
@@ -89,6 +97,25 @@ public class PackageJson {
 	 * @return {@link #devDependencies}
 	 */
 	public Map<String, String> getDevDependencies() {
-		return devDependencies;
+		return unmodifiableMap(devDependencies);
+	}
+
+	/**
+	 * Get {@link #scripts}
+	 *
+	 * @return {@link #scripts}
+	 */
+	public Map<String, String> getScripts() {
+		return unmodifiableMap(scripts);
+	}
+
+	/**
+	 * Check if given script command is defined in package.json file.
+	 *
+	 * @param script Script command.
+	 * @return True if script command is defined, false otherwise.
+	 */
+	public boolean hasScript(String script) {
+		return scripts.containsKey(script);
 	}
 }

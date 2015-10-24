@@ -39,7 +39,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 		defaultPhase = LifecyclePhase.TEST,
 		requiresOnline = false
 )
-public class TestMojo extends AbstractNpmMojo {
+public class TestMojo extends AbstractNpmScriptMojo {
 
 	public TestMojo() {
 		super("test");

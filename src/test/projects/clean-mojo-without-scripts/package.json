@@ -1,11 +1,6 @@
 {
   "name": "test-project",
   "version": "1.0",
-  "scripts": {
-    "clean": "gulp clean",
-    "lint": "gulp lint",
-    "build": "gulp build"
-  },
   "dependencies": {
     "react": "0.13.3",
     "jquery": "2.11"

@@ -36,7 +36,7 @@ import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractMojoTest {
+public abstract class AbstractNpmMojoTest {
 
 	@Rule
 	public TestResources resources = new TestResources();
@@ -61,6 +61,9 @@ public abstract class AbstractMojoTest {
 				mojoRule.lookupEmptyMojo(mojoName(), pom);
 
 		writeField(mojo, "workingDirectory", baseDir, true);
+
+		Log logger = createLogger();
+		writeField(mojo, "log", logger, true);
 
 		return (T) mojo;
 	}

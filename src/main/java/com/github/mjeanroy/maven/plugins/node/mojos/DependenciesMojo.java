@@ -24,17 +24,11 @@
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
-import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
-import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
 import java.util.Map;
-
-import static com.github.mjeanroy.maven.plugins.node.commons.JsonUtils.parseJson;
 
 /**
  * Dependencies Mojo.
@@ -45,10 +39,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.JsonUtils.parseJson
 		name = "dependencies",
 		requiresOnline = false
 )
-public class DependenciesMojo extends AbstractMojo {
-
-	@Parameter(defaultValue = "${project.basedir}", readonly = true)
-	private File workingDirectory;
+public class DependenciesMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
@@ -61,23 +52,6 @@ public class DependenciesMojo extends AbstractMojo {
 		// Display list of devDependencies
 		getLog().info("  == devDependencies");
 		displayDependencies(packageJson.getDevDependencies());
-	}
-
-	/**
-	 * Return package.json content.
-	 *
-	 * @return Instance of package.json content.
-	 */
-	private PackageJson getPackageJson() {
-		getLog().debug("Searching for package.json file in: " + workingDirectory);
-
-		File packageJson = new File(workingDirectory, "package.json");
-		if (!packageJson.exists()) {
-			getLog().error("Missing package.json file");
-			throw new PackageJsonNotFoundException(packageJson);
-		}
-
-		return parseJson(packageJson, PackageJson.class);
 	}
 
 	/**

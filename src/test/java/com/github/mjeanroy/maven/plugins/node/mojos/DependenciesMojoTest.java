@@ -30,11 +30,13 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 
+import java.io.File;
+
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Mockito.inOrder;
 
-public class DependenciesMojoTest extends AbstractMojoTest {
+public class DependenciesMojoTest extends AbstractNpmMojoTest {
 
 	@Rule
 	public ExpectedException thrown = none();
@@ -82,6 +84,7 @@ public class DependenciesMojoTest extends AbstractMojoTest {
 		thrown.expect(PackageJsonNotFoundException.class);
 
 		DependenciesMojo mojo = createMojo("clean-mojo-with-parameters", false);
+		writeField(mojo, "workingDirectory", new File("."), true);
 
 		Log logger = createLogger();
 		writeField(mojo, "log", logger, true);

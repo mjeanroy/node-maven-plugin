@@ -39,7 +39,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 		defaultPhase = LifecyclePhase.COMPILE,
 		requiresOnline = false
 )
-public class BuildMojo extends AbstractNpmMojo {
+public class BuildMojo extends AbstractNpmScriptMojo {
 
 	public BuildMojo() {
 		super("build");

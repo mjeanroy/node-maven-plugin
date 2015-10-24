@@ -39,7 +39,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 		defaultPhase = LifecyclePhase.CLEAN,
 		requiresOnline = false
 )
-public class CleanMojo extends AbstractNpmMojo {
+public class CleanMojo extends AbstractNpmScriptMojo {
 
 	/**
 	 * Create Mojo.
