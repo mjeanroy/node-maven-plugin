@@ -23,10 +23,37 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
+
+import java.io.File;
+
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+
 public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	@Override
 	protected String mojoName() {
 		return "test";
+	}
+
+	@Test
+	public void it_should_skip_tests() throws Exception {
+		TestMojo mojo = createMojo("mojo-with-parameters", true);
+		writeField(mojo, "skipTests", true, true);
+
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		Log logger = (Log) readField(mojo, "log", true);
+
+		mojo.execute();
+
+		verify(executor, never()).execute(any(File.class), any(Command.class));
+		verify(logger).info("Tests are skipped.");
 	}
 }

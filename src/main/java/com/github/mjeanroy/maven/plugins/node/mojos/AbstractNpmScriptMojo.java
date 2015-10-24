@@ -97,7 +97,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	@Override
-	public final void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException, MojoFailureException {
 		PackageJson packageJson = getPackageJson();
 
 		String script = getScript();
