@@ -29,6 +29,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
+
 /**
  * Test Mojo.
  * Basically, it only runs `npm test`.
@@ -52,6 +54,12 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	private boolean skipTests;
 
 	/**
+	 * Set test mojo to custom npm script.
+	 */
+	@Parameter(defaultValue = "${npm.script.test}", required = false)
+	private String script;
+
+	/**
 	 * Create Mojo.
 	 */
 	public TestMojo() {
@@ -60,7 +68,7 @@ public class TestMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return "test";
+		return firstNonNull(script, "test");
 	}
 
 	@Override

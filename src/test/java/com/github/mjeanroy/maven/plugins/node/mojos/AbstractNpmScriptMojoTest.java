@@ -92,6 +92,33 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
+	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+		writeField(mojo, "script", "foobar", true);
+
+		CommandResult result = createResult(true);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
+
+		mojo.execute();
+
+		verify(executor).execute(any(File.class), any(Command.class));
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.getExecutable()).isEqualTo("npm");
+		assertThat(cmd.getArguments()).containsExactly(
+				"run-script",
+				"foobar"
+		);
+
+		Log logger = (Log) readField(mojo, "log", true);
+		verify(logger).info("Running: npm run-script foobar");
+		verify(logger, never()).error(anyString());
+	}
+
+	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "failOnError", false, true);

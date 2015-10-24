@@ -25,6 +25,9 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
 
 /**
  * Build Mojo.
@@ -41,12 +44,21 @@ import org.apache.maven.plugins.annotations.Mojo;
 )
 public class BuildMojo extends AbstractNpmScriptMojo {
 
+	/**
+	 * Set build mojo to custom npm script.
+	 */
+	@Parameter(defaultValue = "${npm.script.build}", required = false)
+	private String script;
+
+	/**
+	 * Create Mojo.
+	 */
 	public BuildMojo() {
 		super();
 	}
 
 	@Override
 	protected String getScript() {
-		return "build";
+		return firstNonNull(script, "build");
 	}
 }

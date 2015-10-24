@@ -25,6 +25,9 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
+
+import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
 
 /**
  * Clean Mojo.
@@ -42,6 +45,12 @@ import org.apache.maven.plugins.annotations.Mojo;
 public class CleanMojo extends AbstractNpmScriptMojo {
 
 	/**
+	 * Set clean mojo to custom npm script.
+	 */
+	@Parameter(defaultValue = "${npm.script.clean}", required = false)
+	private String script;
+
+	/**
 	 * Create Mojo.
 	 */
 	public CleanMojo() {
@@ -50,6 +59,6 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return "clean";
+		return firstNonNull(script, "clean");
 	}
 }

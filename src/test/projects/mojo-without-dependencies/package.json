@@ -4,6 +4,7 @@
   "scripts": {
     "clean": "gulp clean",
     "lint": "gulp lint",
-    "build": "gulp build"
+    "build": "gulp build",
+    "foobar": "gulp"
   }
 }

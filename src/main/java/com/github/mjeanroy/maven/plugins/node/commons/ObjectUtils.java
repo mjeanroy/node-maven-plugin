@@ -21,45 +21,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.mojos;
-
-import org.apache.maven.plugins.annotations.LifecyclePhase;
-import org.apache.maven.plugins.annotations.Mojo;
-import org.apache.maven.plugins.annotations.Parameter;
-
-import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
+package com.github.mjeanroy.maven.plugins.node.commons;
 
 /**
- * Lint Mojo.
- * Basically, it only runs `npm run-script lint`.
- * This command should be used to run linters such as jshint/eslint or jscs.
- * Execution will be logged to the console.
- *
- * This mojo will run automatically during the process-sources phase and does not
- * require online connection.
+ * Static Object Utilities.
  */
-@Mojo(
-		name = "lint",
-		defaultPhase = LifecyclePhase.PROCESS_SOURCES,
-		requiresOnline = false
-)
-public class LintMojo extends AbstractNpmScriptMojo {
+public final class ObjectUtils {
 
-	/**
-	 * Set lint mojo to custom npm script.
-	 */
-	@Parameter(defaultValue = "${npm.script.lint}", required = false)
-	private String script;
-
-	/**
-	 * Create Mojo.
-	 */
-	public LintMojo() {
-		super();
+	private ObjectUtils() {
 	}
 
-	@Override
-	protected String getScript() {
-		return firstNonNull(script, "lint");
+	/**
+	 * Return first non null value.
+	 *
+	 * @param v1 Value 1.
+	 * @param v2 Value 2.
+	 * @param <T> Type of parameters.
+	 * @return First parameter if it is not null, second parameter otherwise.
+	 */
+	public static <T> T firstNonNull(T v1, T v2) {
+		return v1 == null ? v2 : v1;
 	}
 }

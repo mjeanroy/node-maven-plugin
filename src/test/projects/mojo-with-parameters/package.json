@@ -4,7 +4,8 @@
   "scripts": {
     "clean": "gulp clean",
     "lint": "gulp lint",
-    "build": "gulp build"
+    "build": "gulp build",
+    "foobar": "gulp"
   },
   "dependencies": {
     "react": "0.13.3",
