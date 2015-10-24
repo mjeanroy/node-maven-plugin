@@ -83,7 +83,6 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	@Parameter(defaultValue = "true")
 	private boolean failOnError;
 
-
 	/**
 	 * Executor used to run command line.
 	 */
