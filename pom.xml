@@ -14,7 +14,7 @@
 	<artifactId>node-maven-plugin</artifactId>
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
-	<url>https://github.com/mjeanroy/springmvc-mustache</url>
+	<url>https://github.com/mjeanroy/node-maven-plugin</url>
 
 	<licenses>
 		<license>
