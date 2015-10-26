@@ -31,7 +31,9 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
@@ -106,21 +108,29 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		if (isSkipped()) {
+		String script = notNull(getScript(), "Npm Script command must not be null");
+		boolean isCustom = needRunScript(script);
+		String npmCmd = "npm" + (isCustom ? " run-script " : " ") + script;
+
+		// Command already done ?
+		if (hasBeenRun()) {
 			// Skip execution.
+			getLog().info("Command " + npmCmd + " already executed, skip.");
+			return;
+		}
+
+		// Should skip ?
+		if (isSkipped()) {
 			getLog().info(getSkippedMessage());
 			return;
 		}
 
 		PackageJson packageJson = getPackageJson();
 
-		String script = notNull(getScript(), "Npm Script command must not be null");
-		boolean isCustom = needRunScript(script);
-
 		if (isCustom && !packageJson.hasScript(script)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
-			String message = "Cannot execute npm run-script " + script + " command: it is not defined in package.json";
+			String message = "Cannot execute " + npmCmd + " command: it is not defined in package.json";
 			getLog().warn(message);
 			if (failOnMissingScript) {
 				throw new MojoExecutionException(message);
@@ -141,7 +151,48 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 
 		getLog().info("Running: " + cmd.toString());
-		executeCommand(cmd);
+
+		try {
+			executeCommand(cmd);
+			onRun(true);
+		}
+		catch (RuntimeException ex) {
+			onRun(false);
+			throw ex;
+		}
+		catch (MojoExecutionException ex) {
+			onRun(false);
+			throw ex;
+		}
+	}
+
+	/**
+	 * Check if given script command has already been run.
+	 *
+	 * @return True if script command has been run, false otherwise.
+	 */
+	private boolean hasBeenRun() {
+		Map pluginContext = getPluginContext();
+		String script = getScript();
+		return pluginContext != null &&
+			pluginContext.containsKey(script) &&
+			((Boolean) pluginContext.get(script));
+	}
+
+	/**
+	 * Executed after command execution.
+	 *
+	 * @param status If command execution has been executed, false otherwise.
+	 */
+	@SuppressWarnings("unchecked")
+	private void onRun(boolean status) {
+		Map pluginContext = getPluginContext();
+		if (pluginContext == null) {
+			pluginContext = new HashMap();
+		}
+
+		pluginContext.put(getScript(), status);
+		setPluginContext(pluginContext);
 	}
 
 	/**

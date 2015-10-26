@@ -37,7 +37,9 @@ import org.mockito.verification.VerificationMode;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
@@ -155,7 +157,27 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
-		verify(logger).info(String.format("Npm %s is skipped.", mojoName()));
+		verify(logger).info(String.format("Npm %s is skipped.", script()));
+	}
+
+	@SuppressWarnings("unchecked")
+	@Test
+	public void it_should_skip_mojo_execution_if_it_has_been_executed() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+
+		Map pluginContext = new HashMap();
+		pluginContext.put(script(), true);
+		mojo.setPluginContext(pluginContext);
+
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		Log logger = (Log) readField(mojo, "log", true);
+
+		mojo.execute();
+
+		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
+
+		String cmd = "npm" + (isStandardNpm() ? " " : " run-script ") + script();
+		verify(logger).info(String.format("Command %s already executed, skip.", cmd));
 	}
 
 	@Test
@@ -259,14 +281,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private boolean isStandardNpm() {
-		String mojoName = mojoName();
-		return mojoName.equals("test") || mojoName.equals("install");
+		String script = script();
+		return script.equals("test") || script.equals("install");
 	}
 
 	private List<String> defaultArguments(boolean withColors) {
 		List<String> arguments = new ArrayList<String>();
 
-		String mojoName = mojoName();
+		String mojoName = script();
 		if (!isStandardNpm()) {
 			arguments.add("run-script");
 		}

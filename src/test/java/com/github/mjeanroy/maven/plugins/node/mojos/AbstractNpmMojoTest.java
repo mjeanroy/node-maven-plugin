@@ -70,6 +70,10 @@ public abstract class AbstractNpmMojoTest {
 
 	protected abstract String mojoName();
 
+	protected String script() {
+		return mojoName();
+	}
+
 	protected Log createLogger() {
 		return mock(Log.class);
 	}

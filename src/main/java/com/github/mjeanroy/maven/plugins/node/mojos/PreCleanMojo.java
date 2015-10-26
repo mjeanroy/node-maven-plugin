@@ -30,39 +30,38 @@ import org.apache.maven.plugins.annotations.Parameter;
 import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
 
 /**
- * Install Mojo.
+ * PreClean Mojo.
  * Basically, it only runs `npm install` to install
- * mandatory dependencies.
- * If install command has already been executed (during pre-clean phase), it will be
- * automatically skipped.
+ * mandatory dependencies (since, most of the time, install need
+ * to be run before clean phase).
  * Executed will be logged to the console.
  *
- * This mojo will run automatically during the initialize phase and
+ * This mojo will run automatically during the pre-clean phase and
  * **require** online connection.
  */
 @Mojo(
-	name = "install",
-	defaultPhase = LifecyclePhase.INITIALIZE,
+	name = "pre-clean",
+	defaultPhase = LifecyclePhase.PRE_CLEAN,
 	requiresOnline = true
 )
-public class InstallMojo extends AbstractNpmScriptMojo {
+public class PreCleanMojo extends AbstractNpmScriptMojo {
 
 	/**
-	 * Set install mojo to custom npm script.
+	 * Set pre-clean mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.install}", required = false)
+	@Parameter(defaultValue = "${npm.script.preClean}", required = false)
 	private String script;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.install}", required = false)
+	@Parameter(defaultValue = "${npm.skip.preClean}", required = false)
 	private boolean skip;
 
 	/**
 	 * Create Mojo.
 	 */
-	public InstallMojo() {
+	public PreCleanMojo() {
 		super();
 	}
 
