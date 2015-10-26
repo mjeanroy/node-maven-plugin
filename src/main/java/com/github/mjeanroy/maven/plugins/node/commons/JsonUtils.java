@@ -28,7 +28,6 @@ import com.google.gson.Gson;
 
 import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 
@@ -57,9 +56,6 @@ public final class JsonUtils {
 			}
 
 			return new Gson().fromJson(json.toString(), klass);
-		}
-		catch (FileNotFoundException ex) {
-			throw new JsonException(ex);
 		}
 		catch (IOException ex) {
 			throw new JsonException(ex);

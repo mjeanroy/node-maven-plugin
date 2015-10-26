@@ -81,7 +81,7 @@ public final class Commands {
 
 		@Override
 		public Collection<String> getArguments() {
-			List<String> args = new LinkedList<String>(super.getArguments());
+			List<String> args = new LinkedList<>(super.getArguments());
 			args.add(cmd.getExecutable());
 			args.addAll(cmd.getArguments());
 			return args;

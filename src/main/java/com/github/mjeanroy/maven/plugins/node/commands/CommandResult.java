@@ -30,7 +30,7 @@ package com.github.mjeanroy.maven.plugins.node.commands;
  * - A failure is a command exiting with everything but zero.
  *
  * This class should not be instantiated explicitly, but should be obtaining with
- * the result of {@link com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor#execute(java.io.File, Command)}.
+ * the result of {@link com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor#execute(java.io.File, Command, org.apache.maven.plugin.logging.Log)}.
  *
  * This class is immutable and, consequently, thread safe.
  */

@@ -52,7 +52,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	// Initialize commands
 	static {
-		Set<String> cmds = new HashSet<String>();
+		Set<String> cmds = new HashSet<>();
 		cmds.add("install");
 		cmds.add("test");
 		cmds.add("publish");
@@ -156,11 +156,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			executeCommand(cmd);
 			onRun(true);
 		}
-		catch (RuntimeException ex) {
-			onRun(false);
-			throw ex;
-		}
-		catch (MojoExecutionException ex) {
+		catch (RuntimeException | MojoExecutionException ex) {
 			onRun(false);
 			throw ex;
 		}

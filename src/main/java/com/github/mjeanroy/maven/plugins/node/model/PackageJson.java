@@ -43,25 +43,25 @@ public class PackageJson {
 	/**
 	 * Npm project dependencies.
 	 */
-	private Map<String, String> dependencies;
+	private final Map<String, String> dependencies;
 
 	/**
 	 * Npm project devDependencies.
 	 */
-	private Map<String, String> devDependencies;
+	private final Map<String, String> devDependencies;
 
 	/**
 	 * List of available scripts.
 	 */
-	private Map<String, String> scripts;
+	private final Map<String, String> scripts;
 
 	/**
 	 * Create default package json representation.
 	 */
 	PackageJson() {
-		dependencies = new HashMap<String, String>();
-		devDependencies = new HashMap<String, String>();
-		scripts = new HashMap<String, String>();
+		dependencies = new HashMap<>();
+		devDependencies = new HashMap<>();
+		scripts = new HashMap<>();
 	}
 
 	/**

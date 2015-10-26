@@ -58,7 +58,7 @@ public class Command {
 	 */
 	Command(String executable) {
 		this.executable = executable;
-		this.arguments = new LinkedList<String>();
+		this.arguments = new LinkedList<>();
 	}
 
 	/**
@@ -95,7 +95,7 @@ public class Command {
 	 * @return Arguments.
 	 */
 	public Collection<String> getArguments() {
-		return new LinkedHashSet<String>(arguments);
+		return new LinkedHashSet<>(arguments);
 	}
 
 	@Override

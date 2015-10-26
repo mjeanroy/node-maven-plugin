@@ -279,7 +279,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private List<String> defaultArguments(boolean withColors) {
-		List<String> arguments = new ArrayList<String>();
+		List<String> arguments = new ArrayList<>();
 
 		String mojoName = script();
 		if (!isStandardNpm()) {
