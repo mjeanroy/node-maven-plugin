@@ -4,3 +4,9 @@
 
 # Build
 target/
+
+# Node
+node_modules/
+
+# Bower
+vendors/
