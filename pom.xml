@@ -9,6 +9,28 @@
 	<version>0.1.0-SNAPSHOT</version>
 	<packaging>maven-plugin</packaging>
 
+	<licenses>
+		<license>
+			<name>MIT License</name>
+			<url>http://www.opensource.org/licenses/mit-license.php</url>
+			<distribution>repo</distribution>
+		</license>
+	</licenses>
+
+	<developers>
+		<developer>
+			<id>mjeanroy</id>
+			<name>Mickael Jeanroy</name>
+			<email>mickael.jeanroy@gmail.com</email>
+		</developer>
+	</developers>
+
+	<scm>
+		<connection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</connection>
+		<developerConnection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</developerConnection>
+		<url>https://github.com/mjeanroy/node-maven-plugin</url>
+	</scm>
+
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<commons-exec.version>1.1</commons-exec.version>
