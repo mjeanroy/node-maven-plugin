@@ -27,6 +27,8 @@ import org.apache.commons.exec.CommandLine;
 import org.apache.commons.exec.DefaultExecutor;
 import org.apache.commons.exec.ExecuteException;
 import org.apache.commons.exec.Executor;
+import org.apache.commons.exec.PumpStreamHandler;
+import org.apache.maven.plugin.logging.Log;
 
 import java.io.File;
 import java.io.IOException;
@@ -46,9 +48,10 @@ public class CommandExecutor {
 	 *
 	 * @param workingDirectory Working directory (i.e where the command line is executed).
 	 * @param command Command, containing executable path with arguments.
+	 * @param logger Logger to use to log command output.
 	 * @return Command result object.
 	 */
-	public CommandResult execute(File workingDirectory, Command command) {
+	public CommandResult execute(File workingDirectory, Command command, Log logger) {
 		CommandLine commandLine = new CommandLine(command.getExecutable());
 		for (String argument : command.getArguments()) {
 			commandLine.addArgument(argument);
@@ -58,6 +61,12 @@ public class CommandExecutor {
 			Executor executor = new DefaultExecutor();
 			executor.setWorkingDirectory(workingDirectory);
 			executor.setExitValue(0);
+
+			// Define custom output stream
+			LogStreamHandler stream = new LogStreamHandler(logger);
+			PumpStreamHandler handler = new PumpStreamHandler(stream);
+			executor.setStreamHandler(handler);
+
 			int status = executor.execute(commandLine);
 			return new CommandResult(status);
 		}

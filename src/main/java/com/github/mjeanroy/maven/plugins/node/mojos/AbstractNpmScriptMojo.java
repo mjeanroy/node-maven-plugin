@@ -157,8 +157,14 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		return String.format("Npm %s is skipped.", getScript());
 	}
 
+	/**
+	 * Execute given command.
+	 *
+	 * @param cmd Command Line.
+	 * @throws MojoExecutionException In case of errors.
+	 */
 	private void executeCommand(Command cmd) throws MojoExecutionException {
-		CommandResult result = executor.execute(getWorkingDirectory(), cmd);
+		CommandResult result = executor.execute(getWorkingDirectory(), cmd, getLog());
 		if (result.isFailure()) {
 			// Always display error log
 			getLog().error("Error during execution of: " + cmd.toString());

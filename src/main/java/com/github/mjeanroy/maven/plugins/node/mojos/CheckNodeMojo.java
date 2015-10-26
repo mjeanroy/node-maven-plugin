@@ -68,6 +68,12 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		check(npm());
 	}
 
+	/**
+	 * Execute check operation.
+	 *
+	 * @param cmd Command Line.
+	 * @throws MojoExecutionException In case of errors.
+	 */
 	private void check(Command cmd) throws MojoExecutionException {
 		cmd.addArgument("--version");
 
@@ -75,7 +81,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		getLog().debug("Running: " + cmd.toString());
 
 		try {
-			executor.execute(getWorkingDirectory(), cmd);
+			executor.execute(getWorkingDirectory(), cmd, getLog());
 		}
 		catch (CommandException ex) {
 			throw new MojoExecutionException(capitalize(cmd.getExecutable()) + " is not available, please install it on your operating system");

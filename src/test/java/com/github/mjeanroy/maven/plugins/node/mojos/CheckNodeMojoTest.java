@@ -44,8 +44,11 @@ import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest {
@@ -69,9 +72,11 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 
 		CommandResult result = createResult(true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture())).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
 
 		mojo.execute();
+
+		verify(executor, times(2)).execute(any(File.class), any(Command.class), eq(logger));
 
 		InOrder inOrder = inOrder(logger);
 		inOrder.verify(logger).info("Checking node command");
@@ -91,7 +96,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		writeField(mojo, "executor", executor, true);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture())).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Command command = (Command) invocation.getArguments()[1];
@@ -117,7 +122,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		writeField(mojo, "executor", executor, true);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture())).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Command command = (Command) invocation.getArguments()[1];

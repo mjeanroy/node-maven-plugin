@@ -21,40 +21,32 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.mojos;
+package com.github.mjeanroy.maven.plugins.node.commands;
 
-import com.github.mjeanroy.maven.plugins.node.commands.Command;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import org.apache.commons.exec.LogOutputStream;
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
 
-import java.io.File;
+/**
+ * Output Stream handler used to log command line output.
+ */
+class LogStreamHandler extends LogOutputStream {
 
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+	/**
+	 * Logger instance.
+	 */
+	private final Log logger;
 
-public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
-
-	@Override
-	protected String mojoName() {
-		return "test";
+	/**
+	 * Build output stream.
+	 *
+	 * @param logger Logger.
+	 */
+	LogStreamHandler(Log logger) {
+		this.logger = logger;
 	}
 
-	@Test
-	public void it_should_skip_tests() throws Exception {
-		TestMojo mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "skipTests", true, true);
-
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
-
-		mojo.execute();
-
-		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
-		verify(logger).info("Npm test is skipped.");
+	@Override
+	protected void processLine(String line, int level) {
+		logger.info(line);
 	}
 }

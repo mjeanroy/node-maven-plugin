@@ -1,5 +1,6 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -33,8 +34,9 @@ public class CommandExecutorTest {
 		String script = "success.sh";
 		Command command = createUnixCommand(script);
 		File workingDirectory = workingDirectory(script);
+		Log logger = mock(Log.class);
 
-		CommandResult result = commandExecutor.execute(workingDirectory, command);
+		CommandResult result = commandExecutor.execute(workingDirectory, command, logger);
 
 		assertThat(result.getStatus()).isZero();
 	}
@@ -46,8 +48,9 @@ public class CommandExecutorTest {
 		String script = "error.sh";
 		Command command = createUnixCommand(script);
 		File workingDirectory = workingDirectory(script);
+		Log logger = mock(Log.class);
 
-		CommandResult result = commandExecutor.execute(workingDirectory, command);
+		CommandResult result = commandExecutor.execute(workingDirectory, command, logger);
 
 		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
 	}
