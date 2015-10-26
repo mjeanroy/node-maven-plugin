@@ -39,9 +39,9 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * **require** online connection.
  */
 @Mojo(
-		name = "install",
-		defaultPhase = LifecyclePhase.INITIALIZE,
-		requiresOnline = true
+	name = "install",
+	defaultPhase = LifecyclePhase.INITIALIZE,
+	requiresOnline = true
 )
 public class InstallMojo extends AbstractNpmScriptMojo {
 

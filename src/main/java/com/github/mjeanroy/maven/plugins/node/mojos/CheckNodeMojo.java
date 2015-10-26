@@ -43,9 +43,9 @@ import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capital
  * is not the case.
  */
 @Mojo(
-		name = "check",
-		defaultPhase = LifecyclePhase.VALIDATE,
-		requiresOnline = false
+	name = "check",
+	defaultPhase = LifecyclePhase.VALIDATE,
+	requiresOnline = false
 )
 public class CheckNodeMojo extends AbstractNpmMojo {
 

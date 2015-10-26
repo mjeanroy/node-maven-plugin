@@ -38,9 +38,9 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * require online connection.
  */
 @Mojo(
-		name = "test",
-		defaultPhase = LifecyclePhase.TEST,
-		requiresOnline = false
+	name = "test",
+	defaultPhase = LifecyclePhase.TEST,
+	requiresOnline = false
 )
 public class TestMojo extends AbstractNpmScriptMojo {
 

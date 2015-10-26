@@ -39,9 +39,9 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * require online connection.
  */
 @Mojo(
-		name = "lint",
-		defaultPhase = LifecyclePhase.PROCESS_SOURCES,
-		requiresOnline = false
+	name = "lint",
+	defaultPhase = LifecyclePhase.PROCESS_SOURCES,
+	requiresOnline = false
 )
 public class LintMojo extends AbstractNpmScriptMojo {
 

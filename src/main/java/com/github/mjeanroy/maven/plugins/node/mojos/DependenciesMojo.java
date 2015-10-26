@@ -36,8 +36,8 @@ import java.util.Map;
  * This mojo will not run by default and does not require online connection.
  */
 @Mojo(
-		name = "dependencies",
-		requiresOnline = false
+	name = "dependencies",
+	requiresOnline = false
 )
 public class DependenciesMojo extends AbstractNpmMojo {
 

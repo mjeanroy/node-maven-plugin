@@ -24,7 +24,6 @@
 package com.github.mjeanroy.maven.plugins.node.exceptions;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 
 /**
  * Exception thrown when package.json file cannot
@@ -39,14 +38,5 @@ public class PackageJsonNotFoundException extends RuntimeException {
 	 */
 	public PackageJsonNotFoundException(File file) {
 		super("File " + file.getAbsolutePath() + " does not exist");
-	}
-
-	/**
-	 * Wrap external exception.
-	 *
-	 * @param file File that should point to package.json.
-	 */
-	public PackageJsonNotFoundException(FileNotFoundException ex) {
-		super(ex);
 	}
 }
