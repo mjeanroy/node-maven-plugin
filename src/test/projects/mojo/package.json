@@ -5,6 +5,7 @@
     "clean": "gulp clean",
     "lint": "gulp lint",
     "build": "gulp build",
+    "bower": "gulp bower",
     "foobar": "gulp"
   },
   "dependencies": {
