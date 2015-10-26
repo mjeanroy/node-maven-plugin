@@ -23,6 +23,11 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import java.util.Collection;
+import java.util.LinkedList;
+
+import static com.github.mjeanroy.maven.plugins.node.commons.EnvUtils.isWindows;
+
 /**
  * Static factories for commons commands.
  */
@@ -38,7 +43,7 @@ public final class Commands {
 	 * @return New npm command.
 	 */
 	public static Command npm() {
-		return new Command("npm");
+		return wrap(new Command("npm"));
 	}
 
 	/**
@@ -47,6 +52,36 @@ public final class Commands {
 	 * @return New node command.
 	 */
 	public static Command node() {
-		return new Command("node");
+		return wrap(new Command("node"));
+	}
+
+	private static Command wrap(Command command) {
+		return isWindows() ? new MsDos(command) : command;
+	}
+
+	private static class MsDos extends Command {
+		private final Command cmd;
+
+		private MsDos(Command cmd) {
+			super("cmd /c");
+			this.cmd = cmd;
+		}
+
+		@Override
+		public void addArgument(String argument) {
+			cmd.addArgument(argument);
+		}
+
+		@Override
+		public Collection<String> getArguments() {
+			LinkedList<String> args = new LinkedList<String>(cmd.getArguments());
+			args.addFirst(cmd.getExecutable());
+			return args;
+		}
+
+		@Override
+		public String toString() {
+			return cmd.toString();
+		}
 	}
 }
