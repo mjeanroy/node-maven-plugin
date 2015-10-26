@@ -33,6 +33,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
+import org.mockito.verification.VerificationMode;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -47,6 +48,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -137,8 +139,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		assertThat(cmd).isNotNull();
 		assertThat(cmd.getExecutable()).isEqualTo("npm");
 		assertThat(cmd.getArguments()).containsExactly(
-				"run-script",
-				"foobar"
+			"run-script",
+			"foobar"
 		);
 	}
 
@@ -203,6 +205,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		T mojo = createMojo("mojo-without-scripts", false);
+		writeField(mojo, "failOnMissingScript", true, true);
 
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
@@ -210,6 +213,23 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
 
 		mojo.execute();
+	}
+
+	@Test
+	public void it_not_throw_exception_if_scripts_does_not_exist() throws Exception {
+		T mojo = createMojo("mojo-without-scripts", false);
+		writeField(mojo, "failOnMissingScript", false, true);
+
+		CommandResult result = createResult(false);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+
+		mojo.execute();
+
+		VerificationMode verificationMode = isStandardNpm() ? never() : times(1);
+		Log logger = (Log) readField(mojo, "log", true);
+		verify(logger, verificationMode).warn("Cannot execute npm " + join(defaultArguments(true)) + " command: it is not defined in package.json");
 	}
 
 	@Test
@@ -233,6 +253,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		CommandExecutor executor = mock(CommandExecutor.class);
 		writeField(mojo, "executor", executor, true);
+		writeField(mojo, "failOnMissingScript", false, true);
 
 		return mojo;
 	}

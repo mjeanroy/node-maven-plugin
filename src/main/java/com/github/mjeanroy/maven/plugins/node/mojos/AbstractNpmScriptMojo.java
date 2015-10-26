@@ -84,6 +84,14 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private boolean failOnError;
 
 	/**
+	 * Should the build fail on missing script command ?
+	 * By default, build will fail with if an script command is not defined in package.json file, but this may
+	 * be ignored and let the build continue.
+	 */
+	@Parameter(defaultValue = "true")
+	private boolean failOnMissingScript;
+
+	/**
 	 * Executor used to run command line.
 	 */
 	private final CommandExecutor executor;
@@ -113,8 +121,10 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
 			String message = "Cannot execute npm run-script " + script + " command: it is not defined in package.json";
-			getLog().error(message);
-			throw new MojoExecutionException(message);
+			getLog().warn(message);
+			if (failOnMissingScript) {
+				throw new MojoExecutionException(message);
+			}
 		}
 
 		Command cmd = npm();
