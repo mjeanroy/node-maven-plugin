@@ -95,7 +95,7 @@ public class CommandResult {
 
 	@Override
 	public int hashCode() {
-		return Integer.hashCode(status);
+		return status;
 	}
 
 	@Override

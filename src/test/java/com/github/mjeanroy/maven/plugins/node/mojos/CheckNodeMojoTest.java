@@ -100,7 +100,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Command command = (Command) invocation.getArguments()[1];
-				if (command.getExecutable().equals("node")) {
+				if (command.toString().contains("node")) {
 					throw new CommandException(mock(IOException.class));
 				}
 
@@ -126,7 +126,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 			@Override
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Command command = (Command) invocation.getArguments()[1];
-				if (command.getExecutable().equals("npm")) {
+				if (command.toString().contains("npm")) {
 					throw new CommandException(mock(IOException.class));
 				}
 

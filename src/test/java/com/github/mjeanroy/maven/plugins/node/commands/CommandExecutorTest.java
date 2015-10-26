@@ -11,6 +11,7 @@ import java.io.File;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeFalse;
+import static org.junit.Assume.assumeTrue;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -55,12 +56,53 @@ public class CommandExecutorTest {
 		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
 	}
 
+	@Test
+	public void it_should_execute_success_command_on_windows() throws Exception {
+		assumeTrue(isWindows());
+
+		String script = "success.bat";
+		Command command = createMsDosCommand(script);
+		File workingDirectory = workingDirectory(script);
+		Log logger = mock(Log.class);
+
+		CommandResult result = commandExecutor.execute(workingDirectory, command, logger);
+
+		assertThat(result.getStatus()).isZero();
+	}
+
+	@Test
+	public void it_should_execute_error_command_on_windows() throws Exception {
+		assumeTrue(isWindows());
+
+		String script = "error.bat";
+		Command command = createMsDosCommand(script);
+		File workingDirectory = workingDirectory(script);
+		Log logger = mock(Log.class);
+
+		CommandResult result = commandExecutor.execute(workingDirectory, command, logger);
+
+		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
+	}
+
 	private Command createUnixCommand(String script) {
 		String executable = "/bin/sh";
 
 		Command command = mock(Command.class);
 		when(command.getExecutable()).thenReturn(executable);
 		when(command.getArguments()).thenReturn(asList(
+				script
+		));
+
+		return command;
+	}
+
+	private Command createMsDosCommand(String script) {
+		String executable = "cmd";
+
+		Command command = mock(Command.class);
+		when(command.getExecutable()).thenReturn(executable);
+		when(command.getArguments()).thenReturn(asList(
+				"/C",
 				script
 		));
 

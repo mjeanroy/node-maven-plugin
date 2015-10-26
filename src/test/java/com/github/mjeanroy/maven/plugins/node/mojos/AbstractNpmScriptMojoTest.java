@@ -92,8 +92,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(true));
+		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(true)));
 	}
 
 	@Test
@@ -115,8 +114,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(false));
+		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(false)));
 	}
 
 	@Test
@@ -139,11 +137,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactly(
-			"run-script",
-			"foobar"
-		);
+		assertThat(cmd.toString()).isEqualTo("npm run-script foobar");
 	}
 
 	@Test
@@ -200,8 +194,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.getExecutable()).isEqualTo("npm");
-		assertThat(cmd.getArguments()).containsExactlyElementsOf(defaultArguments(true));
+		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(true)));
 	}
 
 	@Test

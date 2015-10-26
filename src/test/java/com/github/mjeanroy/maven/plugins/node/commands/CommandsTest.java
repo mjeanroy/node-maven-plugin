@@ -72,8 +72,9 @@ public class CommandsTest {
 		when(EnvUtils.isWindows()).thenReturn(true);
 		Command npm = npm();
 		npm.addArgument("--no-color");
-		assertThat(npm.getExecutable()).isEqualTo("cmd /c");
+		assertThat(npm.getExecutable()).isEqualTo("cmd");
 		assertThat(npm.getArguments()).containsExactly(
+			"/C",
 			"npm",
 			"--no-color"
 		);
@@ -84,8 +85,9 @@ public class CommandsTest {
 		when(EnvUtils.isWindows()).thenReturn(true);
 		Command node = node();
 		node.addArgument("--no-color");
-		assertThat(node.getExecutable()).isEqualTo("cmd /c");
+		assertThat(node.getExecutable()).isEqualTo("cmd");
 		assertThat(node.getArguments()).containsExactly(
+			"/C",
 			"node",
 			"--no-color"
 		);

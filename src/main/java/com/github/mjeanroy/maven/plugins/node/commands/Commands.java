@@ -24,6 +24,7 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.LinkedList;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.EnvUtils.isWindows;
@@ -63,8 +64,14 @@ public final class Commands {
 		private final Command cmd;
 
 		private MsDos(Command cmd) {
-			super("cmd /c");
+			super("cmd");
+			super.addArgument("/C");
 			this.cmd = cmd;
+		}
+
+		@Override
+		public String getName() {
+			return cmd.getName();
 		}
 
 		@Override
@@ -74,8 +81,9 @@ public final class Commands {
 
 		@Override
 		public Collection<String> getArguments() {
-			LinkedList<String> args = new LinkedList<String>(cmd.getArguments());
-			args.addFirst(cmd.getExecutable());
+			List<String> args = new LinkedList<String>(super.getArguments());
+			args.add(cmd.getExecutable());
+			args.addAll(cmd.getArguments());
 			return args;
 		}
 

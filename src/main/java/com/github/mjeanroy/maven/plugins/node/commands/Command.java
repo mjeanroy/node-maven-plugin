@@ -80,6 +80,15 @@ public class Command {
 	}
 
 	/**
+	 * Get executable name.
+	 *
+	 * @return Executable name.
+	 */
+	public String getName() {
+		return executable;
+	}
+
+	/**
 	 * Return unique list of arguments.
 	 * Arguments are returned in the same order they were added.
 	 *
