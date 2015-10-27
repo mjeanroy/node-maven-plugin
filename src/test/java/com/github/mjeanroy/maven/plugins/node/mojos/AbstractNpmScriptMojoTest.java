@@ -29,6 +29,8 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
+import org.apache.maven.settings.Proxy;
+import org.apache.maven.settings.Settings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -41,6 +43,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -261,6 +264,56 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 	}
 
+	@Test
+	public void it_should_add_proxy_configuration() throws Exception {
+		T mojo = createMojo("mojo", false);
+		writeField(mojo, "ignoreProxies", false, true);
+
+		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
+		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
+
+		Settings settings = mock(Settings.class);
+		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
+		writeField(mojo, "settings", settings, true);
+
+		CommandResult result = createResult(false);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+
+		mojo.execute();
+
+		Command command = cmdCaptor.getValue();
+		assertThat(command.toString())
+			.contains("--proxy http://mjeanroy:foo@localhost:8080")
+			.contains("--https-proxy http://mjeanroy:foo@localhost:8080");
+	}
+
+	@Test
+	public void it_should_ignore_proxy_configuration() throws Exception {
+		T mojo = createMojo("mojo", false);
+		writeField(mojo, "ignoreProxies", true, true);
+
+		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
+		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
+
+		Settings settings = mock(Settings.class);
+		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
+		writeField(mojo, "settings", settings, true);
+
+		CommandResult result = createResult(false);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+
+		mojo.execute();
+
+		Command command = cmdCaptor.getValue();
+		assertThat(command.toString())
+			.doesNotContain("--proxy http://mjeanroy:foo@localhost:8080")
+			.doesNotContain("--https-proxy http://mjeanroy:foo@localhost:8080");
+	}
+
 	@SuppressWarnings("unchecked")
 	@Override
 	protected T createMojo(String projectName, boolean hasConfiguration) throws Exception {
@@ -269,6 +322,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandExecutor executor = mock(CommandExecutor.class);
 		writeField(mojo, "executor", executor, true);
 		writeField(mojo, "failOnMissingScript", false, true);
+		writeField(mojo, "ignoreProxies", true, true);
 
 		return mojo;
 	}
@@ -304,5 +358,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 			sb.append(arg).append(" ");
 		}
 		return sb.toString().trim();
+	}
+
+	private Proxy createProxy(String protocol, String host, int port, String username, String password) {
+		Proxy proxy = mock(Proxy.class);
+		when(proxy.getProtocol()).thenReturn(protocol);
+		when(proxy.getHost()).thenReturn(host);
+		when(proxy.getPort()).thenReturn(port);
+		when(proxy.getUsername()).thenReturn(username);
+		when(proxy.getPassword()).thenReturn(password);
+		when(proxy.isActive()).thenReturn(true);
+		return proxy;
 	}
 }

@@ -27,18 +27,22 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
+import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
+import org.apache.maven.settings.Settings;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
 import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.ProxyUtils.findHttpActiveProfiles;
 import static java.util.Collections.unmodifiableSet;
 
 public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
@@ -92,6 +96,18 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	@Parameter(defaultValue = "true")
 	private boolean failOnMissingScript;
+
+	/**
+	 * Maven Settings.
+	 */
+	@Parameter(defaultValue = "true")
+	private boolean ignoreProxies;
+
+	/**
+	 * Maven Settings.
+	 */
+	@Parameter(defaultValue = "${settings}", readonly = true)
+	private Settings settings;
 
 	/**
 	 * Executor used to run command line.
@@ -153,6 +169,15 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		// Add maven flag
 		// This will let any script known that execution is triggered by maven
 		cmd.addArgument("--maven");
+
+		// Should we add proxy ?
+		if (!ignoreProxies) {
+			List<ProxyConfig> activeProxies = findHttpActiveProfiles(settings.getProxies());
+			for (ProxyConfig proxy : activeProxies) {
+				cmd.addArgument(proxy.isSecure() ? "--https-proxy" : "--proxy");
+				cmd.addArgument(proxy.toUri());
+			}
+		}
 
 		getLog().info("Running: " + cmd.toString());
 
