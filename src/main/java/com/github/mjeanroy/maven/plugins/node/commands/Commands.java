@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.EnvUtils.isWindows;
+import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
 
 /**
  * Static factories for commons commands.
@@ -40,20 +41,26 @@ public final class Commands {
 
 	/**
 	 * Create new `npm` command with
+	 * Executable path should be given as the first argument.
+	 * If path is null, then npm executable should be globally available.
 	 *
+	 * @param path Path to npm executable file (optional, can be null).
 	 * @return New npm command.
 	 */
-	public static Command npm() {
-		return wrap(new Command("npm"));
+	public static Command npm(String path) {
+		return wrap(new Command(firstNonNull(path, "npm")));
 	}
 
 	/**
 	 * Create new `node` command.
+	 * Executable path should be given as the first argument.
+	 * If path is null, then node executable should be globally available.
 	 *
+	 * @param path Path to node executable file (optional, can be null).
 	 * @return New node command.
 	 */
-	public static Command node() {
-		return wrap(new Command("node"));
+	public static Command node(String path) {
+		return wrap(new Command(firstNonNull(path, "node")));
 	}
 
 	private static Command wrap(Command command) {

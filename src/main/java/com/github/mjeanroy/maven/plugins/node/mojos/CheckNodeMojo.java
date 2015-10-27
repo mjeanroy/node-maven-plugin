@@ -32,8 +32,6 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
 import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capitalize;
 
 /**
@@ -64,8 +62,8 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		check("node", node());
-		check("npm", npm());
+		check(node());
+		check(npm());
 	}
 
 	/**
@@ -74,10 +72,10 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 * @param cmd Command Line.
 	 * @throws MojoExecutionException In case of errors.
 	 */
-	private void check(String executable, Command cmd) throws MojoExecutionException {
+	private void check(Command cmd) throws MojoExecutionException {
 		cmd.addArgument("--version");
 
-		getLog().info("Checking " + executable + " command");
+		getLog().info("Checking " + cmd.getName() + " command");
 		getLog().debug("Running: " + cmd.toString());
 
 		try {

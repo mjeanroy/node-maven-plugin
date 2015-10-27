@@ -48,7 +48,7 @@ public class CommandsTest {
 	@Test
 	public void it_should_create_npm_command() {
 		when(EnvUtils.isWindows()).thenReturn(false);
-		Command npm = npm();
+		Command npm = npm(null);
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("npm");
 		assertThat(npm.getArguments()).containsExactly(
@@ -57,9 +57,20 @@ public class CommandsTest {
 	}
 
 	@Test
+	public void it_should_create_npm_command_with_custom_path() {
+		when(EnvUtils.isWindows()).thenReturn(false);
+		Command npm = npm("./npm-cli");
+		npm.addArgument("--no-color");
+		assertThat(npm.getExecutable()).isEqualTo("./npm-cli");
+		assertThat(npm.getArguments()).containsExactly(
+			"--no-color"
+		);
+	}
+
+	@Test
 	public void it_should_create_node_command() {
 		when(EnvUtils.isWindows()).thenReturn(false);
-		Command node = node();
+		Command node = node(null);
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("node");
 		assertThat(node.getArguments()).containsExactly(
@@ -68,9 +79,20 @@ public class CommandsTest {
 	}
 
 	@Test
+	public void it_should_create_node_command_with_custom_path() {
+		when(EnvUtils.isWindows()).thenReturn(false);
+		Command node = node("./node");
+		node.addArgument("--no-color");
+		assertThat(node.getExecutable()).isEqualTo("./node");
+		assertThat(node.getArguments()).containsExactly(
+			"--no-color"
+		);
+	}
+
+	@Test
 	public void it_should_create_npm_command_on_windows() {
 		when(EnvUtils.isWindows()).thenReturn(true);
-		Command npm = npm();
+		Command npm = npm(null);
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
 		assertThat(npm.getArguments()).containsExactly(
@@ -81,14 +103,40 @@ public class CommandsTest {
 	}
 
 	@Test
+	public void it_should_create_npm_command_on_windows_with_custom_path() {
+		when(EnvUtils.isWindows()).thenReturn(true);
+		Command npm = npm("./npm-cli");
+		npm.addArgument("--no-color");
+		assertThat(npm.getExecutable()).isEqualTo("cmd");
+		assertThat(npm.getArguments()).containsExactly(
+			"/C",
+			"./npm-cli",
+			"--no-color"
+		);
+	}
+
+	@Test
 	public void it_should_create_node_command_on_windows() {
 		when(EnvUtils.isWindows()).thenReturn(true);
-		Command node = node();
+		Command node = node(null);
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("cmd");
 		assertThat(node.getArguments()).containsExactly(
 			"/C",
 			"node",
+			"--no-color"
+		);
+	}
+
+	@Test
+	public void it_should_create_node_command_on_windows_with_custom_path() {
+		when(EnvUtils.isWindows()).thenReturn(true);
+		Command node = node("./node.exe");
+		node.addArgument("--no-color");
+		assertThat(node.getExecutable()).isEqualTo("cmd");
+		assertThat(node.getArguments()).containsExactly(
+			"/C",
+			"./node.exe",
 			"--no-color"
 		);
 	}

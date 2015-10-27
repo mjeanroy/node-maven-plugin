@@ -23,6 +23,8 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.Commands;
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import org.apache.maven.plugin.AbstractMojo;
@@ -42,6 +44,20 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	@Parameter(property = "workingDirectory", defaultValue = "${project.basedir}")
 	private File workingDirectory;
+
+	/**
+	 * Get node path.
+	 * The path should point to the node executable file.
+	 */
+	@Parameter(property = "node.path")
+	private String nodePath;
+
+	/**
+	 * Get npm path.
+	 * The path should point to the npm executable file.
+	 */
+	@Parameter(property = "npm.path")
+	private String npmPath;
 
 	/**
 	 * Default Constructor.
@@ -76,4 +92,21 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 		return parseJson(packageJson, PackageJson.class);
 	}
 
+	/**
+	 * Create new npm command instance.
+	 *
+	 * @return Npm Command.
+	 */
+	protected Command npm() {
+		return Commands.npm(npmPath);
+	}
+
+	/**
+	 * Create new node command instance.
+	 *
+	 * @return Node Command.
+	 */
+	protected Command node() {
+		return Commands.node(nodePath);
+	}
 }
