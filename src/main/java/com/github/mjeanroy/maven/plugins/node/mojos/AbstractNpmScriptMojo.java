@@ -150,6 +150,10 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			cmd.addArgument("--no-color");
 		}
 
+		// Add maven flag
+		// This will let any script known that execution is triggered by maven
+		cmd.addArgument("--maven");
+
 		getLog().info("Running: " + cmd.toString());
 
 		try {

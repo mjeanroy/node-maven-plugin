@@ -130,14 +130,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger).info("Running: npm run-script foobar");
+		verify(logger).info("Running: npm run-script foobar --maven");
 		verify(logger, never()).error(anyString());
 
 		verify(executor).execute(any(File.class), any(Command.class), eq(logger));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm run-script foobar");
+		assertThat(cmd.toString()).isEqualTo("npm run-script foobar --maven");
 	}
 
 	@Test
@@ -216,7 +216,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_throw_exception_if_scripts_does_not_exist() throws Exception {
 		if (!isStandardNpm()) {
 			thrown.expect(MojoExecutionException.class);
-			thrown.expectMessage("Cannot execute npm " + join(defaultArguments(true)) + " command: it is not defined in package.json");
+			thrown.expectMessage("Cannot execute npm run-script " + script() + " command: it is not defined in package.json");
 		}
 
 		T mojo = createMojo("mojo-without-scripts", false);
@@ -244,7 +244,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		VerificationMode verificationMode = isStandardNpm() ? never() : times(1);
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger, verificationMode).warn("Cannot execute npm " + join(defaultArguments(true)) + " command: it is not defined in package.json");
+		verify(logger, verificationMode).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json");
 	}
 
 	@Test
@@ -291,6 +291,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		if (!withColors) {
 			arguments.add("--no-color");
 		}
+
+		// Do not forget maven flag
+		arguments.add("--maven");
 
 		return arguments;
 	}
