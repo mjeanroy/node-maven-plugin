@@ -44,13 +44,14 @@
 		<commons-exec.version>1.1</commons-exec.version>
 		<maven.version>3.3.3</maven.version>
 		<maven-plugin-plugin.version>3.2</maven-plugin-plugin.version>
+		<maven-settings.version>3.3.3</maven-settings.version>
 		<maven-plugin-api.version>${maven.version}</maven-plugin-api.version>
 		<maven-plugin-annotations.version>3.4</maven-plugin-annotations.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
 		<gson.version>2.3.1</gson.version>
-		<powermock.version>1.6.0</powermock.version>
 
 		<!-- Test dependencies -->
+		<powermock.version>1.6.0</powermock.version>
 		<junit.version>4.11</junit.version>
 		<assertj-core.version>1.6.1</assertj-core.version>
 		<mockito-core.version>1.9.5</mockito-core.version>
@@ -66,7 +67,7 @@
 		<dependency>
 			<groupId>org.apache.maven</groupId>
 			<artifactId>maven-settings</artifactId>
-			<version>3.3.3</version>
+			<version>${maven-settings.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.maven.plugin-tools</groupId>
