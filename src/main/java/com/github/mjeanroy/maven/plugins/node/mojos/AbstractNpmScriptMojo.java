@@ -140,7 +140,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		Command cmd = npm();
 
 		// Append "run-script" if needed.
-		if (needRunScript(script)) {
+		if (isCustom) {
 			cmd.addArgument("run-script");
 		}
 
