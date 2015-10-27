@@ -22,10 +22,11 @@ public class CommandTest {
 		command.addArgument("arg3");
 
 		assertThat(command.getArguments())
-				.isNotNull()
-				.isNotEmpty()
-				.hasSize(3)
-				.containsExactly("arg1", "arg2", "arg3");
+			.isNotNull()
+			.isNotEmpty()
+			.hasSize(3)
+			.extractingResultOf("toString")
+			.containsExactly("arg1", "arg2", "arg3");
 	}
 
 	@Test
@@ -44,8 +45,8 @@ public class CommandTest {
 		command.addArgument("--no-color");
 		command.addArgument("clean");
 		assertThat(command.toString())
-				.isNotNull()
-				.isNotEmpty()
-				.isEqualTo("npm --no-color clean");
+			.isNotNull()
+			.isNotEmpty()
+			.isEqualTo("npm --no-color clean");
 	}
 }

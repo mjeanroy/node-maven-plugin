@@ -24,8 +24,8 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.LinkedList;
+import java.util.List;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.EnvUtils.isWindows;
 
@@ -72,6 +72,11 @@ public final class Commands {
 		@Override
 		public String getName() {
 			return cmd.getName();
+		}
+
+		@Override
+		public void addArgument(CommandArg argument) {
+			cmd.addArgument(argument);
 		}
 
 		@Override

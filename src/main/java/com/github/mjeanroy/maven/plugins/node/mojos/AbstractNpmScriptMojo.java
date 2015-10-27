@@ -175,7 +175,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			List<ProxyConfig> activeProxies = findHttpActiveProfiles(settings.getProxies());
 			for (ProxyConfig proxy : activeProxies) {
 				cmd.addArgument(proxy.isSecure() ? "--https-proxy" : "--proxy");
-				cmd.addArgument(proxy.toUri());
+				cmd.addArgument(proxy);
 			}
 		}
 

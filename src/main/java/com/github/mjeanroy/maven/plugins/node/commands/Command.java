@@ -27,6 +27,9 @@ import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
+
+import static com.github.mjeanroy.maven.plugins.node.commands.StringCommandArg.arg;
 
 /**
  * Provide necessary api to execute a command line on operating system.
@@ -49,7 +52,7 @@ public class Command {
 	 * Optional arguments.
 	 * Each arguments will be unique.
 	 */
-	private final List<String> arguments;
+	private final List<CommandArg> arguments;
 
 	/**
 	 * Create new command providing executable path.
@@ -66,8 +69,17 @@ public class Command {
 	 *
 	 * @param argument Argument.
 	 */
-	public void addArgument(String argument) {
+	public void addArgument(CommandArg argument) {
 		arguments.add(argument);
+	}
+
+	/**
+	 * Add new argument to the command line.
+	 *
+	 * @param argument Argument.
+	 */
+	public void addArgument(String argument) {
+		arguments.add(arg(argument));
 	}
 
 	/**
@@ -95,7 +107,12 @@ public class Command {
 	 * @return Arguments.
 	 */
 	public Collection<String> getArguments() {
-		return new LinkedHashSet<>(arguments);
+		Set<String> args = new LinkedHashSet<>();
+		for (CommandArg arg : arguments) {
+			args.add(arg.toArgument());
+		}
+
+		return args;
 	}
 
 	@Override
@@ -103,8 +120,8 @@ public class Command {
 		StringBuilder cmd = new StringBuilder();
 		cmd.append(executable).append(" ");
 
-		for (String arg : arguments) {
-			cmd.append(arg).append(" ");
+		for (CommandArg arg : arguments) {
+			cmd.append(arg.toString()).append(" ");
 		}
 
 		return cmd.toString().trim();

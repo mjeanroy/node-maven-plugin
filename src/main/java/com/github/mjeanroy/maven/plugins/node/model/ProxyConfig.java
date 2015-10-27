@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.model;
 
+import com.github.mjeanroy.maven.plugins.node.commands.CommandArg;
 import com.github.mjeanroy.maven.plugins.node.exceptions.ProxyException;
 import org.apache.maven.settings.Proxy;
 
@@ -35,7 +36,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNu
 /**
  * Proxy Configuration.
  */
-public class ProxyConfig {
+public class ProxyConfig implements CommandArg {
 
 	/**
 	 * Extract configuration from given maven proxy settings.
@@ -115,12 +116,12 @@ public class ProxyConfig {
 		return protocol.toLowerCase().equals("https");
 	}
 
-	/**
-	 * Serialize proxy configuration to valid URI string.
-	 *
-	 * @return URI String.
-	 */
-	public String toUri() {
+	@Override
+	public String toArgument() {
+		return safeUri(username, password, host, port);
+	}
+
+	private String safeUri(String username, String password, String host, int port) {
 		String authentication = hasAuthentication() ? username + ":" + password : null;
 
 		try {
@@ -133,7 +134,7 @@ public class ProxyConfig {
 
 	@Override
 	public String toString() {
-		return toUri();
+		return safeUri(username, "********", host, port);
 	}
 
 	@Override

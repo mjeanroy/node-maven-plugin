@@ -44,11 +44,11 @@ public class ProxyConfigTest {
 		when(proxy.getPassword()).thenReturn(null);
 
 		ProxyConfig config = proxyConfiguration(proxy);
-		String uri = config.toUri();
 
 		assertThat(config.isSecure()).isFalse();
 		assertThat(config.hasAuthentication()).isFalse();
-		assertThat(uri).isEqualTo("http://squid.local:8080");
+		assertThat(config.toArgument()).isEqualTo("http://squid.local:8080");
+		assertThat(config.toString()).isEqualTo("http://squid.local:8080");
 	}
 
 	@Test
@@ -61,11 +61,11 @@ public class ProxyConfigTest {
 		when(proxy.getPassword()).thenReturn("foobar");
 
 		ProxyConfig config = proxyConfiguration(proxy);
-		String uri = config.toUri();
 
 		assertThat(config.isSecure()).isFalse();
 		assertThat(config.hasAuthentication()).isTrue();
-		assertThat(uri).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
+		assertThat(config.toArgument()).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
+		assertThat(config.toString()).isEqualTo("http://mjeanroy:********@squid.local:8080");
 	}
 
 	@Test
@@ -78,24 +78,10 @@ public class ProxyConfigTest {
 		when(proxy.getPassword()).thenReturn("foobar");
 
 		ProxyConfig config = proxyConfiguration(proxy);
-		String uri = config.toUri();
 
 		assertThat(config.isSecure()).isTrue();
 		assertThat(config.hasAuthentication()).isTrue();
-		assertThat(uri).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
-	}
-
-	@Test
-	public void it_should_serialize_proxy_to_string() {
-		Proxy proxy = mock(Proxy.class);
-		when(proxy.getProtocol()).thenReturn("https");
-		when(proxy.getHost()).thenReturn("squid.local");
-		when(proxy.getPort()).thenReturn(8080);
-		when(proxy.getUsername()).thenReturn("mjeanroy");
-		when(proxy.getPassword()).thenReturn("foobar");
-
-		ProxyConfig config = proxyConfiguration(proxy);
-
-		assertThat(config.toString()).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
+		assertThat(config.toArgument()).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
+		assertThat(config.toString()).isEqualTo("http://mjeanroy:********@squid.local:8080");
 	}
 }

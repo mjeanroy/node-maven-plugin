@@ -266,8 +266,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_add_proxy_configuration() throws Exception {
-		T mojo = createMojo("mojo", false);
+		T mojo = createMojo("mojo-with-parameters", false);
 		writeField(mojo, "ignoreProxies", false, true);
+		writeField(mojo, "color", true, true);
 
 		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
 		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
@@ -285,8 +286,22 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command command = cmdCaptor.getValue();
 		assertThat(command.toString())
-			.contains("--proxy http://mjeanroy:foo@localhost:8080")
-			.contains("--https-proxy http://mjeanroy:foo@localhost:8080");
+			.contains("--proxy http://mjeanroy:********@localhost:8080")
+			.contains("--https-proxy http://mjeanroy:********@localhost:8080");
+
+		Log logger = (Log) readField(mojo, "log", true);
+
+		verify(logger).info(
+			"Running: npm " + join(defaultArguments(true)) +
+				" --proxy http://mjeanroy:********@localhost:8080" +
+				" --https-proxy http://mjeanroy:********@localhost:8080"
+		);
+
+		verify(logger).error(
+			"Error during execution of: npm " + join(defaultArguments(true)) +
+			" --proxy http://mjeanroy:********@localhost:8080" +
+			" --https-proxy http://mjeanroy:********@localhost:8080"
+		);
 	}
 
 	@Test
