@@ -8,12 +8,12 @@ This plugin allow you to run `npm` commands into your maven project.
 
 ### Why ?
 
-Most npm project follow define some classic build:
-- Dependencies installation (npm and maybe bower dependencies).
+Most npm project are standards and define some classic phase:
+- Dependencies installation (npm and probably bower dependencies).
 - Clean previous build files.
 - Linting (using tools such as `jshint`, `eslint`, `csslint`, etc.).
 - Tests (using `karma`, `jest` or anything else).
-- Integration tests (maybe `protactor` ?).
+- Integration tests (maybe `protactor`?).
 - Building (concatenation, minification, transpilation, etc.).
 
 These steps can be easily integrated into the build lifecycle of maven:
