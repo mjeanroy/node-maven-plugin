@@ -10,7 +10,7 @@
 
 	<groupId>com.github.mjeanroy</groupId>
 	<artifactId>node-maven-plugin</artifactId>
-	<version>0.1.1-SNAPSHOT</version>
+	<version>0.1.1</version>
 	<packaging>maven-plugin</packaging>
 	<url>https://github.com/mjeanroy/node-maven-plugin</url>
 
