@@ -130,7 +130,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		// Command already done ?
 		if (hasBeenRun()) {
 			// Skip execution.
-			getLog().info("Command " + npmCmd + " already executed, skip.");
+			getLog().info("Command " + npmCmd + " already done, skipping.");
 			return;
 		}
 

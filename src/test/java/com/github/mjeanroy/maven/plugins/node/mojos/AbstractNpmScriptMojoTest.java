@@ -174,7 +174,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
 
 		String cmd = "npm" + (isStandardNpm() ? " " : " run-script ") + script();
-		verify(logger).info(String.format("Command %s already executed, skip.", cmd));
+		verify(logger).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
 	@Test
