@@ -6,6 +6,7 @@
     "lint": "gulp lint",
     "build": "gulp build",
     "bower": "gulp bower",
+    "test-e2e": "gulp e2e",
     "foobar": "gulp"
   },
   "dependencies": {

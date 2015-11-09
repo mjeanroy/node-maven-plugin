@@ -40,7 +40,6 @@ import java.util.Map;
 import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
 import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.ProxyUtils.findHttpActiveProfiles;
 import static java.util.Collections.unmodifiableSet;
@@ -147,9 +146,13 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
 			String message = "Cannot execute " + npmCmd + " command: it is not defined in package.json";
-			getLog().warn(message);
 			if (failOnMissingScript) {
+				getLog().error(message + ".");
 				throw new MojoExecutionException(message);
+			} else {
+				// Do not fail, but log warning
+				getLog().warn(message + ", skipping.");
+				return;
 			}
 		}
 

@@ -216,7 +216,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
-	public void it_throw_exception_if_scripts_does_not_exist() throws Exception {
+	public void it_should_throw_exception_if_scripts_does_not_exist() throws Exception {
 		if (!isStandardNpm()) {
 			thrown.expect(MojoExecutionException.class);
 			thrown.expectMessage("Cannot execute npm run-script " + script() + " command: it is not defined in package.json");
@@ -234,7 +234,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
-	public void it_not_throw_exception_if_scripts_does_not_exist() throws Exception {
+	public void it_should_not_throw_exception_if_scripts_does_not_exist() throws Exception {
 		T mojo = createMojo("mojo-without-scripts", false);
 		writeField(mojo, "failOnMissingScript", false, true);
 
@@ -245,13 +245,17 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		VerificationMode verificationMode = isStandardNpm() ? never() : times(1);
+		VerificationMode verificationModeLog = isStandardNpm() ? never() : times(1);
+		VerificationMode verificationModeExecutor = isStandardNpm() ? times(1) : never();
+
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger, verificationMode).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json");
+		verify(logger, verificationModeLog).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
+		verify(logger, never()).error("Cannot execute npm run-script " + script() + " command: it is not defined in package.json.");
+		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(Log.class));
 	}
 
 	@Test
-	public void it_throw_exception_if_package_json_does_not_exist() throws Exception {
+	public void it_should_throw_exception_if_package_json_does_not_exist() throws Exception {
 		File workingDirectory = new File(".");
 
 		thrown.expect(PackageJsonNotFoundException.class);
