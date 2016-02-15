@@ -55,6 +55,9 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	 * By default, unit tests are skipped if maven.test.skip property is set to true.
 	 */
 	@Parameter(defaultValue = "${maven.test.skip}", required = false)
+	private boolean mavenTestSkip;
+
+	@Parameter(defaultValue = "${skipTests}", required = false)
 	private boolean skipTests;
 
 	/**
@@ -77,6 +80,11 @@ public class TestMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected boolean isSkipped() {
-		return skipTests || skip;
+		return skipTests || mavenTestSkip || skip;
+	}
+
+	@Override
+	protected String getSkippedMessage() {
+		return "Tests are skipped.";
 	}
 }

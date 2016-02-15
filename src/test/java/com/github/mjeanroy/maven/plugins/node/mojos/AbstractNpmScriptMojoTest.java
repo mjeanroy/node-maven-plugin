@@ -154,7 +154,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
-		verify(logger).info(String.format("Npm %s is skipped.", script()));
+		verify(logger).info(skipMessage());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -388,5 +388,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		when(proxy.getPassword()).thenReturn(password);
 		when(proxy.isActive()).thenReturn(true);
 		return proxy;
+	}
+
+	protected String skipMessage() {
+		return String.format("Npm %s is skipped.", script());
 	}
 }

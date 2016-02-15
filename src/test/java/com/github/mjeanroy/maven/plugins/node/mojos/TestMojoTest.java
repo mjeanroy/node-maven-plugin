@@ -45,7 +45,7 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 	}
 
 	@Test
-	public void it_should_skip_tests() throws Exception {
+	public void it_should_skip_tests_with_skipTests() throws Exception {
 		TestMojo mojo = createMojo("mojo-with-parameters", true);
 		writeField(mojo, "skipTests", true, true);
 
@@ -55,6 +55,25 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 		mojo.execute();
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
-		verify(logger).info("Npm test is skipped.");
+		verify(logger).info(skipMessage());
 	}
+
+	@Test
+        public void it_should_skip_tests_with_mavenTestSkip() throws Exception {
+                TestMojo mojo = createMojo("mojo-with-parameters", true);
+                writeField(mojo, "mavenTestSkip", true, true);
+
+                CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+                Log logger = (Log) readField(mojo, "log", true);
+
+                mojo.execute();
+
+                verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
+                verify(logger).info(skipMessage());
+        }
+
+	@Override
+	protected String skipMessage() {
+                return "Tests are skipped.";
+        }
 }
