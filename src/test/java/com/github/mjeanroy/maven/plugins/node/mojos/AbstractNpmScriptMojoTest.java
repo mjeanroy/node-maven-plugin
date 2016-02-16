@@ -249,7 +249,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		VerificationMode verificationModeExecutor = isStandardNpm() ? times(1) : never();
 
 		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger, verificationModeLog).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
+		verify(logger, verificationModeLog).info("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
 		verify(logger, never()).error("Cannot execute npm run-script " + script() + " command: it is not defined in package.json.");
 		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(Log.class));
 	}

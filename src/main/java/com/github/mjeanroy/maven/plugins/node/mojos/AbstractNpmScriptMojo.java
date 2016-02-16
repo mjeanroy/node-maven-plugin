@@ -151,7 +151,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 				throw new MojoExecutionException(message);
 			} else {
 				// Do not fail, but log warning
-				getLog().warn(message + ", skipping.");
+				getLog().info(message + ", skipping.");
 				return;
 			}
 		}
