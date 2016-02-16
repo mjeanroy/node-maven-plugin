@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Mickael Jeanroy
+ * Copyright (c) 2016 Mickael Jeanroy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -23,36 +23,45 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import org.apache.commons.exec.LogOutputStream;
 import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
 
-/**
- * Output Stream handler used to log command line output.
- */
-class LogStreamHandler extends LogOutputStream {
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-	/**
-	 * Logger instance.
-	 */
-	private final Log logger;
+public class LogStreamHandlerTest {
 
-	/**
-	 * Build output stream.
-	 *
-	 * @param logger Logger.
-	 */
-	LogStreamHandler(Log logger) {
-		this.logger = logger;
+	@Test
+	public void it_should_log_warn() {
+		String message = "npm WARN message";
+		Log logger = mock(Log.class);
+		LogStreamHandler handler = new LogStreamHandler(logger);
+
+		handler.processLine(message, 0);
+
+		verify(logger).warn(message);
 	}
 
-	@Override
-	protected void processLine(String line, int level) {
-		if (line.startsWith("npm WARN")) {
-			logger.warn(line);
-		} else if (line.startsWith("npm ERR")) {
-			logger.error(line);
-		} else {
-			logger.info(line);
-		}
+	@Test
+	public void it_should_log_error() {
+		String message = "npm ERR! Test failed";
+		Log logger = mock(Log.class);
+		LogStreamHandler handler = new LogStreamHandler(logger);
+
+		handler.processLine(message, 0);
+
+		verify(logger).error(message);
 	}
+
+	@Test
+	public void it_should_log_info() {
+		String message = "Running: npm install --no-color --maven";
+		Log logger = mock(Log.class);
+		LogStreamHandler handler = new LogStreamHandler(logger);
+
+		handler.processLine(message, 0);
+
+		verify(logger).info(message);
+	}
+
 }
