@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<component-set>
+	<components>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>war</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>war</type>
+				<extension>war</extension>
+				<language>java</language>
+				<addedToClasspath>true</addedToClasspath>
+				<includesDependencies>true</includesDependencies>
+			</configuration>
+		</component>
+		<component>
+			<role>org.apache.maven.artifact.handler.ArtifactHandler</role>
+			<role-hint>node</role-hint>
+			<implementation>org.apache.maven.artifact.handler.DefaultArtifactHandler</implementation>
+			<configuration>
+				<type>node</type>
+				<extension>tgz</extension>
+				<language>javascript</language>
+				<addedToClasspath>true</addedToClasspath>
+				<includesDependencies>true</includesDependencies>
+			</configuration>
+		</component>
+	</components>
+</component-set>
