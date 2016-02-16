@@ -63,6 +63,18 @@ public final class Commands {
 		return wrap(new Command(firstNonNull(path, "node")));
 	}
 
+	/**
+	 * Create new `nvm` command.
+	 * Executable path should be given as the first argument.
+	 * If path is null, then nvm executable should be globally available.
+	 *
+	 * @param path Path to nvm executable file (optional, can be null).
+	 * @return New node command.
+	 */
+	public static Command nvm(String path) {
+		return wrap(new Command(firstNonNull(path, "nvm")));
+	}
+
 	private static Command wrap(Command command) {
 		return isWindows() ? new MsDos(command) : command;
 	}

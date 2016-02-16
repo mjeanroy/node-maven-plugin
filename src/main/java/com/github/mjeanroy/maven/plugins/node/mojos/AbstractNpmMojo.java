@@ -60,6 +60,13 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	private String npmPath;
 
 	/**
+	 * Get nvm path.
+	 * The path should point to the nvm executable file.
+	 */
+	@Parameter(property = "nvm.path")
+	private String nvmPath;
+
+	/**
 	 * Default Constructor.
 	 */
 	protected AbstractNpmMojo() {
@@ -108,5 +115,14 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	protected Command node() {
 		return Commands.node(nodePath);
+	}
+
+	/**
+	 * Create new nvm command instance.
+	 *
+	 * @return Nvm Command.
+	 */
+	protected Command nvm() {
+		return Commands.nvm(nvmPath);
 	}
 }

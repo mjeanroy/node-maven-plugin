@@ -31,6 +31,8 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.io.File;
+
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capitalize;
 
@@ -62,6 +64,21 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
+		// Check for .nvmrc file
+		File workingDirectory = getWorkingDirectory();
+		if (workingDirectory != null) {
+			getLog().debug("Searching for .nvmrc file");
+			File nvmrc = new File(workingDirectory, ".nvmrc");
+			if (nvmrc.exists()) {
+				if (nvmrc.canRead()) {
+					getLog().debug("File .nvmrc found, running nvm use");
+					useNvm();
+				} else {
+					getLog().warn("File .nvmrc found, but file cannot be read.");
+				}
+			}
+		}
+
 		check(node());
 		check(npm());
 	}
@@ -74,6 +91,26 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 */
 	private void check(Command cmd) throws MojoExecutionException {
 		cmd.addArgument("--version");
+
+		getLog().info("Checking " + cmd.getName() + " command");
+		getLog().debug("Running: " + cmd.toString());
+
+		try {
+			executor.execute(getWorkingDirectory(), cmd, getLog());
+		}
+		catch (CommandException ex) {
+			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available, please install it on your operating system");
+		}
+	}
+
+	/**
+	 * Execute check operation.
+	 *
+	 * @throws MojoExecutionException In case of errors.
+	 */
+	private void useNvm() throws MojoExecutionException {
+		Command cmd = nvm();
+		cmd.addArgument("use");
 
 		getLog().info("Checking " + cmd.getName() + " command");
 		getLog().debug("Running: " + cmd.toString());
