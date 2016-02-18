@@ -63,7 +63,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 * Get nvm path.
 	 * The path should point to the nvm executable file.
 	 */
-	@Parameter(property = "nvm.path")
+	@Parameter(property = "nvm.path", defaultValue = "${user.home}/.nvm/nvm.sh", required = false)
 	private String nvmPath;
 
 	/**

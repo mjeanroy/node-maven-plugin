@@ -30,6 +30,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
@@ -70,9 +71,12 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 			getLog().debug("Searching for .nvmrc file");
 			File nvmrc = new File(workingDirectory, ".nvmrc");
 			if (nvmrc.exists()) {
+				System.out.println("Found nvmrc file !");
 				if (nvmrc.canRead()) {
 					getLog().debug("File .nvmrc found, running nvm use");
-					useNvm();
+					System.out.println("Running nvm");
+					nvmInstall();
+					nvmUse();
 				} else {
 					getLog().warn("File .nvmrc found, but file cannot be read.");
 				}
@@ -108,13 +112,34 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 *
 	 * @throws MojoExecutionException In case of errors.
 	 */
-	private void useNvm() throws MojoExecutionException {
+	private void nvmInstall() throws MojoExecutionException {
+		Command cmd = nvm();
+		cmd.addArgument("install");
+
+		getLog().info("Running " + cmd.getName() + " command");
+
+		System.out.println("Running " + cmd.toString());
+		try {
+			executor.execute(getWorkingDirectory(), cmd, getLog());
+		}
+		catch (CommandException ex) {
+			ex.printStackTrace();
+			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available, please install it on your operating system");
+		}
+	}
+
+	/**
+	 * Execute check operation.
+	 *
+	 * @throws MojoExecutionException In case of errors.
+	 */
+	private void nvmUse() throws MojoExecutionException {
 		Command cmd = nvm();
 		cmd.addArgument("use");
 
-		getLog().info("Checking " + cmd.getName() + " command");
-		getLog().debug("Running: " + cmd.toString());
+		getLog().info("Running " + cmd.getName() + " command");
 
+		System.out.println("Running " + cmd.toString());
 		try {
 			executor.execute(getWorkingDirectory(), cmd, getLog());
 		}

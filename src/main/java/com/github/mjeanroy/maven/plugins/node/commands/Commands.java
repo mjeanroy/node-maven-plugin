@@ -72,7 +72,12 @@ public final class Commands {
 	 * @return New node command.
 	 */
 	public static Command nvm(String path) {
-		return wrap(new Command(firstNonNull(path, "nvm")));
+		String sh = firstNonNull(path, "~/.nvm/nvm.sh") + ";";
+		Command nvm = new Command("/bin/bash");
+		nvm.addArgument("-c");
+		nvm.addArgument(sh);
+		nvm.addArgument("nvm");
+		return wrap(nvm);
 	}
 
 	private static Command wrap(Command command) {
