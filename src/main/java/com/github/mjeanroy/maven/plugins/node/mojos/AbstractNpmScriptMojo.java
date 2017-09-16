@@ -33,11 +33,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
@@ -251,7 +247,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * @throws MojoExecutionException In case of errors.
 	 */
 	private void executeCommand(Command cmd) throws MojoExecutionException {
-		CommandResult result = executor.execute(getWorkingDirectory(), cmd, getLog());
+		CommandResult result = executor.execute(getWorkingDirectory(), cmd, npmLogger());
 		if (result.isFailure()) {
 			// Always display error log
 			getLog().error("Error during execution of: " + cmd.toString());

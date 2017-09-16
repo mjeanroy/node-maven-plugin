@@ -85,7 +85,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		getLog().debug("Running: " + cmd.toString());
 
 		try {
-			executor.execute(getWorkingDirectory(), cmd, getLog());
+			executor.execute(getWorkingDirectory(), cmd, npmLogger());
 		}
 		catch (CommandException ex) {
 			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available, please install it on your operating system");

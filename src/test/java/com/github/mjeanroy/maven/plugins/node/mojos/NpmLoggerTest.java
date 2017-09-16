@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Mickael Jeanroy
+ * Copyright (c) 2015-2017 Mickael Jeanroy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -23,37 +23,56 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.Command;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.logging.Log;
+import org.junit.Before;
 import org.junit.Test;
 
-import java.io.File;
-
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
-import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
-public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
+public class NpmLoggerTest {
 
-	@Override
-	protected String mojoName() {
-		return "test-e2e";
+	private Log log;
+	private NpmLogger npmLogger;
+
+	@Before
+	public void setUp() {
+		log = mock(Log.class);
+		npmLogger = NpmLogger.npmLogger(log);
 	}
 
 	@Test
-	public void it_should_skip_tests() throws Exception {
-		TestE2EMojo mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "skipTests", true, true);
+	public void it_should_use_error_level() {
+		String line = "npm ERR! There is likely additional logging output above.";
 
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
+		npmLogger.process(line);
 
-		mojo.execute();
+		verify(log).error(line);
+		verify(log, never()).warn(anyString());
+		verify(log, never()).info(anyString());
+	}
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
-		verify(logger).info("Npm test-e2e is skipped.");
+	@Test
+	public void it_should_use_warn_level() {
+		String line = "npm WARN Local package.json exists, but node_modules missing, did you mean to install?";
+
+		npmLogger.process(line);
+
+		verify(log).warn(line);
+		verify(log, never()).error(anyString());
+		verify(log, never()).info(anyString());
+	}
+
+	@Test
+	public void it_should_use_info_level_by_default() {
+		String line = "> gulp clean";
+
+		npmLogger.process(line);
+
+		verify(log).info(line);
+		verify(log, never()).error(anyString());
+		verify(log, never()).warn(anyString());
 	}
 }

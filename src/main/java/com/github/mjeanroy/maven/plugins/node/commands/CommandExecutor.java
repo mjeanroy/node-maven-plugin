@@ -23,12 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import org.apache.commons.exec.CommandLine;
-import org.apache.commons.exec.DefaultExecutor;
-import org.apache.commons.exec.ExecuteException;
-import org.apache.commons.exec.Executor;
-import org.apache.commons.exec.PumpStreamHandler;
-import org.apache.maven.plugin.logging.Log;
+import org.apache.commons.exec.*;
 
 import java.io.File;
 import java.io.IOException;
@@ -51,7 +46,7 @@ public class CommandExecutor {
 	 * @param logger Logger to use to log command output.
 	 * @return Command result object.
 	 */
-	public CommandResult execute(File workingDirectory, Command command, Log logger) {
+	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger) {
 		CommandLine commandLine = new CommandLine(command.getExecutable());
 		for (String argument : command.getArguments()) {
 			commandLine.addArgument(argument);

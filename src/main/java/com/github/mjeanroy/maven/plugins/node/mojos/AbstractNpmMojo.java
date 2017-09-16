@@ -109,4 +109,14 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	Command node() {
 		return Commands.node(nodePath);
 	}
+
+	/**
+	 * Create new logger for {@code npm} command output (use the appropriate maven
+	 * log level, depending on NPM log level).
+	 *
+	 * @return NPM Logger.
+	 */
+	NpmLogger npmLogger() {
+		return NpmLogger.npmLogger(getLog());
+	}
 }

@@ -1,7 +1,7 @@
 /**
  * The MIT License (MIT)
  *
- * Copyright (c) 2015 Mickael Jeanroy
+ * Copyright (c) 2015-2017 Mickael Jeanroy
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -23,29 +23,16 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import org.apache.commons.exec.LogOutputStream;
-
 /**
- * Output Stream handler used to log command line output.
+ * Log writer that will process output line returned by command
+ * execution process.
  */
-class LogStreamHandler extends LogOutputStream {
+public interface OutputHandler {
 
 	/**
-	 * Logger instance.
-	 */
-	private final OutputHandler out;
-
-	/**
-	 * Build output stream.
+	 * The line to process.
 	 *
-	 * @param logger Logger.
+	 * @param line The line.
 	 */
-	LogStreamHandler(OutputHandler logger) {
-		this.out = logger;
-	}
-
-	@Override
-	protected void processLine(String line, int level) {
-		out.process(line);
-	}
+	void process(String line);
 }

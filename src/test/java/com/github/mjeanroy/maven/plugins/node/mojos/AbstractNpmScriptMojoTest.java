@@ -50,12 +50,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
 
@@ -83,7 +78,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(true);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -91,7 +86,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).info("Running: npm " + join(defaultArguments(true)));
 		verify(logger, never()).error(anyString());
 
-		verify(executor).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
@@ -105,7 +100,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(true);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -113,7 +108,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).info("Running: npm " + join(defaultArguments(false)));
 		verify(logger, never()).error(anyString());
 
-		verify(executor).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
@@ -128,7 +123,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(true);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -136,7 +131,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).info("Running: npm run-script foobar --maven");
 		verify(logger, never()).error(anyString());
 
-		verify(executor).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
@@ -153,7 +148,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 		verify(logger).info(skipMessage());
 	}
 
@@ -171,7 +166,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		String cmd = "npm" + (isStandardNpm() ? " " : " run-script ") + script();
 		verify(logger).info(String.format("Command %s already done, skipping.", cmd));
@@ -185,7 +180,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -193,7 +188,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).error("Error during execution of: npm " + join(defaultArguments(true)));
 		verify(logger).error("Exit status: 1");
 
-		verify(executor).execute(any(File.class), any(Command.class), eq(logger));
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
@@ -210,7 +205,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 	}
@@ -228,7 +223,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 	}
@@ -241,7 +236,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -251,7 +246,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		Log logger = (Log) readField(mojo, "log", true);
 		verify(logger, verificationModeLog).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
 		verify(logger, never()).error("Cannot execute npm run-script " + script() + " command: it is not defined in package.json.");
-		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(Log.class));
+		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 	}
 
 	@Test
@@ -284,7 +279,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -323,7 +318,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		CommandResult result = createResult(false);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(Log.class))).thenReturn(result);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
