@@ -1,6 +1,9 @@
-# Idea
+# IDE
 .idea/
 *.iml
+.classpath
+.project
+.settings/
 
 # Build
 target/
