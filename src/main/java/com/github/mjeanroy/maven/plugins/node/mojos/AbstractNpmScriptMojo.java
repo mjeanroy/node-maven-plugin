@@ -44,7 +44,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNu
 import static com.github.mjeanroy.maven.plugins.node.commons.ProxyUtils.findHttpActiveProfiles;
 import static java.util.Collections.unmodifiableSet;
 
-public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
+abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	/**
 	 * Store standard npm commands.
@@ -116,7 +116,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Default Constructor.
 	 */
-	protected AbstractNpmScriptMojo() {
+	AbstractNpmScriptMojo() {
 		super();
 		this.executor = newExecutor();
 	}
@@ -202,9 +202,7 @@ public abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private boolean hasBeenRun() {
 		Map pluginContext = getPluginContext();
 		String script = getScript();
-		return pluginContext != null &&
-			pluginContext.containsKey(script) &&
-			((Boolean) pluginContext.get(script));
+		return pluginContext != null && pluginContext.containsKey(script) && ((Boolean) pluginContext.get(script));
 	}
 
 	/**

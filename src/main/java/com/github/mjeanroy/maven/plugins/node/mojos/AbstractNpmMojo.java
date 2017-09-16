@@ -35,7 +35,7 @@ import java.io.File;
 import static com.github.mjeanroy.maven.plugins.node.commons.JsonUtils.parseJson;
 import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
 
-public abstract class AbstractNpmMojo extends AbstractMojo {
+abstract class AbstractNpmMojo extends AbstractMojo {
 
 	/**
 	 * Get the project base directory.
@@ -62,7 +62,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	/**
 	 * Default Constructor.
 	 */
-	protected AbstractNpmMojo() {
+	AbstractNpmMojo() {
 	}
 
 	/**
@@ -70,7 +70,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return {@link #workingDirectory}
 	 */
-	protected File getWorkingDirectory() {
+	File getWorkingDirectory() {
 		return workingDirectory;
 	}
 
@@ -79,7 +79,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return Instance of package.json content.
 	 */
-	protected PackageJson getPackageJson() {
+	PackageJson getPackageJson() {
 		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
 		getLog().debug("Searching for package.json file in: " + workingDirectory);
 
@@ -97,7 +97,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return Npm Command.
 	 */
-	protected Command npm() {
+	Command npm() {
 		return Commands.npm(npmPath);
 	}
 
@@ -106,7 +106,7 @@ public abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return Node Command.
 	 */
-	protected Command node() {
+	Command node() {
 		return Commands.node(nodePath);
 	}
 }
