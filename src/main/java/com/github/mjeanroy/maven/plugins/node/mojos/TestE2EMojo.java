@@ -38,11 +38,23 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * require online connection.
  */
 @Mojo(
-	name = "test-e2e",
+	name = TestE2EMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.INTEGRATION_TEST,
 	requiresOnline = false
 )
 public class TestE2EMojo extends AbstractNpmScriptMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "test-e2e";
+
+	/**
+	 * The default {@code npm} script command (default is the maven goal name).
+	 * @see TestE2EMojo#GOAL_NAME
+	 */
+	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
 	 * Set test-e2e mojo to custom npm script.
@@ -72,7 +84,7 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return firstNonNull(script, "test-e2e");
+		return firstNonNull(script, DEFAULT_SCRIPT);
 	}
 
 	@Override

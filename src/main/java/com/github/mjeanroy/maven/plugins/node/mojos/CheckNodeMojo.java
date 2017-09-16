@@ -41,11 +41,17 @@ import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capital
  * is not the case.
  */
 @Mojo(
-	name = "check",
+	name = CheckNodeMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.VALIDATE,
 	requiresOnline = false
 )
 public class CheckNodeMojo extends AbstractNpmMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "check";
 
 	/**
 	 * Executor used to run command line.

@@ -38,11 +38,23 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * require online connection.
  */
 @Mojo(
-	name = "clean",
+	name = CleanMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.CLEAN,
 	requiresOnline = false
 )
 public class CleanMojo extends AbstractNpmScriptMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "clean";
+
+	/**
+	 * The default {@code npm} script command (default is the maven goal name).
+	 * @see CleanMojo#GOAL_NAME
+	 */
+	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
 	 * Set clean mojo to custom npm script.
@@ -65,7 +77,7 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return firstNonNull(script, "clean");
+		return firstNonNull(script, DEFAULT_SCRIPT);
 	}
 
 	@Override

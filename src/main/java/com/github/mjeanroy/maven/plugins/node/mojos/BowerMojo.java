@@ -39,11 +39,23 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * **require** online connection.
  */
 @Mojo(
-	name = "bower",
+	name = BowerMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.INITIALIZE,
 	requiresOnline = true
 )
 public class BowerMojo extends AbstractNpmScriptMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "bower";
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
 	 * Set bower mojo to custom npm script.
@@ -66,7 +78,7 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return firstNonNull(script, "bower");
+		return firstNonNull(script, DEFAULT_SCRIPT);
 	}
 
 	@Override

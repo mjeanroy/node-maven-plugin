@@ -36,10 +36,16 @@ import java.util.Map;
  * This mojo will not run by default and does not require online connection.
  */
 @Mojo(
-	name = "dependencies",
+	name = DependenciesMojo.GOAL_NAME,
 	requiresOnline = false
 )
 public class DependenciesMojo extends AbstractNpmMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "dependencies";
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {

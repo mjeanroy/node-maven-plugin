@@ -41,11 +41,23 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * **require** online connection.
  */
 @Mojo(
-	name = "install",
+	name = InstallMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.INITIALIZE,
 	requiresOnline = true
 )
 public class InstallMojo extends AbstractNpmScriptMojo {
+
+	/**
+	 * The maven goal name.
+	 * This is the name that will be used in the {@code pom.xml} file.
+	 */
+	static final String GOAL_NAME = "install";
+
+	/**
+	 * The default {@code npm} script command (default is the maven goal name).
+	 * @see InstallMojo#GOAL_NAME
+	 */
+	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
 	 * Set install mojo to custom npm script.
@@ -68,7 +80,7 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	protected String getScript() {
-		return firstNonNull(script, "install");
+		return firstNonNull(script, DEFAULT_SCRIPT);
 	}
 
 	@Override
