@@ -42,6 +42,10 @@ import static java.util.Collections.unmodifiableSet;
 
 abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
+	private static final String NPM_INSTALL = "install";
+	private static final String NPM_TEST = "test";
+	private static final String NPM_PUBLISH = "publish";
+
 	/**
 	 * Store standard {@code nom} commands.
 	 * Theses commands do not need to be prefixed by {@code "run-script"} (or {@code "run"})
@@ -51,19 +55,19 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	// Initialize commands
 	static {
-		Set<String> cmds = new HashSet<>();
-		cmds.add("install");
-		cmds.add("test");
-		cmds.add("publish");
-		BASIC_COMMANDS = unmodifiableSet(cmds);
+		BASIC_COMMANDS = unmodifiableSet(new HashSet<String>() {{
+			add(NPM_INSTALL);
+			add(NPM_TEST);
+			add(NPM_PUBLISH);
+		}});
 	}
 
 	/**
-	 * Check if given command need to be prefixed by {@code "run-script"}
+	 * Check if given command need to be prefixed by {@code "run"}
 	 * argument.
 	 *
 	 * @param command Command to check.
-	 * @return {@code true} if command si a custom command and need to be prefixed by {@code "run-script"} argument, {@code false} otherwise.
+	 * @return {@code true} if command si a custom command and need to be prefixed by {@code "run"} argument, {@code false} otherwise.
 	 */
 	private static boolean needRunScript(String command) {
 		return !BASIC_COMMANDS.contains(command);
@@ -120,14 +124,21 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException, MojoFailureException {
-		String script = notNull(getScript(), "Npm Script command must not be null");
-		boolean isCustom = needRunScript(script);
-		String npmCmd = "npm" + (isCustom ? " run-script " : " ") + script;
+		String script = notNull(getScript(), "Script command must not be null");
+
+		boolean isYarn = isUseYarn();
+		Command cmd = isYarn ? yarn() : npm();
+
+		if (needRunScript(script)) {
+			cmd.addArgument("run");
+		}
+
+		cmd.addArgument(script);
 
 		// Command already done ?
 		if (hasBeenRun()) {
 			// Skip execution.
-			getLog().info("Command " + npmCmd + " already done, skipping.");
+			getLog().info("Command " + cmd.toString() + " already done, skipping.");
 			return;
 		}
 
@@ -139,10 +150,10 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		PackageJson packageJson = getPackageJson();
 
-		if (isCustom && !packageJson.hasScript(script)) {
+		if (needRunScript(script) && !packageJson.hasScript(script)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
-			String message = "Cannot execute " + npmCmd + " command: it is not defined in package.json";
+			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json";
 			if (failOnMissingScript) {
 				getLog().error(message + ".");
 				throw new MojoExecutionException(message);
@@ -152,15 +163,6 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 				return;
 			}
 		}
-
-		Command cmd = npm();
-
-		// Append "run-script" if needed.
-		if (isCustom) {
-			cmd.addArgument("run-script");
-		}
-
-		cmd.addArgument(script);
 
 		if (!color) {
 			cmd.addArgument("--no-color");

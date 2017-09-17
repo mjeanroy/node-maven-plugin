@@ -72,6 +72,10 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	public void execute() throws MojoExecutionException, MojoFailureException {
 		check(node());
 		check(npm());
+
+		if (isUseYarn()) {
+			check(yarn());
+		}
 	}
 
 	/**
@@ -90,7 +94,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 			executor.execute(getWorkingDirectory(), cmd, npmLogger());
 		}
 		catch (CommandException ex) {
-			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available, please install it on your operating system");
+			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available. Please install it on your operating system.");
 		}
 	}
 }

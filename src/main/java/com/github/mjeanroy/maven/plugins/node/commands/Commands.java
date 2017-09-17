@@ -55,6 +55,18 @@ public final class Commands {
 	}
 
 	/**
+	 * Create new `yarn` command with
+	 * Executable path should be given as the first argument.
+	 * If path is null, then npm executable should be globally available.
+	 *
+	 * @param path Path to npm executable file (optional, can be null).
+	 * @return New npm command.
+	 */
+	public static Command yarn(String path) {
+		return wrap(new Command(firstNonNull(path, "yarn")));
+	}
+
+	/**
 	 * Create new {@code node} command.
 	 *
 	 * <p>
