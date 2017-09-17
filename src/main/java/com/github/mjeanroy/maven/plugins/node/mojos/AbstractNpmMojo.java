@@ -52,15 +52,29 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * Get {@code node} path.
 	 * The path should point to the node executable file.
 	 */
-	@Parameter(property = "node.path")
+	@Parameter(property = "node.path", defaultValue = "node")
 	private String nodePath;
 
 	/**
 	 * Get {@code npm} path.
 	 * The path should point to the npm executable file.
 	 */
-	@Parameter(property = "npm.path")
+	@Parameter(property = "npm.path", defaultValue = "npm")
 	private String npmPath;
+
+	/**
+	 * Get npm path.
+	 * The path should point to the npm executable file.
+	 */
+	@Parameter(property = "yarn.path", defaultValue = "yarn")
+	private String yarnPath;
+
+	/**
+	 * Flag to check if yarn command should be used instead of npm to install dependencies.
+	 * Default is false, since yarn may not be installed.
+	 */
+	@Parameter(property = "yarn", defaultValue = "false")
+	private boolean yarn;
 
 	/**
 	 * Default Constructor.
@@ -75,6 +89,15 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	File getWorkingDirectory() {
 		return workingDirectory;
+	}
+
+	/**
+	 * Check if yarn should be used instead of npm to install dependencies.
+	 *
+	 * @return {@code true} if {@code yarn} should be used to install dependencies, {@code false} otherwise.
+	 */
+	boolean isUseYarn() {
+		return yarn;
 	}
 
 	/**
@@ -102,6 +125,15 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	Command npm() {
 		return Commands.npm(npmPath);
+	}
+
+	/**
+	 * Create new yarn command instance.
+	 *
+	 * @return Yarn Command.
+	 */
+	Command yarn() {
+		return Commands.yarn(yarnPath);
 	}
 
 	/**

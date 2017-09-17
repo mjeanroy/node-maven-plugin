@@ -45,6 +45,7 @@ import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.TestUtils.join;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
@@ -74,7 +75,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
+		verify_mojo_success(mojo, "npm");
+	}
 
+	@Test
+	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
+		T mojo = createMojo("mojo-with-yarn", true);
+		verify_mojo_success(mojo, "yarn");
+	}
+
+	private void verify_mojo_success(T mojo, String pkg) throws Exception {
 		CommandResult result = createResult(true);
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
@@ -83,14 +93,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm " + join(defaultArguments(true)));
+		verify(logger).info("Running: " + pkg + " " + join(defaultArguments(true)));
 		verify(logger, never()).error(anyString());
 
 		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(true)));
+		assertThat(cmd.toString()).isEqualTo(pkg + " " + join(defaultArguments(true)));
 	}
 
 	@Test
@@ -128,14 +138,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm run-script foobar --maven");
+		verify(logger).info("Running: npm run foobar --maven");
 		verify(logger, never()).error(anyString());
 
 		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm run-script foobar --maven");
+		assertThat(cmd.toString()).isEqualTo("npm run foobar --maven");
 	}
 
 	@Test
@@ -168,7 +178,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
-		String cmd = "npm" + (isStandardNpm() ? " " : " run-script ") + script();
+		String cmd = "npm" + (isStandardScript() ? "" : " run") + " " + script();
 		verify(logger).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
@@ -212,9 +222,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_throw_exception_if_scripts_does_not_exist() throws Exception {
-		if (!isStandardNpm()) {
+		if (!isStandardScript()) {
 			thrown.expect(MojoExecutionException.class);
-			thrown.expectMessage("Cannot execute npm run-script " + script() + " command: it is not defined in package.json");
+			thrown.expectMessage("Cannot execute npm run " + script() + " command: it is not defined in package.json");
 		}
 
 		T mojo = createMojo("mojo-without-scripts", false);
@@ -240,12 +250,12 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		VerificationMode verificationModeLog = isStandardNpm() ? never() : times(1);
-		VerificationMode verificationModeExecutor = isStandardNpm() ? times(1) : never();
+		VerificationMode verificationModeLog = isStandardScript() ? never() : times(1);
+		VerificationMode verificationModeExecutor = isStandardScript() ? times(1) : never();
 
 		Log logger = readPrivate(mojo, "log");
-		verify(logger, verificationModeLog).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
-		verify(logger, never()).error("Cannot execute npm run-script " + script() + " command: it is not defined in package.json.");
+		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json, skipping.");
+		verify(logger, never()).error("Cannot execute npm run " + script() + " command: it is not defined in package.json.");
 		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 	}
 
@@ -341,37 +351,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return mojo;
 	}
 
-	private boolean isStandardNpm() {
+	private boolean isStandardScript() {
 		String script = script();
-		return script.equals("test") || script.equals("install");
-	}
-
-	private List<String> defaultArguments(boolean withColors) {
-		List<String> arguments = new ArrayList<>();
-
-		String mojoName = script();
-		if (!isStandardNpm()) {
-			arguments.add("run-script");
-		}
-
-		arguments.add(mojoName);
-
-		if (!withColors) {
-			arguments.add("--no-color");
-		}
-
-		// Do not forget maven flag
-		arguments.add("--maven");
-
-		return arguments;
-	}
-
-	private String join(List<String> arguments) {
-		StringBuilder sb = new StringBuilder();
-		for (String arg : arguments) {
-			sb.append(arg).append(" ");
-		}
-		return sb.toString().trim();
+		return script.equals("test") || script.equals("install") || script.equals("publish");
 	}
 
 	private Proxy createProxy(String protocol, String host, int port, String username, String password) {
@@ -387,5 +369,26 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	protected String skipMessage() {
 		return String.format("Npm %s is skipped.", script());
+	}
+
+	private List<String> defaultArguments(boolean withColors) {
+		List<String> arguments = new ArrayList<>();
+
+		String mojoName = script();
+
+		if (!isStandardScript()) {
+			arguments.add("run");
+		}
+
+		arguments.add(mojoName);
+
+		if (!withColors) {
+			arguments.add("--no-color");
+		}
+
+		// Do not forget maven flag
+		arguments.add("--maven");
+
+		return arguments;
 	}
 }

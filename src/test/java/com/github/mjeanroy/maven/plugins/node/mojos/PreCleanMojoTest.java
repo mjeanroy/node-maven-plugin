@@ -23,7 +23,24 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+
+import java.io.File;
+
+import static org.apache.commons.lang3.reflect.FieldUtils.readField;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<PreCleanMojo> {
 
 	@Override
 	protected String mojoName() {
@@ -33,5 +50,27 @@ public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
 	@Override
 	protected String script() {
 		return "install";
+	}
+
+	@Test
+	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
+		PreCleanMojo mojo = createMojo("mojo-with-yarn", true);
+
+		CommandResult result = createResult(true);
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
+
+		mojo.execute();
+
+		Log logger = (Log) readField(mojo, "log", true);
+		verify(logger).info("Running: yarn install --maven");
+		verify(logger, never()).error(anyString());
+
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.toString()).isEqualTo("yarn install --maven");
 	}
 }

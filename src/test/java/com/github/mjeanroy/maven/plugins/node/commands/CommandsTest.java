@@ -33,6 +33,7 @@ import java.security.PrivilegedExceptionAction;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
+import static com.github.mjeanroy.maven.plugins.node.commands.Commands.yarn;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writeStatic;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -54,104 +55,168 @@ public class CommandsTest {
 	public void it_should_create_npm_command() throws Exception {
 		unsetWindows();
 
-		Command npm = npm(null);
-		npm.addArgument("--no-color");
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
 		assertThat(npm.getExecutable()).isEqualTo("npm");
-		assertThat(npm.getArguments()).containsExactly(
-			"--no-color"
-		);
+		assertThat(npm.getArguments()).containsExactly(arg);
 	}
 
 	@Test
 	public void it_should_create_npm_command_with_custom_path() throws Exception {
 		unsetWindows();
 
-		Command npm = npm("./npm-cli");
-		npm.addArgument("--no-color");
-		assertThat(npm.getExecutable()).isEqualTo("./npm-cli");
-		assertThat(npm.getArguments()).containsExactly(
-			"--no-color"
-		);
+		final String executable = "./npm-cli";
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
+		assertThat(npm.getExecutable()).isEqualTo(executable);
+		assertThat(npm.getArguments()).containsExactly(arg);
+	}
+
+	@Test
+	public void it_should_create_yarn_command() throws Exception {
+		unsetWindows();
+
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("yarn");
+		assertThat(yarn.getArguments()).containsExactly(arg);
+	}
+
+	@Test
+	public void it_should_create_yarn_command_with_custom_path() throws Exception {
+		unsetWindows();
+
+		final String executable =  "./yarn-cli";
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo(executable);
+		assertThat(yarn.getArguments()).containsExactly(arg);
 	}
 
 	@Test
 	public void it_should_create_node_command() throws Exception {
 		unsetWindows();
 
-		Command node = node(null);
-		node.addArgument("--no-color");
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
 		assertThat(node.getExecutable()).isEqualTo("node");
-		assertThat(node.getArguments()).containsExactly(
-			"--no-color"
-		);
+		assertThat(node.getArguments()).containsExactly(arg);
 	}
 
 	@Test
 	public void it_should_create_node_command_with_custom_path() throws Exception {
 		unsetWindows();
 
-		Command node = node("./node");
-		node.addArgument("--no-color");
-		assertThat(node.getExecutable()).isEqualTo("./node");
-		assertThat(node.getArguments()).containsExactly(
-			"--no-color"
-		);
+		final String executable = "./node";
+		final String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
+		assertThat(node.getExecutable()).isEqualTo(executable);
+		assertThat(node.getArguments()).containsExactly(arg);
 	}
 
 	@Test
 	public void it_should_create_npm_command_on_windows() throws Exception {
 		setWindows();
 
-		Command npm = npm(null);
-		npm.addArgument("--no-color");
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
-		assertThat(npm.getArguments()).containsExactly(
-			"/C",
-			"npm",
-			"--no-color"
-		);
+		assertThat(npm.getArguments()).containsExactly("/C", "npm", arg);
 	}
 
 	@Test
 	public void it_should_create_npm_command_on_windows_with_custom_path() throws Exception {
 		setWindows();
 
-		Command npm = npm("./npm-cli");
-		npm.addArgument("--no-color");
+		final String executable = "./npm-cli";
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
-		assertThat(npm.getArguments()).containsExactly(
-			"/C",
-			"./npm-cli",
-			"--no-color"
-		);
+		assertThat(npm.getArguments()).containsExactly("/C", executable, arg);
+	}
+
+	@Test
+	public void it_should_create_yarn_command_on_windows() throws Exception {
+		setWindows();
+
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("cmd");
+		assertThat(yarn.getArguments()).containsExactly("/C", "yarn", arg);
+	}
+
+	@Test
+	public void it_should_create_yarn_command_on_windows_with_custom_path() throws Exception {
+		setWindows();
+
+		final String executable = "./yarn-cli";
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("cmd");
+		assertThat(yarn.getArguments()).containsExactly("/C", executable, arg);
 	}
 
 	@Test
 	public void it_should_create_node_command_on_windows() throws Exception {
 		setWindows();
 
-		Command node = node(null);
-		node.addArgument("--no-color");
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
 		assertThat(node.getExecutable()).isEqualTo("cmd");
-		assertThat(node.getArguments()).containsExactly(
-			"/C",
-			"node",
-			"--no-color"
-		);
+		assertThat(node.getArguments()).containsExactly("/C", "node", arg);
 	}
 
 	@Test
 	public void it_should_create_node_command_on_windows_with_custom_path() throws Exception {
 		setWindows();
 
-		Command node = node("./node.exe");
-		node.addArgument("--no-color");
+		String executable = "./node.exe";
+		String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
 		assertThat(node.getExecutable()).isEqualTo("cmd");
-		assertThat(node.getArguments()).containsExactly(
-			"/C",
-			"./node.exe",
-			"--no-color"
-		);
+		assertThat(node.getArguments()).containsExactly("/C", executable, arg);
 	}
 
 	private static void setWindows() throws Exception {

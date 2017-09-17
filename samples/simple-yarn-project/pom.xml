@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.github.mjeanroy</groupId>
-	<artifactId>simple-node-project</artifactId>
+	<artifactId>simple-yarn-project</artifactId>
 	<version>0.1.3-SNAPSHOT</version>
 	<packaging>war</packaging>
 	<name>This is for testing only</name>
@@ -39,6 +39,7 @@
 				<configuration>
 					<failOnMissingScript>false</failOnMissingScript>
 					<ignoreProxies>false</ignoreProxies>
+					<yarn>true</yarn>
 				</configuration>
 			</plugin>
 		</plugins>

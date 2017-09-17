@@ -58,11 +58,8 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 
 	@Test
 	public void it_should_execute_mojo() throws Exception {
-		CheckNodeMojo mojo = createMojo("mojo", false);
-
-		Log logger = readPrivate(mojo, "log");
-
 		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = createMojo("mojo", false);
 		writePrivate(mojo, "executor", executor);
 
 		CommandResult result = createResult(true);
@@ -72,6 +69,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 
 		verify(executor, times(2)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
+		Log logger = readPrivate(mojo, "log");
 		InOrder inOrder = inOrder(logger);
 		inOrder.verify(logger).info("Checking node command");
 		inOrder.verify(logger).debug("Running: node --version");
@@ -80,13 +78,36 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	}
 
 	@Test
+	public void it_should_execute_mojo_with_yarn() throws Exception {
+		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = createMojo("mojo", false);
+		writePrivate(mojo, "executor", executor);
+		writePrivate(mojo, "yarn", true);
+
+		CommandResult result = createResult(true);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+
+		mojo.execute();
+
+		verify(executor, times(3)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+
+		Log logger = readPrivate(mojo, "log");
+		InOrder inOrder = inOrder(logger);
+		inOrder.verify(logger).info("Checking node command");
+		inOrder.verify(logger).debug("Running: node --version");
+		inOrder.verify(logger).info("Checking npm command");
+		inOrder.verify(logger).debug("Running: npm --version");
+		inOrder.verify(logger).info("Checking yarn command");
+		inOrder.verify(logger).debug("Running: yarn --version");
+	}
+
+	@Test
 	public void it_should_fail_if_node_is_not_available() throws Exception {
 		thrown.expect(MojoExecutionException.class);
-		thrown.expectMessage("Node is not available, please install it on your operating system");
-
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		thrown.expectMessage("Node is not available. Please install it on your operating system.");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = createMojo("mojo", false);
 		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
@@ -108,11 +129,10 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	@Test
 	public void it_should_fail_if_npm_is_not_available() throws Exception {
 		thrown.expect(MojoExecutionException.class);
-		thrown.expectMessage("Npm is not available, please install it on your operating system");
-
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		thrown.expectMessage("Npm is not available. Please install it on your operating system.");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = createMojo("mojo", false);
 		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
@@ -121,6 +141,32 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 			public Object answer(InvocationOnMock invocation) throws Throwable {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("npm")) {
+					throw new CommandException(mock(IOException.class));
+				}
+
+				return createResult(true);
+			}
+		});
+
+		mojo.execute();
+	}
+
+	@Test
+	public void it_should_fail_if_yarn_is_not_available() throws Exception {
+		thrown.expect(MojoExecutionException.class);
+		thrown.expectMessage("Yarn is not available. Please install it on your operating system.");
+
+		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = createMojo("mojo", false);
+		writePrivate(mojo, "executor", executor);
+		writePrivate(mojo, "yarn", true);
+
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
+			@Override
+			public Object answer(InvocationOnMock invocation) throws Throwable {
+				Command command = (Command) invocation.getArguments()[1];
+				if (command.toString().contains("yarn")) {
 					throw new CommandException(mock(IOException.class));
 				}
 
