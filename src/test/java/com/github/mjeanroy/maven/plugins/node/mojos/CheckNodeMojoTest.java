@@ -40,15 +40,11 @@ import org.mockito.stubbing.Answer;
 import java.io.File;
 import java.io.IOException;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 
@@ -64,10 +60,10 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	public void it_should_execute_mojo() throws Exception {
 		CheckNodeMojo mojo = createMojo("mojo", false);
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(mojo, "executor", executor, true);
+		writePrivate(mojo, "executor", executor);
 
 		CommandResult result = createResult(true);
 		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
@@ -91,7 +87,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		CheckNodeMojo mojo = createMojo("mojo", false);
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(mojo, "executor", executor, true);
+		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
@@ -117,7 +113,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		CheckNodeMojo mojo = createMojo("mojo", false);
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(mojo, "executor", executor, true);
+		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {

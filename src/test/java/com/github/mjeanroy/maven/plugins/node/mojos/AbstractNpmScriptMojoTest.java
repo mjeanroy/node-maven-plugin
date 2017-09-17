@@ -43,18 +43,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static java.util.Arrays.asList;
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
 
@@ -71,8 +67,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void test_should_create_mojo_with_configuration() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
 		assertThat(mojo).isNotNull();
-		assertThat((Boolean) readField(mojo, "color", true)).isTrue();
-		assertThat((File) readField(mojo, "workingDirectory", true)).isNotNull();
+		assertThat((Boolean) readPrivate(mojo, "color")).isTrue();
+		assertThat((File) readPrivate(mojo, "workingDirectory")).isNotNull();
 	}
 
 	@Test
@@ -80,13 +76,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = createMojo("mojo-with-parameters", true);
 
 		CommandResult result = createResult(true);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Running: npm " + join(defaultArguments(true)));
 		verify(logger, never()).error(anyString());
 
@@ -102,13 +98,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = createMojo("mojo", false);
 
 		CommandResult result = createResult(true);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Running: npm " + join(defaultArguments(false)));
 		verify(logger, never()).error(anyString());
 
@@ -122,16 +118,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "script", "foobar", true);
+		writePrivate(mojo, "script", "foobar");
 
 		CommandResult result = createResult(true);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Running: npm run-script foobar --maven");
 		verify(logger, never()).error(anyString());
 
@@ -145,10 +141,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_skip_mojo_execution() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "skip", true, true);
+		writePrivate(mojo, "skip", true);
 
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
 
 		mojo.execute();
 
@@ -165,8 +161,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		pluginContext.put(script(), true);
 		mojo.setPluginContext(pluginContext);
 
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
 
 		mojo.execute();
 
@@ -179,16 +175,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "failOnError", false, true);
+		writePrivate(mojo, "failOnError", false);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).error("Error during execution of: npm " + join(defaultArguments(true)));
 		verify(logger).error("Exit status: 1");
 
@@ -204,10 +200,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		thrown.expect(MojoExecutionException.class);
 
 		T mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "failOnError", true, true);
+		writePrivate(mojo, "failOnError", true);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
@@ -222,10 +218,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		T mojo = createMojo("mojo-without-scripts", false);
-		writeField(mojo, "failOnMissingScript", true, true);
+		writePrivate(mojo, "failOnMissingScript", true);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
@@ -235,10 +231,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_not_throw_exception_if_scripts_does_not_exist() throws Exception {
 		T mojo = createMojo("mojo-without-scripts", false);
-		writeField(mojo, "failOnMissingScript", false, true);
+		writePrivate(mojo, "failOnMissingScript", false);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
@@ -247,7 +243,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		VerificationMode verificationModeLog = isStandardNpm() ? never() : times(1);
 		VerificationMode verificationModeExecutor = isStandardNpm() ? times(1) : never();
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 		verify(logger, verificationModeLog).warn("Cannot execute npm run-script " + script() + " command: it is not defined in package.json, skipping.");
 		verify(logger, never()).error("Cannot execute npm run-script " + script() + " command: it is not defined in package.json.");
 		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
@@ -261,8 +257,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		thrown.expectMessage("File " + new File(workingDirectory.getAbsolutePath(), "package.json") + " does not exist");
 
 		T mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "failOnError", false, true);
-		writeField(mojo, "workingDirectory", workingDirectory, true);
+		writePrivate(mojo, "failOnError", false);
+		writePrivate(mojo, "workingDirectory", workingDirectory);
 
 		mojo.execute();
 	}
@@ -270,18 +266,18 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_add_proxy_configuration() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", false);
-		writeField(mojo, "ignoreProxies", false, true);
-		writeField(mojo, "color", true, true);
+		writePrivate(mojo, "ignoreProxies", false);
+		writePrivate(mojo, "color", true);
 
 		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
 		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
 
 		Settings settings = mock(Settings.class);
 		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
-		writeField(mojo, "settings", settings, true);
+		writePrivate(mojo, "settings", settings);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
@@ -292,7 +288,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 			.contains("--proxy http://mjeanroy:********@localhost:8080")
 			.contains("--https-proxy http://mjeanroy:********@localhost:8080");
 
-		Log logger = (Log) readField(mojo, "log", true);
+		Log logger = readPrivate(mojo, "log");
 
 		verify(logger).info(
 			"Running: npm " + join(defaultArguments(true)) +
@@ -310,17 +306,17 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_ignore_proxy_configuration() throws Exception {
 		T mojo = createMojo("mojo", false);
-		writeField(mojo, "ignoreProxies", true, true);
+		writePrivate(mojo, "ignoreProxies", true);
 
 		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
 		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
 
 		Settings settings = mock(Settings.class);
 		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
-		writeField(mojo, "settings", settings, true);
+		writePrivate(mojo, "settings", settings);
 
 		CommandResult result = createResult(false);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
 
@@ -338,9 +334,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = super.createMojo(projectName, hasConfiguration);
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		writeField(mojo, "executor", executor, true);
-		writeField(mojo, "failOnMissingScript", false, true);
-		writeField(mojo, "ignoreProxies", true, true);
+		writePrivate(mojo, "executor", executor);
+		writePrivate(mojo, "failOnMissingScript", false);
+		writePrivate(mojo, "ignoreProxies", true);
 
 		return mojo;
 	}

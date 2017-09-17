@@ -30,8 +30,8 @@ import org.junit.Test;
 
 import java.io.File;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -46,10 +46,10 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 	@Test
 	public void it_should_skip_tests_with_skipTests() throws Exception {
 		TestMojo mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "skipTests", true, true);
+		writePrivate(mojo, "skipTests", true);
 
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
 
 		mojo.execute();
 
@@ -60,10 +60,10 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 	@Test
 	public void it_should_skip_tests_with_mavenTestSkip() throws Exception {
 		TestMojo mojo = createMojo("mojo-with-parameters", true);
-		writeField(mojo, "mavenTestSkip", true, true);
+		writePrivate(mojo, "mavenTestSkip", true);
 
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		Log logger = (Log) readField(mojo, "log", true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
 
 		mojo.execute();
 

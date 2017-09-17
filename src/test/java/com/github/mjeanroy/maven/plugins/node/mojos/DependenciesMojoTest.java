@@ -32,7 +32,7 @@ import org.mockito.InOrder;
 
 import java.io.File;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Mockito.inOrder;
 
@@ -51,7 +51,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 		DependenciesMojo mojo = createMojo("mojo", false);
 
 		Log logger = createLogger();
-		writeField(mojo, "log", logger, true);
+		writePrivate(mojo, "log", logger);
 
 		mojo.execute();
 
@@ -68,7 +68,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 		DependenciesMojo mojo = createMojo("mojo-without-dependencies", false);
 
 		Log logger = createLogger();
-		writeField(mojo, "log", logger, true);
+		writePrivate(mojo, "log", logger);
 
 		mojo.execute();
 
@@ -84,10 +84,10 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 		thrown.expect(PackageJsonNotFoundException.class);
 
 		DependenciesMojo mojo = createMojo("mojo-with-parameters", false);
-		writeField(mojo, "workingDirectory", new File("."), true);
+		writePrivate(mojo, "workingDirectory", new File("."));
 
 		Log logger = createLogger();
-		writeField(mojo, "log", logger, true);
+		writePrivate(mojo, "log", logger);
 
 		mojo.execute();
 	}

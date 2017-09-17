@@ -32,7 +32,7 @@ import org.junit.Rule;
 
 import java.io.File;
 
-import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -60,10 +60,10 @@ public abstract class AbstractNpmMojoTest {
 				mojoRule.lookupMojo(mojoName(), pom) :
 				mojoRule.lookupEmptyMojo(mojoName(), pom);
 
-		writeField(mojo, "workingDirectory", baseDir, true);
+		writePrivate(mojo, "workingDirectory", baseDir);
 
 		Log logger = createLogger();
-		writeField(mojo, "log", logger, true);
+		writePrivate(mojo, "log", logger);
 
 		return (T) mojo;
 	}

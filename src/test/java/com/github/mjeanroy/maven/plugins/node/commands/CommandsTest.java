@@ -24,15 +24,16 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
 import com.github.mjeanroy.maven.plugins.node.commons.EnvUtils;
-import org.apache.commons.lang3.reflect.FieldUtils;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.lang.reflect.Field;
+import java.security.AccessController;
+import java.security.PrivilegedExceptionAction;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writeStatic;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandsTest {
@@ -45,12 +46,12 @@ public class CommandsTest {
 	}
 
 	@After
-	public void tearDown() {
+	public void tearDown() throws Exception {
 		setWindows(isWindows);
 	}
 
 	@Test
-	public void it_should_create_npm_command() {
+	public void it_should_create_npm_command() throws Exception {
 		unsetWindows();
 
 		Command npm = npm(null);
@@ -62,7 +63,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_with_custom_path() {
+	public void it_should_create_npm_command_with_custom_path() throws Exception {
 		unsetWindows();
 
 		Command npm = npm("./npm-cli");
@@ -74,7 +75,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command() {
+	public void it_should_create_node_command() throws Exception {
 		unsetWindows();
 
 		Command node = node(null);
@@ -86,7 +87,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command_with_custom_path() {
+	public void it_should_create_node_command_with_custom_path() throws Exception {
 		unsetWindows();
 
 		Command node = node("./node");
@@ -98,7 +99,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_on_windows() {
+	public void it_should_create_npm_command_on_windows() throws Exception {
 		setWindows();
 
 		Command npm = npm(null);
@@ -112,7 +113,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_on_windows_with_custom_path() {
+	public void it_should_create_npm_command_on_windows_with_custom_path() throws Exception {
 		setWindows();
 
 		Command npm = npm("./npm-cli");
@@ -126,7 +127,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command_on_windows() {
+	public void it_should_create_node_command_on_windows() throws Exception {
 		setWindows();
 
 		Command node = node(null);
@@ -140,7 +141,7 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command_on_windows_with_custom_path() {
+	public void it_should_create_node_command_on_windows_with_custom_path() throws Exception {
 		setWindows();
 
 		Command node = node("./node.exe");
@@ -153,22 +154,21 @@ public class CommandsTest {
 		);
 	}
 
-	private static void setWindows() {
+	private static void setWindows() throws Exception {
 		setWindows(true);
 	}
 
-	private static void unsetWindows() {
+	private static void unsetWindows() throws Exception {
 		setWindows(false);
 	}
 
-	private static void setWindows(boolean isWindows) {
-		try {
-			Field field = FieldUtils.getField(EnvUtils.class, "IS_WINDOWS", true);
-			FieldUtils.removeFinalModifier(field);
-			FieldUtils.writeStaticField(field, isWindows, true);
-		}
-		catch (Exception ex) {
-			throw new AssertionError(ex);
-		}
+	private static void setWindows(final boolean isWindows) throws Exception {
+		AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
+			@Override
+			public Void run() throws Exception {
+				writeStatic(EnvUtils.class, "IS_WINDOWS", isWindows);
+				return null;
+			}
+		});
 	}
 }
