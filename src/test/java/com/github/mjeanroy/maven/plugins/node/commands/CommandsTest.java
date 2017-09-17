@@ -24,30 +24,35 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
 import com.github.mjeanroy.maven.plugins.node.commons.EnvUtils;
+import org.apache.commons.lang3.reflect.FieldUtils;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.powermock.core.classloader.annotations.PrepareForTest;
-import org.powermock.modules.junit4.PowerMockRunner;
+
+import java.lang.reflect.Field;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
-import static org.powermock.api.mockito.PowerMockito.when;
 
-@RunWith(PowerMockRunner.class)
-@PrepareForTest(EnvUtils.class)
 public class CommandsTest {
+
+	private boolean isWindows;
 
 	@Before
 	public void setUp() {
-		mockStatic(EnvUtils.class);
+		isWindows = EnvUtils.isWindows();
+	}
+
+	@After
+	public void tearDown() {
+		setWindows(isWindows);
 	}
 
 	@Test
 	public void it_should_create_npm_command() {
-		when(EnvUtils.isWindows()).thenReturn(false);
+		unsetWindows();
+
 		Command npm = npm(null);
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("npm");
@@ -58,7 +63,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_npm_command_with_custom_path() {
-		when(EnvUtils.isWindows()).thenReturn(false);
+		unsetWindows();
+
 		Command npm = npm("./npm-cli");
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("./npm-cli");
@@ -69,7 +75,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_node_command() {
-		when(EnvUtils.isWindows()).thenReturn(false);
+		unsetWindows();
+
 		Command node = node(null);
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("node");
@@ -80,7 +87,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_node_command_with_custom_path() {
-		when(EnvUtils.isWindows()).thenReturn(false);
+		unsetWindows();
+
 		Command node = node("./node");
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("./node");
@@ -91,7 +99,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_npm_command_on_windows() {
-		when(EnvUtils.isWindows()).thenReturn(true);
+		setWindows();
+
 		Command npm = npm(null);
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
@@ -104,7 +113,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_npm_command_on_windows_with_custom_path() {
-		when(EnvUtils.isWindows()).thenReturn(true);
+		setWindows();
+
 		Command npm = npm("./npm-cli");
 		npm.addArgument("--no-color");
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
@@ -117,7 +127,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_node_command_on_windows() {
-		when(EnvUtils.isWindows()).thenReturn(true);
+		setWindows();
+
 		Command node = node(null);
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("cmd");
@@ -130,7 +141,8 @@ public class CommandsTest {
 
 	@Test
 	public void it_should_create_node_command_on_windows_with_custom_path() {
-		when(EnvUtils.isWindows()).thenReturn(true);
+		setWindows();
+
 		Command node = node("./node.exe");
 		node.addArgument("--no-color");
 		assertThat(node.getExecutable()).isEqualTo("cmd");
@@ -139,5 +151,24 @@ public class CommandsTest {
 			"./node.exe",
 			"--no-color"
 		);
+	}
+
+	private static void setWindows() {
+		setWindows(true);
+	}
+
+	private static void unsetWindows() {
+		setWindows(false);
+	}
+
+	private static void setWindows(boolean isWindows) {
+		try {
+			Field field = FieldUtils.getField(EnvUtils.class, "IS_WINDOWS", true);
+			FieldUtils.removeFinalModifier(field);
+			FieldUtils.writeStaticField(field, isWindows, true);
+		}
+		catch (Exception ex) {
+			throw new AssertionError(ex);
+		}
 	}
 }

@@ -28,6 +28,15 @@ package com.github.mjeanroy.maven.plugins.node.commons;
  */
 public final class EnvUtils {
 
+	/**
+	 * Flag that will be {@code true} if runtime operating system is windows.
+	 */
+	private static final boolean IS_WINDOWS;
+
+	static {
+			IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
+	}
+
 	// Ensure non instantiation
 	private EnvUtils() {
 	}
@@ -38,6 +47,6 @@ public final class EnvUtils {
 	 * @return True if current operating-system is windows, false otherwise.
 	 */
 	public static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("windows");
+		return IS_WINDOWS;
 	}
 }
