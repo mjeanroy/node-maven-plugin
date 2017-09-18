@@ -23,14 +23,23 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import java.io.File;
+
 /**
  * Store result of a command line execution.
- * Result contains a status:
- * - A success is a command exiting with zero.
- * - A failure is a command exiting with everything but zero.
  *
- * This class should not be instantiated explicitly, but should be obtaining with
- * the result of {@link com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor#execute(java.io.File, Command, org.apache.maven.plugin.logging.Log)}.
+ * <p>
+ *
+ * Result contains a status:
+ * <ul>
+ *   <li>A success is a command exiting with zero.</li>
+ *   <li>A failure is a command exiting with everything but zero.</li>
+ * </ul>
+ *
+ * This class should not be instantiated explicitly, but should be obtained with
+ * the result of {@link CommandExecutor#execute(File, Command, OutputHandler)}.
+ *
+ * <p>
  *
  * This class is immutable and, consequently, thread safe.
  */
@@ -51,7 +60,7 @@ public class CommandResult {
 	}
 
 	/**
-	 * Get exit status.
+	 * Get the exit status.
 	 *
 	 * @return Exit status.
 	 */
@@ -63,7 +72,7 @@ public class CommandResult {
 	 * Check if result is a success: this is a shortcut for checking if {@link #status} is equal
 	 * to zero.
 	 *
-	 * @return True if result is a success, false otherwise.
+	 * @return {@code true} if result is a success, {@code false} otherwise.
 	 */
 	public boolean isSuccess() {
 		return status == 0;
@@ -73,7 +82,7 @@ public class CommandResult {
 	 * Check if result is a failure: this is a shortcut for checking if {@link #status} is not equal
 	 * to zero.
 	 *
-	 * @return True if result is a failure, false otherwise.
+	 * @return {@code true} if result is a failure, {@code false} otherwise.
 	 */
 	public boolean isFailure() {
 		return status != 0;

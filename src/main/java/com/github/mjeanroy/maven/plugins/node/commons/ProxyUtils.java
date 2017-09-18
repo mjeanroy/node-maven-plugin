@@ -37,14 +37,27 @@ import static com.github.mjeanroy.maven.plugins.node.model.ProxyConfig.proxyConf
  */
 public final class ProxyUtils {
 
+	/**
+	 * The {@code "http"} protocol value.
+	 */
+	private static final String HTTP_SCHEME = "http";
+
+	/**
+	 * The {@code "https"} protocol value.
+	 */
+	private static final String HTTPS_SCHEME = "https";
+
 	// Ensure non instantiation.
 	private ProxyUtils() {
 	}
 
 	/**
 	 * Return configuration for active profiles.
-	 * Note that npm does not support socks proxy, so filter against http or https
-	 * protocol also.
+	 *
+	 * <p>
+	 *
+	 * Note that {@code npm} does not support socks proxy, so filter against http or https
+	 * protocol is enough.
 	 *
 	 * @param proxies Proxies.
 	 * @return Active configurations.
@@ -54,7 +67,7 @@ public final class ProxyUtils {
 		for (Proxy proxy : proxies) {
 			if (proxy.isActive()) {
 				String protocol = proxy.getProtocol().toLowerCase();
-				if (protocol.equals("http") || protocol.equals("https")) {
+				if (protocol.equals(HTTP_SCHEME) || protocol.equals(HTTPS_SCHEME)) {
 					configs.add(proxyConfiguration(proxy));
 				}
 			}

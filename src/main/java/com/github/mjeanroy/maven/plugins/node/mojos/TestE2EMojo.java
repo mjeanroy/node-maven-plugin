@@ -31,11 +31,24 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Test End 2 End Mojo.
- * Basically, it only runs `npm run-script test-e2e`.
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm run-script test-e2e}.
+ *
+ * <p>
+ *
  * Execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the test phase and does not
  * require online connection.
+ *
+ * <p>
+ *
+ * Note that this mojo is aware of {@code maven.test.skip} and {@code skipTests} properties and tests will be
+ * skipped if one of these properties is {@code true}.
  */
 @Mojo(
 	name = TestE2EMojo.GOAL_NAME,
@@ -57,7 +70,7 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set test-e2e mojo to custom npm script.
+	 * Set {@code test-e2e} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.testE2E}", required = false)
 	private String script;

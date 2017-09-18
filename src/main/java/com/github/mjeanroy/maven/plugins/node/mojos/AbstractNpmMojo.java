@@ -40,20 +40,23 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	/**
 	 * Get the project base directory.
 	 * This parameter is automatically provided by maven, but can be overridden by projects.
-	 * This directory should contain `package.json` file.
+	 *
+	 * <p>
+	 *
+	 * This directory should contain {@code package.json} file.
 	 */
 	@Parameter(property = "workingDirectory", defaultValue = "${project.basedir}")
 	private File workingDirectory;
 
 	/**
-	 * Get node path.
+	 * Get {@code node} path.
 	 * The path should point to the node executable file.
 	 */
 	@Parameter(property = "node.path")
 	private String nodePath;
 
 	/**
-	 * Get npm path.
+	 * Get {@code npm} path.
 	 * The path should point to the npm executable file.
 	 */
 	@Parameter(property = "npm.path")
@@ -75,9 +78,9 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Return package.json content.
+	 * Return {@code package.json} content.
 	 *
-	 * @return Instance of package.json content.
+	 * @return Instance of {@code package.json} content.
 	 */
 	PackageJson getPackageJson() {
 		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
@@ -93,18 +96,18 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Create new npm command instance.
+	 * Create new {@code npm} command instance.
 	 *
-	 * @return Npm Command.
+	 * @return NPM Command.
 	 */
 	Command npm() {
 		return Commands.npm(npmPath);
 	}
 
 	/**
-	 * Create new node command instance.
+	 * Create new {@code node} command instance.
 	 *
-	 * @return Node Command.
+	 * @return NODE Command.
 	 */
 	Command node() {
 		return Commands.node(nodePath);

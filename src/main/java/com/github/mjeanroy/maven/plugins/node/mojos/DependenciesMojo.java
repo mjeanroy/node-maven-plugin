@@ -32,7 +32,13 @@ import java.util.Map;
 
 /**
  * Dependencies Mojo.
+ *
+ * <p>
+ *
  * This mojo will be display list of npm dependencies with associated version.
+ *
+ * <p>
+ *
  * This mojo will not run by default and does not require online connection.
  */
 @Mojo(
@@ -62,6 +68,9 @@ public class DependenciesMojo extends AbstractNpmMojo {
 
 	/**
 	 * Display list of dependencies.
+	 *
+	 * <p>
+	 *
 	 * If collection does not contains any dependencies, a log with this
 	 * information will be displayed, otherwise all dependencies with associated
 	 * version will be displayed.

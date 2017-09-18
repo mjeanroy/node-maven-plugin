@@ -32,12 +32,12 @@ public final class ObjectUtils {
 	}
 
 	/**
-	 * Return first non null value.
+	 * Return first non {@code null} value.
 	 *
 	 * @param v1 Value 1.
 	 * @param v2 Value 2.
 	 * @param <T> Type of parameters.
-	 * @return First parameter if it is not null, second parameter otherwise.
+	 * @return First parameter if it is not {@code null}, second parameter otherwise.
 	 */
 	public static <T> T firstNonNull(T v1, T v2) {
 		return v1 == null ? v2 : v1;

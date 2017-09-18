@@ -44,7 +44,7 @@ public final class EnvUtils {
 	/**
 	 * Check if current operating system is Windows.
 	 *
-	 * @return True if current operating-system is windows, false otherwise.
+	 * @return {@code true} if current operating-system is windows, {@code false} otherwise.
 	 */
 	public static boolean isWindows() {
 		return IS_WINDOWS;

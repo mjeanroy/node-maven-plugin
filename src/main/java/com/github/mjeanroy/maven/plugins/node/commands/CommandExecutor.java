@@ -30,6 +30,9 @@ import java.io.IOException;
 
 /**
  * Execute command line (i.e instance of {@link Command} object.
+ *
+ * <p>
+ *
  * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
  */
 public class CommandExecutor {

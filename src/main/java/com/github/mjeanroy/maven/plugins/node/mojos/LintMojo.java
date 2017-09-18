@@ -31,9 +31,20 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Lint Mojo.
- * Basically, it only runs `npm run-script lint`.
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm run-script lint}.
+ *
+ * <p>
+ *
  * This command should be used to run linters such as jshint/eslint or jscs.
+ *
+ * <p>
+ *
  * Execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the process-sources phase and does not
  * require online connection.
@@ -59,7 +70,7 @@ public class LintMojo extends AbstractNpmScriptMojo {
 
 
 	/**
-	 * Set lint mojo to custom npm script.
+	 * Set {@code lint} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.lint}", required = false)
 	private String script;

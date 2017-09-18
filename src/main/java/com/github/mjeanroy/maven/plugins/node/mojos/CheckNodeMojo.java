@@ -36,9 +36,11 @@ import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capital
 
 /**
  * Check Mojo.
- * Basically, it checks for node and npm.
- * These commands must be available and mojo will fail if it
- * is not the case.
+ *
+ * <p>
+ *
+ * Basically, it checks for {@code node} and {@code npm}: these commands must be available and
+ * mojo will fail if it is not the case.
  */
 @Mojo(
 	name = CheckNodeMojo.GOAL_NAME,

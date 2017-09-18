@@ -26,8 +26,8 @@ package com.github.mjeanroy.maven.plugins.node.exceptions;
 import java.io.File;
 
 /**
- * Exception thrown when package.json file cannot
- * be found (this file is required by npm project).
+ * Exception thrown when {@code package.json} file cannot
+ * be found (this file is required by {@code npm} project).
  */
 public class PackageJsonNotFoundException extends RuntimeException {
 

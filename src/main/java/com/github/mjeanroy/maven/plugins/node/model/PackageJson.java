@@ -28,6 +28,10 @@ import java.util.Map;
 
 import static java.util.Collections.unmodifiableMap;
 
+/**
+ * The {@code package.json} model object (simplified model, since some properties that are not
+ * explicitly needed are ignored).
+ */
 public class PackageJson {
 
 	/**

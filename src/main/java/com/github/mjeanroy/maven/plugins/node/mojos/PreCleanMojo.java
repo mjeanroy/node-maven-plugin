@@ -31,13 +31,21 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * PreClean Mojo.
- * Basically, it only runs `npm install` to install
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm install} to install
  * mandatory dependencies (since, most of the time, install need
  * to be run before clean phase).
- * Executed will be logged to the console.
+ *
+ * <p>
+ *
+ * Execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the pre-clean phase and
- * **require** online connection.
+ * <strong>require</strong> online connection.
  */
 @Mojo(
 	name = PreCleanMojo.GOAL_NAME,
@@ -59,7 +67,7 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = "install";
 
 	/**
-	 * Set pre-clean mojo to custom npm script.
+	 * Set {@code pre-clean} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.preClean}", required = false)
 	private String script;

@@ -31,8 +31,12 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Clean Mojo.
- * Basically, it only runs `npm run-script clean`.
- * Executed will be logged to the console.
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm run-script clean}, execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the clean phase and does not
  * require online connection.
@@ -57,7 +61,7 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set clean mojo to custom npm script.
+	 * Set {@code clean} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.clean}", required = false)
 	private String script;

@@ -33,13 +33,13 @@ public final class PreConditions {
 	}
 
 	/**
-	 * Throw new {@link NullPointerException} if first parameter is null
+	 * Throw new {@link NullPointerException} if first parameter is {@code null}
 	 * with given exception message.
 	 *
 	 * @param v1 Value to check.
 	 * @param message Message thrown.
 	 * @param <T> Type of first parameter.
-	 * @return First parameter if it is not null.
+	 * @return First parameter if it is not {@code null}.
 	 */
 	public static <T> T notNull(T v1, String message) {
 		if (v1 == null) {

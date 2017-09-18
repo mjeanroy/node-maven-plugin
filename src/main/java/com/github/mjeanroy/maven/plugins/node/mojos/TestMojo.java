@@ -31,11 +31,24 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Test Mojo.
- * Basically, it only runs `npm test`.
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm test}.
+ *
+ * <p>
+ *
  * Execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the test phase and does not
  * require online connection.
+ *
+ * <p>
+ *
+ * Note that this mojo is aware of {@code maven.test.skip} and {@code skipTests} properties and tests will be
+ * skipped if one of these properties is {@code true}.
  */
 @Mojo(
 	name = TestMojo.GOAL_NAME,
@@ -57,18 +70,21 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set test mojo to custom npm script.
+	 * Set {@code test} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.test}", required = false)
 	private String script;
 
 	/**
 	 * Check if unit tests must be skipped.
-	 * By default, unit tests are skipped if maven.test.skip property is set to true.
+	 * By default, unit tests are skipped if {@code maven.test.skip property} is set to true.
 	 */
 	@Parameter(defaultValue = "${maven.test.skip}", required = false)
 	private boolean mavenTestSkip;
 
+	/**
+	 * Flag to skip mojo execution.
+	 */
 	@Parameter(defaultValue = "${skipTests}", required = false)
 	private boolean skipTests;
 

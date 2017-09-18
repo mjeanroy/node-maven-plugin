@@ -31,12 +31,16 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Bower Mojo.
- * Basically, it only runs `npm run-script bower` to install
- * bower dependencies.
- * Executed will be logged to the console.
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm run-script bower} to install
+ * bower dependencies (execution will be logged to the console).
+ *
+ * <p>
  *
  * This mojo will run automatically during the initialize phase and
- * **require** online connection.
+ * <strong>require</strong> online connection.
  */
 @Mojo(
 	name = BowerMojo.GOAL_NAME,
@@ -58,7 +62,7 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set bower mojo to custom npm script.
+	 * Set {@code bower} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.bower}", required = false)
 	private String script;

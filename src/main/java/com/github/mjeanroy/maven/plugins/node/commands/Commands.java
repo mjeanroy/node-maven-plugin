@@ -40,11 +40,14 @@ public final class Commands {
 	}
 
 	/**
-	 * Create new `npm` command with
-	 * Executable path should be given as the first argument.
-	 * If path is null, then npm executable should be globally available.
+	 * Create new {@code npm} command.
 	 *
-	 * @param path Path to npm executable file (optional, can be null).
+	 * <p>
+	 *
+	 * Executable path (should be given as the first argument).
+	 * If {@code path} is {@code null}, then {@code npm} executable should be globally available.
+	 *
+	 * @param path Path to {@code npm} executable file (optional, can be {@code null}).
 	 * @return New npm command.
 	 */
 	public static Command npm(String path) {
@@ -52,11 +55,14 @@ public final class Commands {
 	}
 
 	/**
-	 * Create new `node` command.
-	 * Executable path should be given as the first argument.
-	 * If path is null, then node executable should be globally available.
+	 * Create new {@code node} command.
 	 *
-	 * @param path Path to node executable file (optional, can be null).
+	 * <p>
+	 *
+	 * Executable path should be given as the first argument.
+	 * If {@code path} is {@code null}, then node executable should be globally available.
+	 *
+	 * @param path Path to node executable file (optional, can be {@code null}).
 	 * @return New node command.
 	 */
 	public static Command node(String path) {

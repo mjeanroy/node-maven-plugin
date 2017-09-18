@@ -23,22 +23,12 @@
 
 package com.github.mjeanroy.maven.plugins.node.exceptions;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 
 /**
  * Exception related to json parsing.
  */
 public class JsonException extends RuntimeException {
-
-	/**
-	 * Wrap {@link java.io.FileNotFoundException} and create new unchecked exception.
-	 *
-	 * @param ex Original Exception.
-	 */
-	public JsonException(FileNotFoundException ex) {
-		super(ex);
-	}
 
 	/**
 	 * Wrap {@link java.io.IOException} and create new unchecked exception.

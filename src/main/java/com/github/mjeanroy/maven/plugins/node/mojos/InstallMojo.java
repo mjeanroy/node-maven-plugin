@@ -31,14 +31,25 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
 
 /**
  * Install Mojo.
- * Basically, it only runs `npm install` to install
+ *
+ * <p>
+ *
+ * Basically, it only runs {@code npm install} to install
  * mandatory dependencies.
- * If install command has already been executed (during pre-clean phase), it will be
+ *
+ * <p>
+ *
+ * If install command has already been executed (during {@code pre-clean} phase), it will be
  * automatically skipped.
- * Executed will be logged to the console.
+ *
+ * <p>
+ *
+ * Execution will be logged to the console.
+ *
+ * <p>
  *
  * This mojo will run automatically during the initialize phase and
- * **require** online connection.
+ * <strong>require</strong> online connection.
  */
 @Mojo(
 	name = InstallMojo.GOAL_NAME,
@@ -60,7 +71,7 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set install mojo to custom npm script.
+	 * Set {@code install} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.install}", required = false)
 	private String script;

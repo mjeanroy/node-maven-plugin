@@ -33,9 +33,15 @@ import static com.github.mjeanroy.maven.plugins.node.commands.StringCommandArg.a
 
 /**
  * Provide necessary api to execute a command line on operating system.
+ *
+ * <p>
+ *
  * A command line is defined by:
- * - An executable (such as `npm` for instance).
- * - A list of optional arguments (such as `--no-color` for instance).
+ *
+ * <ul>
+ *   <li>An executable (such as {@code npm}).</li>
+ *   <li>A list of optional arguments (such as {@code --no-color}).</li>
+ * </ul>
  *
  * This class is not thread-safe, and adding / getting arguments should be
  * synchronized if needed.
@@ -43,14 +49,12 @@ import static com.github.mjeanroy.maven.plugins.node.commands.StringCommandArg.a
 public class Command {
 
 	/**
-	 * Command executable file.
-	 * This executable will be run on operating system.
+	 * Command executable file, this executable will be run on operating system.
 	 */
 	private final String executable;
 
 	/**
-	 * Optional arguments.
-	 * Each arguments will be unique.
+	 * Optional arguments (each arguments will be unique).
 	 */
 	private final List<CommandArg> arguments;
 

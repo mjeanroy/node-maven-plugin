@@ -43,8 +43,8 @@ import static java.util.Collections.unmodifiableSet;
 abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	/**
-	 * Store standard npm commands.
-	 * Theses commands do not need to be prefixed by "run-script"
+	 * Store standard {@code nom} commands.
+	 * Theses commands do not need to be prefixed by {@code "run-script"} (or {@code "run"})
 	 * argument.
 	 */
 	private static final Set<String> BASIC_COMMANDS;
@@ -59,19 +59,19 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	/**
-	 * Check if given command need to be prefixed by "run-script"
+	 * Check if given command need to be prefixed by {@code "run-script"}
 	 * argument.
 	 *
 	 * @param command Command to check.
-	 * @return True if command si a custom command and need to be prefixed by "run-script" argument, false otherwise.
+	 * @return {@code true} if command si a custom command and need to be prefixed by {@code "run-script"} argument, {@code false} otherwise.
 	 */
 	private static boolean needRunScript(String command) {
 		return !BASIC_COMMANDS.contains(command);
 	}
 
 	/**
-	 * Flag to check if npm command should use colorization.
-	 * Default is false, since colorization is not natively supported with Maven.
+	 * Flag to check if {@code npm} command should use colorization.
+	 * Default is {@code false}, since colorization is not natively supported with Maven.
 	 */
 	@Parameter(defaultValue = "false")
 	private boolean color;
@@ -85,15 +85,16 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private boolean failOnError;
 
 	/**
-	 * Should the build fail on missing script command ?
-	 * By default, build will fail with if an script command is not defined in package.json file, but this may
+	 * Should the build fail on missing script command?
+	 * By default, build will fail with if a script command that is not defined in {@code package.json} file, but this may
 	 * be ignored and let the build continue.
 	 */
 	@Parameter(defaultValue = "true")
 	private boolean failOnMissingScript;
 
 	/**
-	 * Maven Settings.
+	 * Should proxies be ignored?
+	 * Default is {@code true} since proxy may probably be defined in {@code .npmrc} file.
 	 */
 	@Parameter(defaultValue = "true")
 	private boolean ignoreProxies;
@@ -193,7 +194,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Check if given script command has already been run.
 	 *
-	 * @return True if script command has been run, false otherwise.
+	 * @return {@code true} if script command has been run, {@code false} otherwise.
 	 */
 	private boolean hasBeenRun() {
 		Map pluginContext = getPluginContext();
@@ -204,7 +205,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Executed after command execution.
 	 *
-	 * @param status If command execution has been executed, false otherwise.
+	 * @param status If command execution has been executed.
 	 */
 	@SuppressWarnings("unchecked")
 	private void onRun(boolean status) {
@@ -227,7 +228,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Check if mojo execution should be skipped.
 	 *
-	 * @return True if mojo execution should be skipped, false otherwise.
+	 * @return {@code true} if mojo execution should be skipped, {@code false} otherwise.
 	 */
 	protected abstract boolean isSkipped();
 
