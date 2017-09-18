@@ -74,7 +74,7 @@
 		<maven-model.version>${maven.version}</maven-model.version>
 		<maven-aether-provider.version>3.3.9</maven-aether-provider.version>
 
-		<maven-plugin-plugin.version>3.2</maven-plugin-plugin.version>
+		<maven-plugin-plugin.version>3.5</maven-plugin-plugin.version>
 		<maven-settings.version>${maven.version}</maven-settings.version>
 		<maven-plugin-api.version>${maven.version}</maven-plugin-api.version>
 		<maven-plugin-annotations.version>3.5</maven-plugin-annotations.version>
