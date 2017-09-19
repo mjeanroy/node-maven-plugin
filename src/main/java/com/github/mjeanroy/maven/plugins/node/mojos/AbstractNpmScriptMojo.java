@@ -45,10 +45,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private static final String NPM_INSTALL = "install";
 	private static final String NPM_TEST = "test";
 	private static final String NPM_PUBLISH = "publish";
+	private static final String NPM_START = "start";
 
 	/**
 	 * Store standard {@code nom} commands.
-	 * Theses commands do not need to be prefixed by {@code "run-script"} (or {@code "run"})
+	 * Theses commands do not need to be prefixed by {@code "run"}
 	 * argument.
 	 */
 	private static final Set<String> BASIC_COMMANDS;
@@ -59,6 +60,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			add(NPM_INSTALL);
 			add(NPM_TEST);
 			add(NPM_PUBLISH);
+			add(NPM_START);
 		}});
 	}
 

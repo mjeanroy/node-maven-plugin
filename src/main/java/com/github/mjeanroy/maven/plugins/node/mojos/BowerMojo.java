@@ -34,7 +34,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  *
  * <p>
  *
- * Basically, it only runs {@code npm run-script bower} to install
+ * Basically, it only runs {@code npm run bower} to install
  * bower dependencies (execution will be logged to the console).
  *
  * <p>

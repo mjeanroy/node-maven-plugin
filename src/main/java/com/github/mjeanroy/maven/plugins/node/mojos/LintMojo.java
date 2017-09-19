@@ -34,7 +34,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  *
  * <p>
  *
- * Basically, it only runs {@code npm run-script lint}.
+ * Basically, it only runs {@code npm run lint}.
  *
  * <p>
  *

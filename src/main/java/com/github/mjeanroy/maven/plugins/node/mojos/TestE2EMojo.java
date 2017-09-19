@@ -34,7 +34,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  *
  * <p>
  *
- * Basically, it only runs {@code npm run-script test-e2e}.
+ * Basically, it only runs {@code npm run test-e2e}.
  *
  * <p>
  *
