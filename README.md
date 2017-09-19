@@ -8,7 +8,7 @@ This plugin allow you to run `npm` commands into your maven project.
 
 Since version 0.1.3, this plugin can also use `yarn` instead of `npm`.
 
-### Why ?
+### Why?
 
 Most npm project are standards and define some classic phase:
 - Dependencies installation (npm/yarn and maybe bower dependencies).
@@ -119,6 +119,7 @@ Here is a short description of each goal:
 | build        | `compile`          | Run `npm run build` (or `yarn run build`).                        |
 | test         | `test`             | Run `npm test` (or `yarn test`).                                  |
 | test-e2e     | `integration-test` | Run `npm run test-e2e` (or `yarn run test-e2e`).                  |
+| start        | `process-classes`  | Run `npm start` (or `yarn start`).                                |
 | dependencies |                    | Display `npm` (or `yarn`) dependencies.                           |
 
 *Important*: `npm install` (or `yarn install`) is run during `pre-clean` phase **and** `initialize` phase because each phase is
@@ -136,7 +137,8 @@ Note that each script should be defined in `package.json` file:
     "bower": "bower install",
     "test": "gulp test",
     "test-e2e": "gulp test-e2e",
-    "build": "gulp build"
+    "build": "gulp build",
+    "start": "gulp serve"
   }
 }
 ```
