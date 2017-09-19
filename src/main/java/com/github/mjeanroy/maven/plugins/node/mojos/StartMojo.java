@@ -39,7 +39,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  *
  * <p>
  *
- * This mojo will run automatically during the clean phase and does not
+ * This mojo will not run automatically and does not
  * require online connection.
  */
 @Mojo(name = StartMojo.GOAL_NAME, requiresOnline = false)
