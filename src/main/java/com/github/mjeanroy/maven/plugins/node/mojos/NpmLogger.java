@@ -55,6 +55,12 @@ class NpmLogger implements OutputHandler {
 	private static final String NPM_ERROR_PREFIX = "npm ERR! ";
 
 	/**
+	 * The {@code yarn} error prefix used when errors are displayed by
+	 * yarn script.
+	 */
+	private static final String YARN_ERROR_PREFIX = "error ";
+
+	/**
 	 * Create new NPM logger using an existing maven logger.
 	 *
 	 * @param logger Maven logger.
@@ -82,7 +88,7 @@ class NpmLogger implements OutputHandler {
 	public void process(String line) {
 		if (line.startsWith(NPM_WARN_PREFIX)) {
 			log.warn(line);
-		} else if (line.startsWith(NPM_ERROR_PREFIX)) {
+		} else if (line.startsWith(NPM_ERROR_PREFIX) || line.startsWith(YARN_ERROR_PREFIX)) {
 			log.error(line);
 		} else {
 			log.info(line);

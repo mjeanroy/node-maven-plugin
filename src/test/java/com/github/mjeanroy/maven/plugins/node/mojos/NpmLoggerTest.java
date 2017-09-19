@@ -55,6 +55,17 @@ public class NpmLoggerTest {
 	}
 
 	@Test
+	public void it_should_use_error_level_with_yarn_error() {
+		String line = "error Command \"start\" not found.";
+
+		npmLogger.process(line);
+
+		verify(log).error(line);
+		verify(log, never()).warn(anyString());
+		verify(log, never()).info(anyString());
+	}
+
+	@Test
 	public void it_should_use_warn_level() {
 		String line = "npm WARN Local package.json exists, but node_modules missing, did you mean to install?";
 
