@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -41,11 +42,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * This mojo will run automatically during the clean phase and does not
  * require online connection.
  */
-@Mojo(
-	name = StartMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PROCESS_CLASSES,
-	requiresOnline = false
-)
+@Mojo(name = StartMojo.GOAL_NAME, requiresOnline = false)
+@Execute(phase = LifecyclePhase.PROCESS_CLASSES)
 public class StartMojo extends AbstractNpmScriptMojo {
 
 	/**
