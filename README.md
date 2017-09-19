@@ -6,7 +6,7 @@
 
 This plugin allow you to run `npm` commands into your maven project.
 
-Since version 0.1.3, this plugin can also use `yarn` instead of `npm`.
+Since version 0.2.0, this plugin can also use `yarn` instead of `npm`.
 
 ### Why?
 
@@ -54,7 +54,7 @@ It can be used very easily:
       <plugin>
         <groupId>com.github.mjeanroy</groupId>
         <artifactId>node-maven-plugin</artifactId>
-        <version>0.1.3</version>
+        <version>0.2.0</version>
         <executions>
           <execution>
             <id>run-npm</id>
@@ -95,7 +95,7 @@ If you want to bound each phase, here is a configuration using `extensions` flag
       <plugin>
         <groupId>com.github.mjeanroy</groupId>
         <artifactId>node-maven-plugin</artifactId>
-        <version>0.1.3</version>
+        <version>0.2.0</version>
         <extensions>true</extensions>
         <configuration>
           <failOnMissingScript>false</failOnMissingScript>
