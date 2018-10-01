@@ -55,7 +55,7 @@
 		<java.source.version>1.7</java.source.version>
 		<java.target.version>1.7</java.target.version>
 
-		<maven-compiler-plugin.version>3.6.1</maven-compiler-plugin.version>
+		<maven-compiler-plugin.version>3.8.0</maven-compiler-plugin.version>
 		<maven-release-plugin.version>2.5.3</maven-release-plugin.version>
 		<maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
 		<maven-clean-plugin.version>3.0.0</maven-clean-plugin.version>
