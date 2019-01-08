@@ -77,7 +77,7 @@
 		<maven-aether-provider.version>3.3.9</maven-aether-provider.version>
 
 		<maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
-		<maven-settings.version>${maven.version}</maven-settings.version>
+		<maven-settings.version>3.6.0</maven-settings.version>
 		<maven-plugin-api.version>${maven.version}</maven-plugin-api.version>
 		<maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
