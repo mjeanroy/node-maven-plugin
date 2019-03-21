@@ -70,7 +70,7 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	 * Set {@code pre-clean} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.preClean}")
-	private String script;
+	private String preCleanScript;
 
 	/**
 	 * Flag to skip mojo execution.
@@ -86,12 +86,17 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(preCleanScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "preCleanScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return skip;
 	}
 }

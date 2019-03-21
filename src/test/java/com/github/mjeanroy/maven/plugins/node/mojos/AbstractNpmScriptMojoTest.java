@@ -129,7 +129,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writePrivate(mojo, "script", "foobar");
+		overrideScript(mojo, "foobar");
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -349,7 +349,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected T createMojo(String projectName, boolean hasConfiguration) throws Exception {
+	T createMojo(String projectName, boolean hasConfiguration) throws Exception {
 		T mojo = super.createMojo(projectName, hasConfiguration);
 
 		CommandExecutor executor = mock(CommandExecutor.class);
@@ -360,12 +360,26 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return mojo;
 	}
 
+	/**
+	 * Override mojo script value.
+	 *
+	 * @param mojo The mojo.
+	 * @param script The script value to set.
+	 */
+	abstract void overrideScript(T mojo, String script);
+
+	/**
+	 * The expected skipped message.
+	 *
+	 * @return Skipped message.
+	 */
+	String skipMessage() {
+		return String.format("Npm %s is skipped.", script());
+	}
+
 	private boolean isStandardScript() {
 		String script = script();
-		return script.equals("test")
-			|| script.equals("install")
-			|| script.equals("publish")
-			|| script.equals("start");
+		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start");
 	}
 
 	private Proxy createProxy(String protocol, String host, int port, String username, String password) {
@@ -377,10 +391,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		when(proxy.getPassword()).thenReturn(password);
 		when(proxy.isActive()).thenReturn(true);
 		return proxy;
-	}
-
-	protected String skipMessage() {
-		return String.format("Npm %s is skipped.", script());
 	}
 
 	private List<String> defaultArguments(boolean withColors) {

@@ -72,7 +72,7 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	 * Set {@code test-e2e} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.testE2E}")
-	private String script;
+	private String testE2EScript;
 
 	/**
 	 * Check if end to end tests must be skipped.
@@ -95,12 +95,17 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(testE2EScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "testE2EScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return skipTests || skip;
 	}
 }

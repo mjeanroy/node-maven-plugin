@@ -113,6 +113,15 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private Settings settings;
 
 	/**
+	 * Set {@code clean} mojo to custom npm script.
+	 *
+	 * @deprecated
+	 */
+	@Parameter
+	@Deprecated
+	private String script;
+
+	/**
 	 * Executor used to run command line.
 	 */
 	private final CommandExecutor executor;
@@ -127,16 +136,15 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		String script = notNull(getScript(), "Script command must not be null");
-
+		String scriptToRun = getScriptToRun();
 		boolean isYarn = isUseYarn();
 		Command cmd = isYarn ? yarn() : npm();
 
-		if (needRunScript(script)) {
+		if (needRunScript(scriptToRun)) {
 			cmd.addArgument("run");
 		}
 
-		cmd.addArgument(script);
+		cmd.addArgument(scriptToRun);
 
 		// Command already done ?
 		if (hasBeenRun()) {
@@ -154,7 +162,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		File packageJsonFile = lookupPackageJson();
 		PackageJson packageJson = parsePackageJson(packageJsonFile);
 
-		if (needRunScript(script) && !packageJson.hasScript(script)) {
+		if (needRunScript(scriptToRun) && !packageJson.hasScript(scriptToRun)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
 			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json (please check file: " + packageJsonFile.getAbsolutePath() + ")";
@@ -198,6 +206,20 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	/**
+	 * Get the script to run.
+	 *
+	 * @return Script name to run.
+	 */
+	private String getScriptToRun() {
+		if (this.script != null) {
+			getLog().warn("Parameter `script` has been deprecated to avoid conflict issues, please use `" + getScriptParameterName() + "` instead");
+			return this.script;
+		}
+
+		return notNull(getScript(), "Script command must not be null");
+	}
+
+	/**
 	 * Check if given script command has already been run.
 	 *
 	 * @return {@code true} if script command has been run, {@code false} otherwise.
@@ -229,21 +251,28 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 *
 	 * @return Script to execute.
 	 */
-	protected abstract String getScript();
+	abstract String getScript();
+
+	/**
+	 * Return the script parameter to be able to display a useful log.
+	 *
+	 * @return Script parameter name.
+	 */
+	abstract String getScriptParameterName();
 
 	/**
 	 * Check if mojo execution should be skipped.
 	 *
 	 * @return {@code true} if mojo execution should be skipped, {@code false} otherwise.
 	 */
-	protected abstract boolean isSkipped();
+	abstract boolean isSkipped();
 
 	/**
 	 * Message logged when mojo execution is skipped.
 	 *
 	 * @return Message.
 	 */
-	protected String getSkippedMessage() {
+	String getSkippedMessage() {
 		return String.format("Npm %s is skipped.", getScript());
 	}
 

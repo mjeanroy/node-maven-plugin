@@ -72,7 +72,7 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	 * Set {@code test} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.test}")
-	private String script;
+	private String testScript;
 
 	/**
 	 * Check if unit tests must be skipped.
@@ -101,17 +101,22 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(testScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	boolean isSkipped() {
 		return skipTests || mavenTestSkip || skip;
 	}
 
 	@Override
-	protected String getSkippedMessage() {
+	String getScriptParameterName() {
+		return "testScript";
+	}
+
+	@Override
+	String getSkippedMessage() {
 		return "Tests are skipped.";
 	}
 }

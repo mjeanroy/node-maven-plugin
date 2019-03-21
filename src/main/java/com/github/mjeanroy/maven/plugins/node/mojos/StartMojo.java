@@ -62,7 +62,7 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	 * Set {@code clean} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.start}")
-	private String script;
+	private String startScript;
 
 	/**
 	 * Create Mojo.
@@ -72,12 +72,17 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(startScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "startScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return false;
 	}
 }

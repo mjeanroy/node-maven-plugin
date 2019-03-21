@@ -39,8 +39,13 @@ import static org.mockito.Mockito.verify;
 public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "test-e2e";
+	}
+
+	@Override
+	void overrideScript(TestE2EMojo mojo, String script) {
+		writePrivate(mojo, "testE2EScript", script);
 	}
 
 	@Test

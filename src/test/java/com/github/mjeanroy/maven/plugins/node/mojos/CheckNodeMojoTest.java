@@ -52,7 +52,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	public ExpectedException thrown = none();
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "check";
 	}
 

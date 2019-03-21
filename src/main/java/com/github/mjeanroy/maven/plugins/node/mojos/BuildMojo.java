@@ -62,13 +62,13 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code build} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.build}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.script.build}")
+	private String buildScript;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.build}", required = false)
+	@Parameter(defaultValue = "${npm.skip.build}")
 	private boolean skip;
 
 	/**
@@ -79,12 +79,17 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(buildScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "buildScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return skip;
 	}
 }

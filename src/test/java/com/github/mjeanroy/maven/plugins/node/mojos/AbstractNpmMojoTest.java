@@ -53,24 +53,21 @@ public abstract class AbstractNpmMojoTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	protected <T> T createMojo(String projectName, boolean hasConfiguration) throws Exception {
+	<T> T createMojo(String projectName, boolean hasConfiguration) throws Exception {
 		File baseDir = resources.getBasedir(projectName);
 		File pom = new File(baseDir, "pom.xml");
-		Mojo mojo = hasConfiguration ?
-				mojoRule.lookupMojo(mojoName(), pom) :
-				mojoRule.lookupEmptyMojo(mojoName(), pom);
+		Log logger = createLogger();
+		Mojo mojo = hasConfiguration ? mojoRule.lookupMojo(mojoName(), pom) : mojoRule.lookupEmptyMojo(mojoName(), pom);
 
 		writePrivate(mojo, "workingDirectory", baseDir);
-
-		Log logger = createLogger();
 		writePrivate(mojo, "log", logger);
 
 		return (T) mojo;
 	}
 
-	protected abstract String mojoName();
+	abstract String mojoName();
 
-	protected String script() {
+	String script() {
 		return mojoName();
 	}
 

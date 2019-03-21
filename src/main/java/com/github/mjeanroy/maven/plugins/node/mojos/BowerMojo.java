@@ -64,13 +64,13 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code bower} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.bower}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.script.bower}")
+	private String bowerScript;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.bower}", required = false)
+	@Parameter(defaultValue = "${npm.skip.bower}")
 	private boolean skip;
 
 	/**
@@ -81,12 +81,17 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(bowerScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "bowerScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return skip;
 	}
 }

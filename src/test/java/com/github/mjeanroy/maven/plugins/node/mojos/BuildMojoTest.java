@@ -23,10 +23,17 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+
 public class BuildMojoTest extends AbstractNpmScriptMojoTest<BuildMojo> {
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "build";
+	}
+
+	@Override
+	void overrideScript(BuildMojo mojo, String script) {
+		writePrivate(mojo, "buildScript", script);
 	}
 }

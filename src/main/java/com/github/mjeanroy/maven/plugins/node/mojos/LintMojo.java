@@ -27,6 +27,8 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import javax.enterprise.context.Dependent;
+
 import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
 
 /**
@@ -67,12 +69,11 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	 */
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
-
 	/**
 	 * Set {@code lint} mojo to custom npm script.
 	 */
 	@Parameter(defaultValue = "${npm.script.lint}")
-	private String script;
+	private String lintScript;
 
 	/**
 	 * Flag to skip mojo execution.
@@ -88,12 +89,17 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(lintScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
+	String getScriptParameterName() {
+		return "lintScript";
+	}
+
+	@Override
+	boolean isSkipped() {
 		return skip;
 	}
 }
