@@ -52,8 +52,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = TestE2EMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.INTEGRATION_TEST,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.INTEGRATION_TEST
 )
 public class TestE2EMojo extends AbstractNpmScriptMojo {
 
@@ -72,20 +71,20 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code test-e2e} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.testE2E}", required = false)
+	@Parameter(defaultValue = "${npm.script.testE2E}")
 	private String script;
 
 	/**
 	 * Check if end to end tests must be skipped.
 	 * By default, end to end tests are skipped if maven.test.skip property is set to true.
 	 */
-	@Parameter(defaultValue = "${maven.test.skip}", required = false)
+	@Parameter(defaultValue = "${maven.test.skip}")
 	private boolean skipTests;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.testE2E}", required = false)
+	@Parameter(defaultValue = "${npm.skip.testE2E}")
 	private boolean skip;
 
 	/**

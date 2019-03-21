@@ -44,7 +44,7 @@ public abstract class AbstractNpmMojoTest {
 	@Rule
 	public MojoRule mojoRule = new MojoRule();
 
-	protected CommandResult createResult(boolean success) {
+	CommandResult createResult(boolean success) {
 		CommandResult result = mock(CommandResult.class);
 		when(result.isSuccess()).thenReturn(success);
 		when(result.isFailure()).thenReturn(!success);
@@ -74,7 +74,7 @@ public abstract class AbstractNpmMojoTest {
 		return mojoName();
 	}
 
-	protected Log createLogger() {
+	Log createLogger() {
 		return mock(Log.class);
 	}
 }

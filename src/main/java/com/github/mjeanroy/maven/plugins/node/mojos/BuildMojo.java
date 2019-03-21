@@ -43,8 +43,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = BuildMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.COMPILE,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.COMPILE
 )
 public class BuildMojo extends AbstractNpmScriptMojo {
 

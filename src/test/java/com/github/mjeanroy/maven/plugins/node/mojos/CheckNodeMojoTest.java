@@ -113,7 +113,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
+			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("node")) {
 					throw new CommandException(mock(IOException.class));
@@ -138,7 +138,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
+			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("npm")) {
 					throw new CommandException(mock(IOException.class));
@@ -164,7 +164,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
-			public Object answer(InvocationOnMock invocation) throws Throwable {
+			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("yarn")) {
 					throw new CommandException(mock(IOException.class));

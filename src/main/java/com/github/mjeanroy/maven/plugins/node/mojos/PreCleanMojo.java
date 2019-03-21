@@ -69,13 +69,13 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code pre-clean} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.preClean}", required = false)
+	@Parameter(defaultValue = "${npm.script.preClean}")
 	private String script;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.preClean}", required = false)
+	@Parameter(defaultValue = "${npm.skip.preClean}")
 	private boolean skip;
 
 	/**

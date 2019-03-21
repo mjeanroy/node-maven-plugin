@@ -52,7 +52,7 @@ public class CommandExecutorTest {
 	}
 
 	@Test
-	public void it_should_execute_success_command_on_unix() throws Exception {
+	public void it_should_execute_success_command_on_unix() {
 		assumeFalse(isWindows());
 
 		String script = "success.sh";
@@ -66,7 +66,7 @@ public class CommandExecutorTest {
 	}
 
 	@Test
-	public void it_should_execute_error_command_on_unix() throws Exception {
+	public void it_should_execute_error_command_on_unix() {
 		assumeFalse(isWindows());
 
 		String script = "error.sh";
@@ -80,7 +80,7 @@ public class CommandExecutorTest {
 	}
 
 	@Test
-	public void it_should_execute_success_command_on_windows() throws Exception {
+	public void it_should_execute_success_command_on_windows() {
 		assumeTrue(isWindows());
 
 		String script = "success.bat";
@@ -94,7 +94,7 @@ public class CommandExecutorTest {
 	}
 
 	@Test
-	public void it_should_execute_error_command_on_windows() throws Exception {
+	public void it_should_execute_error_command_on_windows() {
 		assumeTrue(isWindows());
 
 		String script = "error.bat";

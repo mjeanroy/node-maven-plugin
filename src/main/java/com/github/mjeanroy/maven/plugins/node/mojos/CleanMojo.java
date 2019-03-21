@@ -43,8 +43,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = CleanMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.CLEAN,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.CLEAN
 )
 public class CleanMojo extends AbstractNpmScriptMojo {
 
@@ -63,13 +62,13 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code clean} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.clean}", required = false)
+	@Parameter(defaultValue = "${npm.script.clean}")
 	private String script;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.clean}", required = false)
+	@Parameter(defaultValue = "${npm.skip.clean}")
 	private boolean skip;
 
 	/**

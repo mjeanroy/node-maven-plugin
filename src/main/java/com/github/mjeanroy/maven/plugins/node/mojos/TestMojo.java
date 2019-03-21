@@ -52,8 +52,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = TestMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.TEST,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.TEST
 )
 public class TestMojo extends AbstractNpmScriptMojo {
 
@@ -72,26 +71,26 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code test} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.test}", required = false)
+	@Parameter(defaultValue = "${npm.script.test}")
 	private String script;
 
 	/**
 	 * Check if unit tests must be skipped.
 	 * By default, unit tests are skipped if {@code maven.test.skip property} is set to true.
 	 */
-	@Parameter(defaultValue = "${maven.test.skip}", required = false)
+	@Parameter(defaultValue = "${maven.test.skip}")
 	private boolean mavenTestSkip;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${skipTests}", required = false)
+	@Parameter(defaultValue = "${skipTests}")
 	private boolean skipTests;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.test}", required = false)
+	@Parameter(defaultValue = "${npm.skip.test}")
 	private boolean skip;
 
 	/**

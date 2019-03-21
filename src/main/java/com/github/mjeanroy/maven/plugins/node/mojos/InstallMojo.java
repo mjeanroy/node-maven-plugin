@@ -73,13 +73,13 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code install} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.install}", required = false)
+	@Parameter(defaultValue = "${npm.script.install}")
 	private String script;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.install}", required = false)
+	@Parameter(defaultValue = "${npm.skip.install}")
 	private boolean skip;
 
 	/**

@@ -51,8 +51,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = LintMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PROCESS_SOURCES,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.PROCESS_SOURCES
 )
 public class LintMojo extends AbstractNpmScriptMojo {
 
@@ -72,13 +71,13 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code lint} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.lint}", required = false)
+	@Parameter(defaultValue = "${npm.script.lint}")
 	private String script;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.lint}", required = false)
+	@Parameter(defaultValue = "${npm.skip.lint}")
 	private boolean skip;
 
 	/**

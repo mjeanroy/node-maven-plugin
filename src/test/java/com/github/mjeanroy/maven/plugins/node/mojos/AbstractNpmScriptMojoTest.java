@@ -327,8 +327,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = createMojo("mojo", false);
 		writePrivate(mojo, "ignoreProxies", true);
 
-		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
-		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
+		Proxy httpProxy = createProxy("http", "nginx.local", 80, "root", "password");
+		Proxy httpsProxy = createProxy("https", "nginx.local", 80, "root", "password");
 
 		Settings settings = mock(Settings.class);
 		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
@@ -343,8 +343,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command command = cmdCaptor.getValue();
 		assertThat(command.toString())
-			.doesNotContain("--proxy http://mjeanroy:foo@localhost:8080")
-			.doesNotContain("--https-proxy http://mjeanroy:foo@localhost:8080");
+			.doesNotContain("--proxy http://root:password@nginx.local:80")
+			.doesNotContain("--https-proxy http://root:password@nginx:80");
 	}
 
 	@SuppressWarnings("unchecked")

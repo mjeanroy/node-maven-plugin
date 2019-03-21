@@ -53,11 +53,11 @@ public class JsonUtilsTest {
 		TestObject() {
 		}
 
-		public int getId() {
+		int getId() {
 			return id;
 		}
 
-		public String getFoo() {
+		String getFoo() {
 			return foo;
 		}
 	}

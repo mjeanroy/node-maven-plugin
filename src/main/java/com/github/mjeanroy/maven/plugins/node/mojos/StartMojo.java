@@ -42,7 +42,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  * This mojo will not run automatically and does not
  * require online connection.
  */
-@Mojo(name = StartMojo.GOAL_NAME, requiresOnline = false)
+@Mojo(name = StartMojo.GOAL_NAME)
 @Execute(phase = LifecyclePhase.PROCESS_CLASSES)
 public class StartMojo extends AbstractNpmScriptMojo {
 
@@ -61,7 +61,7 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code clean} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.start}", required = false)
+	@Parameter(defaultValue = "${npm.script.start}")
 	private String script;
 
 	/**
