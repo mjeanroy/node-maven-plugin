@@ -101,24 +101,6 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Return {@code package.json} content.
-	 *
-	 * @return Instance of {@code package.json} content.
-	 */
-	PackageJson getPackageJson() {
-		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
-		getLog().debug("Searching for package.json file in: " + workingDirectory);
-
-		File packageJson = new File(workingDirectory, "package.json");
-		if (!packageJson.exists()) {
-			getLog().error("Missing package.json file");
-			throw new PackageJsonNotFoundException(packageJson);
-		}
-
-		return parseJson(packageJson, PackageJson.class);
-	}
-
-	/**
 	 * Create new {@code npm} command instance.
 	 *
 	 * @return NPM Command.
@@ -153,5 +135,33 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	NpmLogger npmLogger() {
 		return NpmLogger.npmLogger(getLog());
+	}
+
+	/**
+	 * Lookup for `package.json` file in current working directory.
+	 *
+	 * @return The `package.json` file.
+	 */
+	File lookupPackageJson() {
+		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
+		getLog().debug("Searching for package.json file in: " + workingDirectory);
+
+		File packageJson = new File(workingDirectory, "package.json");
+		if (!packageJson.exists()) {
+			getLog().error("Missing package.json file, cannot find it in: " + workingDirectory);
+			throw new PackageJsonNotFoundException(packageJson);
+		}
+
+		return packageJson;
+	}
+
+	/**
+	 * Parse {@code package.json} content.
+	 *
+	 * @param packageJson The packageJson file.
+	 * @return Instance of {@code package.json} content.
+	 */
+	PackageJson parsePackageJson(File packageJson) {
+		return parseJson(packageJson, PackageJson.class);
 	}
 }

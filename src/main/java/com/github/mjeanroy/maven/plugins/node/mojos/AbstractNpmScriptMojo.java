@@ -33,6 +33,7 @@ import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
+import java.io.File;
 import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
@@ -125,7 +126,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException {
 		String script = notNull(getScript(), "Script command must not be null");
 
 		boolean isYarn = isUseYarn();
@@ -150,12 +151,13 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			return;
 		}
 
-		PackageJson packageJson = getPackageJson();
+		File packageJsonFile = lookupPackageJson();
+		PackageJson packageJson = parsePackageJson(packageJsonFile);
 
 		if (needRunScript(script) && !packageJson.hasScript(script)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
-			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json";
+			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json (please check file: " + packageJsonFile.getAbsolutePath() + ")";
 			if (failOnMissingScript) {
 				getLog().error(message + ".");
 				throw new MojoExecutionException(message);

@@ -34,7 +34,7 @@ import org.apache.maven.settings.Settings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
+import org.mockito.*;
 import org.mockito.verification.VerificationMode;
 
 import java.io.File;
@@ -51,6 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
@@ -254,8 +255,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		VerificationMode verificationModeExecutor = isStandardScript() ? times(1) : never();
 
 		Log logger = readPrivate(mojo, "log");
-		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json, skipping.");
-		verify(logger, never()).error("Cannot execute npm run " + script() + " command: it is not defined in package.json.");
+
+		String expectedPackageJsonPath = new File(mojo.getWorkingDirectory(), "package.json").getAbsolutePath();
+		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json (please check file: " + expectedPackageJsonPath + "), skipping.");
+		verify(logger, never()).error(argThat(new ArgumentMatcher<CharSequence>() {
+			@Override
+			public boolean matches(CharSequence message) {
+				return message.toString().startsWith("Cannot execute npm run " + script() + " command: it is not defined in package.json");
+			}
+		}));
+
 		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 	}
 

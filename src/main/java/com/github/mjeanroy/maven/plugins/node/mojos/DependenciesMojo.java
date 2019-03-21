@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -54,8 +55,9 @@ public class DependenciesMojo extends AbstractNpmMojo {
 	static final String GOAL_NAME = "dependencies";
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		PackageJson packageJson = getPackageJson();
+	public void execute() {
+		File packageJsonFile = lookupPackageJson();
+		PackageJson packageJson = parsePackageJson(packageJsonFile);
 
 		// Display list of dependencies
 		getLog().info("  == dependencies");
