@@ -36,4 +36,9 @@ public class LintMojoTest extends AbstractNpmScriptMojoTest<LintMojo> {
 	void overrideScript(LintMojo mojo, String script) {
 		writePrivate(mojo, "lintScript", script);
 	}
+
+	@Override
+	void enableSkip(LintMojo mojo) {
+		writePrivate(mojo, "skipLint", true);
+	}
 }

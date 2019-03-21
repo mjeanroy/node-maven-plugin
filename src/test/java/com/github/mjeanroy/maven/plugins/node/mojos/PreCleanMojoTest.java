@@ -58,6 +58,11 @@ public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<PreCleanMojo> {
 		writePrivate(mojo, "preCleanScript", script);
 	}
 
+	@Override
+	void enableSkip(PreCleanMojo mojo) {
+		writePrivate(mojo, "skipPreClean", true);
+	}
+
 	@Test
 	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
 		PreCleanMojo mojo = createMojo("mojo-with-yarn", true);

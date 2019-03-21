@@ -71,7 +71,7 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	 * Flag to skip mojo execution.
 	 */
 	@Parameter(defaultValue = "${npm.skip.bower}")
-	private boolean skip;
+	private boolean skipBower;
 
 	/**
 	 * Create Mojo.
@@ -92,6 +92,6 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean isSkipped() {
-		return skip;
+		return skipBower;
 	}
 }

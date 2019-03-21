@@ -36,4 +36,9 @@ public class BuildMojoTest extends AbstractNpmScriptMojoTest<BuildMojo> {
 	void overrideScript(BuildMojo mojo, String script) {
 		writePrivate(mojo, "buildScript", script);
 	}
+
+	@Override
+	void enableSkip(BuildMojo mojo) {
+		writePrivate(mojo, "skipBuild", true);
+	}
 }

@@ -76,7 +76,7 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	 * Flag to skip mojo execution.
 	 */
 	@Parameter(defaultValue = "${npm.skip.preClean}")
-	private boolean skip;
+	private boolean skipPreClean;
 
 	/**
 	 * Create Mojo.
@@ -97,6 +97,6 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean isSkipped() {
-		return skip;
+		return skipPreClean;
 	}
 }

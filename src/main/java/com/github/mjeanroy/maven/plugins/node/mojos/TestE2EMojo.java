@@ -85,7 +85,7 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	 * Flag to skip mojo execution.
 	 */
 	@Parameter(defaultValue = "${npm.skip.testE2E}")
-	private boolean skip;
+	private boolean skipTestE2E;
 
 	/**
 	 * Create Mojo.
@@ -106,6 +106,6 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean isSkipped() {
-		return skipTests || skip;
+		return skipTests || skipTestE2E;
 	}
 }

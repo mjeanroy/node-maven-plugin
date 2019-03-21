@@ -36,4 +36,9 @@ public class CleanMojoTest extends AbstractNpmScriptMojoTest<CleanMojo> {
 	void overrideScript(CleanMojo mojo, String script) {
 		writePrivate(mojo, "cleanScript", script);
 	}
+
+	@Override
+	void enableSkip(CleanMojo mojo) {
+		writePrivate(mojo, "skipClean", true);
+	}
 }

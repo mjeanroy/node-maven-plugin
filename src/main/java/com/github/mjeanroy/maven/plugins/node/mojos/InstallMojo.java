@@ -80,7 +80,7 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	 * Flag to skip mojo execution.
 	 */
 	@Parameter(defaultValue = "${npm.skip.install}")
-	private boolean skip;
+	private boolean skipInstall;
 
 	/**
 	 * Create Mojo.
@@ -101,6 +101,6 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean isSkipped() {
-		return skip;
+		return skipInstall;
 	}
 }

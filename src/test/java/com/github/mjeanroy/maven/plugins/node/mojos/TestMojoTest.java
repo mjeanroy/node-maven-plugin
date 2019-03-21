@@ -53,6 +53,11 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 		writePrivate(mojo, "testScript", script);
 	}
 
+	@Override
+	void enableSkip(TestMojo mojo) {
+		writePrivate(mojo, "skipTest", true);
+	}
+
 	@Test
 	public void it_should_skip_tests_with_skipTests() throws Exception {
 		TestMojo mojo = createMojo("mojo-with-parameters", true);

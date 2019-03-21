@@ -163,6 +163,20 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).info(skipMessage());
 	}
 
+	@Test
+	public void it_should_skip_individual_mojo_execution() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+		enableSkip(mojo);
+
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
+
+		mojo.execute();
+
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(logger).info(skipMessage());
+	}
+
 	@SuppressWarnings("unchecked")
 	@Test
 	public void it_should_skip_mojo_execution_if_it_has_been_executed() throws Exception {
@@ -367,6 +381,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	 * @param script The script value to set.
 	 */
 	abstract void overrideScript(T mojo, String script);
+
+	/**
+	 * Override mojo script value.
+	 *
+	 * @param mojo The mojo.
+	 */
+	abstract void enableSkip(T mojo);
 
 	/**
 	 * The expected skipped message.

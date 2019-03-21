@@ -39,9 +39,20 @@ public class StartMojoTest extends AbstractNpmScriptMojoTest<StartMojo> {
 		writePrivate(mojo, "startScript", script);
 	}
 
+	@Override
+	void enableSkip(StartMojo mojo) {
+	}
+
 	@Test
 	@Override
 	public void it_should_skip_mojo_execution() {
+		// This mojo cannot be skipped.
+		// Nothing to do here.
+	}
+
+	@Test
+	@Override
+	public void it_should_skip_individual_mojo_execution() {
 		// This mojo cannot be skipped.
 		// Nothing to do here.
 	}

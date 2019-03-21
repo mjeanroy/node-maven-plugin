@@ -79,7 +79,7 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	 * Flag to skip mojo execution.
 	 */
 	@Parameter(defaultValue = "${npm.skip.lint}")
-	private boolean skip;
+	private boolean skipLint;
 
 	/**
 	 * Create Mojo.
@@ -100,6 +100,6 @@ public class LintMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean isSkipped() {
-		return skip;
+		return skipLint;
 	}
 }

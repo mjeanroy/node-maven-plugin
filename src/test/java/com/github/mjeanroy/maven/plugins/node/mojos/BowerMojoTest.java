@@ -36,4 +36,9 @@ public class BowerMojoTest extends AbstractNpmScriptMojoTest<BowerMojo> {
 	void overrideScript(BowerMojo mojo, String script) {
 		writePrivate(mojo, "bowerScript", script);
 	}
+
+	@Override
+	void enableSkip(BowerMojo mojo) {
+		writePrivate(mojo, "skipBower", true);
+	}
 }
