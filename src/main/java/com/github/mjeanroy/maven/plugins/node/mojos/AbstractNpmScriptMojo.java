@@ -136,7 +136,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		String scriptToRun = getScriptToRun();
+		String scriptToRun = getScriptToRun(false);
 		boolean isYarn = isUseYarn();
 		Command cmd = isYarn ? yarn() : npm();
 
@@ -208,11 +208,15 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Get the script to run.
 	 *
+	 * @param silent Disable log output to warn about script deprecation.
 	 * @return Script name to run.
 	 */
-	private String getScriptToRun() {
+	private String getScriptToRun(boolean silent) {
 		if (this.script != null) {
-			getLog().warn("Parameter `script` has been deprecated to avoid conflict issues, please use `" + getScriptParameterName() + "` instead");
+			if (silent) {
+				getLog().warn("Parameter `script` has been deprecated to avoid conflict issues, please use `" + getScriptParameterName() + "` instead");
+			}
+
 			return this.script;
 		}
 
@@ -226,7 +230,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	private boolean hasBeenRun() {
 		Map pluginContext = getPluginContext();
-		String script = getScript();
+		String script = getScriptToRun(true);
 		return pluginContext != null && pluginContext.containsKey(script) && ((Boolean) pluginContext.get(script));
 	}
 
@@ -242,7 +246,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			pluginContext = new HashMap();
 		}
 
-		pluginContext.put(getScript(), status);
+		pluginContext.put(getScriptToRun(true), status);
 		setPluginContext(pluginContext);
 	}
 
