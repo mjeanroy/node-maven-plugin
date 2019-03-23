@@ -95,6 +95,9 @@
 							<integration-test>
 								com.github.mjeanroy:node-maven-plugin:${project.version}:test-e2e
 							</integration-test>
+							<deploy>
+								com.github.mjeanroy:node-maven-plugin:${project.version}:publish
+							</deploy>
 						</phases>
 					</lifecycle>
 				</lifecycles>

@@ -29,6 +29,7 @@ These steps can be easily integrated into the build lifecycle of maven:
 | compile            | node:build       |
 | test               | node:test        |
 | integration-test   | node:test-e2e    |
+| deploy             | node:publish     |
 
 This is exactly what this plugin does!
 
@@ -67,6 +68,7 @@ It can be used very easily:
               <goal>lint</goal>
               <goal>test</goal>
               <goal>build</goal>
+              <goal>publish</goal>
             </goals>
           </execution>
         </executions>
@@ -119,6 +121,7 @@ Here is a short description of each goal:
 | build        | `compile`          | Run `npm run build` (or `yarn run build`).                        |
 | test         | `test`             | Run `npm test` (or `yarn test`).                                  |
 | test-e2e     | `integration-test` | Run `npm run test-e2e` (or `yarn run test-e2e`).                  |
+| publish      | `deploy`           | Run `npm publish` (or `yarn publish`).                            |
 | start        | `process-classes`  | Run `npm start` (or `yarn start`).                                |
 | dependencies |                    | Display `npm` (or `yarn`) dependencies.                           |
 
