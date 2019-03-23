@@ -372,7 +372,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_not_add_maven_argument_if_disabled() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writePrivate(mojo, "mavenArgument", false);
+		writePrivate(mojo, "addMavenArgument", false);
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -403,7 +403,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "failOnMissingScript", false);
 		writePrivate(mojo, "ignoreProxies", true);
-		writePrivate(mojo, "mavenArgument", true);
+		writePrivate(mojo, "addMavenArgument", true);
 
 		return mojo;
 	}

@@ -161,7 +161,7 @@ Plugin can use these options:
 | failOnError          | `true`               | If set to `true`, build will not fail if npm command fail.                                                                                             |
 | failOnMissingScript  | `true`               | If set to `true`, missing npm command will not fail the build.                                                                                         |
 | ignoreProxies        | `true`               | If set to `false` , maven proxy settings will be appended to npm commands (default is `true`, since proxies should probably defined in `.npmrc` file). |
-| mavenArgument        | `true`               | If set to `true` , add `--maven` argument to each npm/yarn command                                                                                     |
+| addMavenArgument     | `true`               | If set to `true` , add `--maven` argument to each npm/yarn command                                                                                     |
 
 *Important*: Argument `--maven` is automatically appended to each script command (any script can check this argument to set default options on different plugins).
 

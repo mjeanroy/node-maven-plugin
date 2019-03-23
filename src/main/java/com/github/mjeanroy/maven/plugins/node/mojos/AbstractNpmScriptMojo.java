@@ -29,7 +29,6 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
@@ -105,7 +104,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * the command during the build.
 	 */
 	@Parameter(defaultValue = "true")
-	private boolean mavenArgument;
+	private boolean addMavenArgument;
 
 	/**
 	 * Should proxies be ignored?
@@ -196,7 +195,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		// Add maven flag
 		// This will let any script known that execution is triggered by maven
-		if (mavenArgument) {
+		if (addMavenArgument) {
 			cmd.addArgument("--maven");
 		}
 
