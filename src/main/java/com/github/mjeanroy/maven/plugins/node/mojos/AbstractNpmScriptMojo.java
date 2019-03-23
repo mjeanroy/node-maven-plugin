@@ -100,6 +100,14 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private boolean failOnMissingScript;
 
 	/**
+	 * Should the `--maven` argument be added on npm/yarn commands.
+	 * By default, this argument is automatically added to be able to know that maven triggered
+	 * the command during the build.
+	 */
+	@Parameter(defaultValue = "true")
+	private boolean mavenArgument;
+
+	/**
 	 * Should proxies be ignored?
 	 * Default is {@code true} since proxy may probably be defined in {@code .npmrc} file.
 	 */
@@ -188,7 +196,9 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		// Add maven flag
 		// This will let any script known that execution is triggered by maven
-		cmd.addArgument("--maven");
+		if (mavenArgument) {
+			cmd.addArgument("--maven");
+		}
 
 		// Should we add proxy ?
 		if (!ignoreProxies) {
