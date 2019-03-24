@@ -434,7 +434,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	private boolean isStandardScript() {
 		String script = script();
-		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start");
+		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start") || script.equals("prune");
 	}
 
 	private Proxy createProxy(String protocol, String host, int port, String username, String password) {

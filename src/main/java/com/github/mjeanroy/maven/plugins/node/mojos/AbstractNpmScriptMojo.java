@@ -46,6 +46,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private static final String NPM_TEST = "test";
 	private static final String NPM_PUBLISH = "publish";
 	private static final String NPM_START = "start";
+	private static final String NPM_PRUNE = "prune";
 
 	/**
 	 * Store standard {@code nom} commands.
@@ -61,6 +62,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			add(NPM_TEST);
 			add(NPM_PUBLISH);
 			add(NPM_START);
+			add(NPM_PRUNE);
 		}});
 	}
 
