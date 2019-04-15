@@ -230,7 +230,7 @@ public class CommandsTest {
 	private static void setWindows(final boolean isWindows) throws Exception {
 		AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
 			@Override
-			public Void run() throws Exception {
+			public Void run() {
 				writeStatic(EnvUtils.class, "IS_WINDOWS", isWindows);
 				return null;
 			}

@@ -4,7 +4,7 @@
 
 	<groupId>com.github.mjeanroy</groupId>
 	<artifactId>node-maven-plugin</artifactId>
-	<version>0.2.1-SNAPSHOT</version>
+	<version>0.3.1-SNAPSHOT</version>
 	<name>node-maven-plugin</name>
 	<packaging>maven-plugin</packaging>
 	<url>https://github.com/mjeanroy/node-maven-plugin</url>
@@ -60,7 +60,7 @@
 		<maven-enforcer-plugin.version>1.4.1</maven-enforcer-plugin.version>
 		<maven-clean-plugin.version>3.1.0</maven-clean-plugin.version>
 		<maven-surefire-plugin.version>2.22.1</maven-surefire-plugin.version>
-		<maven-javadoc-plugin.version>3.0.1</maven-javadoc-plugin.version>
+		<maven-javadoc-plugin.version>3.1.0</maven-javadoc-plugin.version>
 		<maven-resources-plugin.version>3.1.0</maven-resources-plugin.version>
 		<maven-jar-plugin.version>3.1.1</maven-jar-plugin.version>
 		<maven-source-plugin.version>3.0.1</maven-source-plugin.version>
@@ -71,13 +71,13 @@
 
 		<commons-exec.version>1.3</commons-exec.version>
 		<maven.version>3.5.0</maven.version>
-		<maven-core.version>3.6.0</maven-core.version>
-		<maven-compat.version>${maven.version}</maven-compat.version>
-		<maven-model.version>3.6.0</maven-model.version>
+		<maven-core.version>3.6.1</maven-core.version>
+		<maven-compat.version>3.6.1</maven-compat.version>
+		<maven-model.version>3.6.1</maven-model.version>
 		<maven-aether-provider.version>3.3.9</maven-aether-provider.version>
 
 		<maven-plugin-plugin.version>3.6.0</maven-plugin-plugin.version>
-		<maven-settings.version>3.6.0</maven-settings.version>
+		<maven-settings.version>3.6.1</maven-settings.version>
 		<maven-plugin-api.version>3.6.0</maven-plugin-api.version>
 		<maven-plugin-annotations.version>3.6.0</maven-plugin-annotations.version>
 		<maven-plugin-testing-harness.version>3.3.0</maven-plugin-testing-harness.version>
@@ -86,7 +86,7 @@
 		<!-- Test dependencies -->
 		<junit.version>4.12</junit.version>
 		<assertj-core.version>2.9.1</assertj-core.version>
-		<mockito-core.version>2.23.4</mockito-core.version>
+		<mockito-core.version>2.27.0</mockito-core.version>
 		<commons-lang3.version>3.8.1</commons-lang3.version>
 	</properties>
 

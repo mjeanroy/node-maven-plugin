@@ -25,16 +25,34 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import org.junit.Test;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+
 public class StartMojoTest extends AbstractNpmScriptMojoTest<StartMojo> {
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "start";
+	}
+
+	@Override
+	void overrideScript(StartMojo mojo, String script) {
+		writePrivate(mojo, "startScript", script);
+	}
+
+	@Override
+	void enableSkip(StartMojo mojo) {
 	}
 
 	@Test
 	@Override
-	public void it_should_skip_mojo_execution() throws Exception {
+	public void it_should_skip_mojo_execution() {
+		// This mojo cannot be skipped.
+		// Nothing to do here.
+	}
+
+	@Test
+	@Override
+	public void it_should_skip_individual_mojo_execution() {
 		// This mojo cannot be skipped.
 		// Nothing to do here.
 	}

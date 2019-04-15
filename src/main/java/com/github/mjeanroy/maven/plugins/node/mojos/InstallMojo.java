@@ -73,14 +73,14 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code install} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.install}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.script.install}")
+	private String installScript;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.install}", required = false)
-	private boolean skip;
+	@Parameter(defaultValue = "${npm.skip.install}")
+	private boolean skipInstall;
 
 	/**
 	 * Create Mojo.
@@ -90,12 +90,17 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(installScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
-		return skip;
+	String getScriptParameterName() {
+		return "installScript";
+	}
+
+	@Override
+	boolean isSkipped() {
+		return skipInstall;
 	}
 }

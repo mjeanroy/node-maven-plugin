@@ -52,8 +52,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = TestMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.TEST,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.TEST
 )
 public class TestMojo extends AbstractNpmScriptMojo {
 
@@ -72,27 +71,27 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code test} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.test}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.script.test}")
+	private String testScript;
 
 	/**
 	 * Check if unit tests must be skipped.
 	 * By default, unit tests are skipped if {@code maven.test.skip property} is set to true.
 	 */
-	@Parameter(defaultValue = "${maven.test.skip}", required = false)
+	@Parameter(defaultValue = "${maven.test.skip}", readonly = true)
 	private boolean mavenTestSkip;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${skipTests}", required = false)
+	@Parameter(defaultValue = "${skipTests}", readonly = true)
 	private boolean skipTests;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.test}", required = false)
-	private boolean skip;
+	@Parameter(defaultValue = "${npm.skip.test}")
+	private boolean skipTest;
 
 	/**
 	 * Create Mojo.
@@ -102,17 +101,22 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(testScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
-		return skipTests || mavenTestSkip || skip;
+	boolean isSkipped() {
+		return skipTests || mavenTestSkip || skipTest;
 	}
 
 	@Override
-	protected String getSkippedMessage() {
+	String getScriptParameterName() {
+		return "testScript";
+	}
+
+	@Override
+	String getSkippedMessage() {
 		return "Tests are skipped.";
 	}
 }

@@ -29,10 +29,10 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
+import java.io.File;
 import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
@@ -46,6 +46,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private static final String NPM_TEST = "test";
 	private static final String NPM_PUBLISH = "publish";
 	private static final String NPM_START = "start";
+	private static final String NPM_PRUNE = "prune";
 
 	/**
 	 * Store standard {@code nom} commands.
@@ -61,6 +62,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			add(NPM_TEST);
 			add(NPM_PUBLISH);
 			add(NPM_START);
+			add(NPM_PRUNE);
 		}});
 	}
 
@@ -99,6 +101,14 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private boolean failOnMissingScript;
 
 	/**
+	 * Should the `--maven` argument be added on npm/yarn commands.
+	 * By default, this argument is automatically added to be able to know that maven triggered
+	 * the command during the build.
+	 */
+	@Parameter(defaultValue = "true")
+	private boolean addMavenArgument;
+
+	/**
 	 * Should proxies be ignored?
 	 * Default is {@code true} since proxy may probably be defined in {@code .npmrc} file.
 	 */
@@ -110,6 +120,21 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	@Parameter(defaultValue = "${settings}", readonly = true)
 	private Settings settings;
+
+	/**
+	 * Skip NPM script globally.
+	 */
+	@Parameter(defaultValue = "${npm.skip}")
+	private boolean skip;
+
+	/**
+	 * Set {@code clean} mojo to custom npm script.
+	 *
+	 * @deprecated
+	 */
+	@Parameter
+	@Deprecated
+	private String script;
 
 	/**
 	 * Executor used to run command line.
@@ -125,17 +150,16 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		String script = notNull(getScript(), "Script command must not be null");
-
+	public void execute() throws MojoExecutionException {
+		String scriptToRun = getScriptToRun(false);
 		boolean isYarn = isUseYarn();
 		Command cmd = isYarn ? yarn() : npm();
 
-		if (needRunScript(script)) {
+		if (needRunScript(scriptToRun)) {
 			cmd.addArgument("run");
 		}
 
-		cmd.addArgument(script);
+		cmd.addArgument(scriptToRun);
 
 		// Command already done ?
 		if (hasBeenRun()) {
@@ -145,17 +169,18 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 
 		// Should skip ?
-		if (isSkipped()) {
+		if (skip || isSkipped()) {
 			getLog().info(getSkippedMessage());
 			return;
 		}
 
-		PackageJson packageJson = getPackageJson();
+		File packageJsonFile = lookupPackageJson();
+		PackageJson packageJson = parsePackageJson(packageJsonFile);
 
-		if (needRunScript(script) && !packageJson.hasScript(script)) {
+		if (needRunScript(scriptToRun) && !packageJson.hasScript(scriptToRun)) {
 			// This command is not a standard command, and it is not defined in package.json.
 			// Fail as soon as possible.
-			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json";
+			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json (please check file: " + packageJsonFile.getAbsolutePath() + ")";
 			if (failOnMissingScript) {
 				getLog().error(message + ".");
 				throw new MojoExecutionException(message);
@@ -172,7 +197,9 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		// Add maven flag
 		// This will let any script known that execution is triggered by maven
-		cmd.addArgument("--maven");
+		if (addMavenArgument) {
+			cmd.addArgument("--maven");
+		}
 
 		// Should we add proxy ?
 		if (!ignoreProxies) {
@@ -196,13 +223,31 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	/**
+	 * Get the script to run.
+	 *
+	 * @param silent Disable log output to warn about script deprecation.
+	 * @return Script name to run.
+	 */
+	private String getScriptToRun(boolean silent) {
+		if (this.script != null) {
+			if (silent) {
+				getLog().warn("Parameter `script` has been deprecated to avoid conflict issues, please use `" + getScriptParameterName() + "` instead");
+			}
+
+			return this.script;
+		}
+
+		return notNull(getScript(), "Script command must not be null");
+	}
+
+	/**
 	 * Check if given script command has already been run.
 	 *
 	 * @return {@code true} if script command has been run, {@code false} otherwise.
 	 */
 	private boolean hasBeenRun() {
 		Map pluginContext = getPluginContext();
-		String script = getScript();
+		String script = getScriptToRun(true);
 		return pluginContext != null && pluginContext.containsKey(script) && ((Boolean) pluginContext.get(script));
 	}
 
@@ -218,7 +263,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			pluginContext = new HashMap();
 		}
 
-		pluginContext.put(getScript(), status);
+		pluginContext.put(getScriptToRun(true), status);
 		setPluginContext(pluginContext);
 	}
 
@@ -227,21 +272,28 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 *
 	 * @return Script to execute.
 	 */
-	protected abstract String getScript();
+	abstract String getScript();
+
+	/**
+	 * Return the script parameter to be able to display a useful log.
+	 *
+	 * @return Script parameter name.
+	 */
+	abstract String getScriptParameterName();
 
 	/**
 	 * Check if mojo execution should be skipped.
 	 *
 	 * @return {@code true} if mojo execution should be skipped, {@code false} otherwise.
 	 */
-	protected abstract boolean isSkipped();
+	abstract boolean isSkipped();
 
 	/**
 	 * Message logged when mojo execution is skipped.
 	 *
 	 * @return Message.
 	 */
-	protected String getSkippedMessage() {
+	String getSkippedMessage() {
 		return String.format("Npm %s is skipped.", getScript());
 	}
 

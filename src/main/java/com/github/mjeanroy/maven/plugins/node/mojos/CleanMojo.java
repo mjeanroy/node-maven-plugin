@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import org.apache.maven.plugins.annotations.Execute;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -43,8 +44,11 @@ import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNo
  */
 @Mojo(
 	name = CleanMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.CLEAN,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.CLEAN
+)
+@Execute(
+	lifecycle = "pre-clean",
+	goal = "install"
 )
 public class CleanMojo extends AbstractNpmScriptMojo {
 
@@ -63,14 +67,14 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	/**
 	 * Set {@code clean} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.clean}", required = false)
-	private String script;
+	@Parameter(defaultValue = "${npm.script.clean}")
+	private String cleanScript;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.clean}", required = false)
-	private boolean skip;
+	@Parameter(defaultValue = "${npm.skip.clean}")
+	private boolean skipClean;
 
 	/**
 	 * Create Mojo.
@@ -80,12 +84,17 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	protected String getScript() {
-		return firstNonNull(script, DEFAULT_SCRIPT);
+	String getScript() {
+		return firstNonNull(cleanScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
-	protected boolean isSkipped() {
-		return skip;
+	String getScriptParameterName() {
+		return "cleanScript";
+	}
+
+	@Override
+	boolean isSkipped() {
+		return skipClean;
 	}
 }

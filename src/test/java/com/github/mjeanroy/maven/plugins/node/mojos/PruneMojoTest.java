@@ -23,22 +23,37 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import org.junit.Test;
+
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 
-public class CleanMojoTest extends AbstractNpmScriptMojoTest<CleanMojo> {
+public class PruneMojoTest extends AbstractNpmScriptMojoTest<PruneMojo> {
 
 	@Override
 	String mojoName() {
-		return "clean";
+		return "prune";
 	}
 
 	@Override
-	void overrideScript(CleanMojo mojo, String script) {
-		writePrivate(mojo, "cleanScript", script);
+	void overrideScript(PruneMojo mojo, String script) {
+		writePrivate(mojo, "pruneScript", script);
 	}
 
 	@Override
-	void enableSkip(CleanMojo mojo) {
-		writePrivate(mojo, "skipClean", true);
+	void enableSkip(PruneMojo mojo) {
+	}
+
+	@Test
+	@Override
+	public void it_should_skip_mojo_execution() {
+		// This mojo cannot be skipped.
+		// Nothing to do here.
+	}
+
+	@Test
+	@Override
+	public void it_should_skip_individual_mojo_execution() {
+		// This mojo cannot be skipped.
+		// Nothing to do here.
 	}
 }

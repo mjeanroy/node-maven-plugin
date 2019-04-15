@@ -42,7 +42,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest {
 	public ExpectedException thrown = none();
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "dependencies";
 	}
 

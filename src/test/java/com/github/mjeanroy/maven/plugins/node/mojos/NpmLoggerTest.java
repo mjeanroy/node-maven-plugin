@@ -77,6 +77,17 @@ public class NpmLoggerTest {
 	}
 
 	@Test
+	public void it_should_use_warn_level_with_yarn_warning() {
+		String line = "warning Command \"start\" not found.";
+
+		npmLogger.process(line);
+
+		verify(log).warn(line);
+		verify(log, never()).error(anyString());
+		verify(log, never()).info(anyString());
+	}
+
+	@Test
 	public void it_should_use_info_level_by_default() {
 		String line = "> gulp clean";
 

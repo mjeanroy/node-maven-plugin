@@ -28,6 +28,7 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.io.File;
 import java.util.Map;
 
 /**
@@ -42,8 +43,7 @@ import java.util.Map;
  * This mojo will not run by default and does not require online connection.
  */
 @Mojo(
-	name = DependenciesMojo.GOAL_NAME,
-	requiresOnline = false
+	name = DependenciesMojo.GOAL_NAME
 )
 public class DependenciesMojo extends AbstractNpmMojo {
 
@@ -54,8 +54,9 @@ public class DependenciesMojo extends AbstractNpmMojo {
 	static final String GOAL_NAME = "dependencies";
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
-		PackageJson packageJson = getPackageJson();
+	public void execute() {
+		File packageJsonFile = lookupPackageJson();
+		PackageJson packageJson = parsePackageJson(packageJsonFile);
 
 		// Display list of dependencies
 		getLog().info("  == dependencies");

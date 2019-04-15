@@ -32,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 
 import java.io.File;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -43,13 +44,23 @@ import static org.mockito.Mockito.when;
 public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<PreCleanMojo> {
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "pre-clean";
 	}
 
 	@Override
-	protected String script() {
+	String script() {
 		return "install";
+	}
+
+	@Override
+	void overrideScript(PreCleanMojo mojo, String script) {
+		writePrivate(mojo, "preCleanScript", script);
+	}
+
+	@Override
+	void enableSkip(PreCleanMojo mojo) {
+		writePrivate(mojo, "skipPreClean", true);
 	}
 
 	@Test

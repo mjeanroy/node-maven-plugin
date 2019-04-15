@@ -34,7 +34,7 @@ import org.apache.maven.settings.Settings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
+import org.mockito.*;
 import org.mockito.verification.VerificationMode;
 
 import java.io.File;
@@ -51,6 +51,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.*;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
@@ -92,15 +93,17 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
+		String expectedArgs = join(defaultArguments(true, true));
+
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: " + pkg + " " + join(defaultArguments(true)));
+		verify(logger).info("Running: " + pkg + " " + expectedArgs);
 		verify(logger, never()).error(anyString());
 
 		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo(pkg + " " + join(defaultArguments(true)));
+		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
 	}
 
 	@Test
@@ -114,21 +117,23 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
+		String expectedArgs = join(defaultArguments(false, true));
+
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm " + join(defaultArguments(false)));
+		verify(logger).info("Running: npm " + expectedArgs);
 		verify(logger, never()).error(anyString());
 
 		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(false)));
+		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
-		writePrivate(mojo, "script", "foobar");
+		overrideScript(mojo, "foobar");
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -152,6 +157,20 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_skip_mojo_execution() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
 		writePrivate(mojo, "skip", true);
+
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		Log logger = readPrivate(mojo, "log");
+
+		mojo.execute();
+
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(logger).info(skipMessage());
+	}
+
+	@Test
+	public void it_should_skip_individual_mojo_execution() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+		enableSkip(mojo);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		Log logger = readPrivate(mojo, "log");
@@ -194,15 +213,17 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
+		String expectedArgs = join(defaultArguments(true, true));
+
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).error("Error during execution of: npm " + join(defaultArguments(true)));
+		verify(logger).error("Error during execution of: npm " + expectedArgs);
 		verify(logger).error("Exit status: 1");
 
 		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + join(defaultArguments(true)));
+		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
 	}
 
 	@Test
@@ -254,8 +275,16 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		VerificationMode verificationModeExecutor = isStandardScript() ? times(1) : never();
 
 		Log logger = readPrivate(mojo, "log");
-		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json, skipping.");
-		verify(logger, never()).error("Cannot execute npm run " + script() + " command: it is not defined in package.json.");
+
+		String expectedPackageJsonPath = new File(mojo.getWorkingDirectory(), "package.json").getAbsolutePath();
+		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json (please check file: " + expectedPackageJsonPath + "), skipping.");
+		verify(logger, never()).error(argThat(new ArgumentMatcher<CharSequence>() {
+			@Override
+			public boolean matches(CharSequence message) {
+				return message.toString().startsWith("Cannot execute npm run " + script() + " command: it is not defined in package.json");
+			}
+		}));
+
 		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 	}
 
@@ -298,16 +327,18 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 			.contains("--proxy http://mjeanroy:********@localhost:8080")
 			.contains("--https-proxy http://mjeanroy:********@localhost:8080");
 
+		String expectedArgs = join(defaultArguments(true, true));
+
 		Log logger = readPrivate(mojo, "log");
 
 		verify(logger).info(
-			"Running: npm " + join(defaultArguments(true)) +
+			"Running: npm " + expectedArgs +
 				" --proxy http://mjeanroy:********@localhost:8080" +
 				" --https-proxy http://mjeanroy:********@localhost:8080"
 		);
 
 		verify(logger).error(
-			"Error during execution of: npm " + join(defaultArguments(true)) +
+			"Error during execution of: npm " + expectedArgs +
 			" --proxy http://mjeanroy:********@localhost:8080" +
 			" --https-proxy http://mjeanroy:********@localhost:8080"
 		);
@@ -318,8 +349,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = createMojo("mojo", false);
 		writePrivate(mojo, "ignoreProxies", true);
 
-		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
-		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
+		Proxy httpProxy = createProxy("http", "nginx.local", 80, "root", "password");
+		Proxy httpsProxy = createProxy("https", "nginx.local", 80, "root", "password");
 
 		Settings settings = mock(Settings.class);
 		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
@@ -334,29 +365,76 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		Command command = cmdCaptor.getValue();
 		assertThat(command.toString())
-			.doesNotContain("--proxy http://mjeanroy:foo@localhost:8080")
-			.doesNotContain("--https-proxy http://mjeanroy:foo@localhost:8080");
+			.doesNotContain("--proxy http://root:password@nginx.local:80")
+			.doesNotContain("--https-proxy http://root:password@nginx:80");
+	}
+
+	@Test
+	public void it_should_not_add_maven_argument_if_disabled() throws Exception {
+		T mojo = createMojo("mojo-with-parameters", true);
+		writePrivate(mojo, "addMavenArgument", false);
+
+		CommandResult result = createResult(true);
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
+
+		mojo.execute();
+
+		String expectedArgs = join(defaultArguments(true, false));
+
+		Log logger = readPrivate(mojo, "log");
+		verify(logger).info("Running: npm " + expectedArgs);
+		verify(logger, never()).error(anyString());
+
+		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
 	}
 
 	@SuppressWarnings("unchecked")
 	@Override
-	protected T createMojo(String projectName, boolean hasConfiguration) throws Exception {
+	T createMojo(String projectName, boolean hasConfiguration) throws Exception {
 		T mojo = super.createMojo(projectName, hasConfiguration);
 
 		CommandExecutor executor = mock(CommandExecutor.class);
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "failOnMissingScript", false);
 		writePrivate(mojo, "ignoreProxies", true);
+		writePrivate(mojo, "addMavenArgument", true);
 
 		return mojo;
 	}
 
+	/**
+	 * Override mojo script value.
+	 *
+	 * @param mojo The mojo.
+	 * @param script The script value to set.
+	 */
+	abstract void overrideScript(T mojo, String script);
+
+	/**
+	 * Override mojo script value.
+	 *
+	 * @param mojo The mojo.
+	 */
+	abstract void enableSkip(T mojo);
+
+	/**
+	 * The expected skipped message.
+	 *
+	 * @return Skipped message.
+	 */
+	String skipMessage() {
+		return String.format("Npm %s is skipped.", script());
+	}
+
 	private boolean isStandardScript() {
 		String script = script();
-		return script.equals("test")
-			|| script.equals("install")
-			|| script.equals("publish")
-			|| script.equals("start");
+		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start") || script.equals("prune");
 	}
 
 	private Proxy createProxy(String protocol, String host, int port, String username, String password) {
@@ -370,11 +448,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return proxy;
 	}
 
-	protected String skipMessage() {
-		return String.format("Npm %s is skipped.", script());
-	}
-
-	private List<String> defaultArguments(boolean withColors) {
+	private List<String> defaultArguments(boolean withColors, boolean withMaven) {
 		List<String> arguments = new ArrayList<>();
 
 		String mojoName = script();
@@ -390,7 +464,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		// Do not forget maven flag
-		arguments.add("--maven");
+		if (withMaven) {
+			arguments.add("--maven");
+		}
 
 		return arguments;
 	}

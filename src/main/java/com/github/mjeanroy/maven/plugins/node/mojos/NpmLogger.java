@@ -55,6 +55,12 @@ class NpmLogger implements OutputHandler {
 	private static final String NPM_ERROR_PREFIX = "npm ERR! ";
 
 	/**
+	 * The {@code npm} warn prefix used when warning are displayed by
+	 * npm script.
+	 */
+	private static final String YARN_WARN_PREFIX = "warning ";
+
+	/**
 	 * The {@code yarn} error prefix used when errors are displayed by
 	 * yarn script.
 	 */
@@ -86,7 +92,7 @@ class NpmLogger implements OutputHandler {
 
 	@Override
 	public void process(String line) {
-		if (line.startsWith(NPM_WARN_PREFIX)) {
+		if (line.startsWith(NPM_WARN_PREFIX) || line.startsWith(YARN_WARN_PREFIX)) {
 			log.warn(line);
 		} else if (line.startsWith(NPM_ERROR_PREFIX) || line.startsWith(YARN_ERROR_PREFIX)) {
 			log.error(line);

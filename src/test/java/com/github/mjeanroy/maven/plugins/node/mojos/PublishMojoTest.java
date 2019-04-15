@@ -39,42 +39,20 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
-public class InstallMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
+public class PublishMojoTest extends AbstractNpmScriptMojoTest<PublishMojo> {
 
 	@Override
 	String mojoName() {
-		return "install";
+		return "publish";
 	}
 
 	@Override
-	void overrideScript(InstallMojo mojo, String script) {
-		writePrivate(mojo, "installScript", script);
+	void overrideScript(PublishMojo mojo, String script) {
+		writePrivate(mojo, "publishScript", script);
 	}
 
 	@Override
-	void enableSkip(InstallMojo mojo) {
-		writePrivate(mojo, "skipInstall", true);
-	}
-
-	@Test
-	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
-		InstallMojo mojo = createMojo("mojo-with-yarn", true);
-
-		CommandResult result = createResult(true);
-		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
-
-		mojo.execute();
-
-		Log logger = (Log) readField(mojo, "log", true);
-		verify(logger).info("Running: yarn install --maven");
-		verify(logger, never()).error(anyString());
-
-		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("yarn install --maven");
+	void enableSkip(PublishMojo mojo) {
+		writePrivate(mojo, "skipPublish", true);
 	}
 }

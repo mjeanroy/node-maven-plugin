@@ -44,8 +44,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capital
  */
 @Mojo(
 	name = CheckNodeMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.VALIDATE,
-	requiresOnline = false
+	defaultPhase = LifecyclePhase.VALIDATE
 )
 public class CheckNodeMojo extends AbstractNpmMojo {
 
@@ -69,7 +68,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException, MojoFailureException {
+	public void execute() throws MojoExecutionException {
 		check(node());
 		check(npm());
 

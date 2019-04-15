@@ -39,8 +39,23 @@ import static org.mockito.Mockito.verify;
 public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	@Override
-	protected String mojoName() {
+	String mojoName() {
 		return "test";
+	}
+
+	@Override
+	String skipMessage() {
+		return "Tests are skipped.";
+	}
+
+	@Override
+	void overrideScript(TestMojo mojo, String script) {
+		writePrivate(mojo, "testScript", script);
+	}
+
+	@Override
+	void enableSkip(TestMojo mojo) {
+		writePrivate(mojo, "skipTest", true);
 	}
 
 	@Test
@@ -69,10 +84,5 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 		verify(logger).info(skipMessage());
-	}
-
-	@Override
-	protected String skipMessage() {
-		return "Tests are skipped.";
 	}
 }
