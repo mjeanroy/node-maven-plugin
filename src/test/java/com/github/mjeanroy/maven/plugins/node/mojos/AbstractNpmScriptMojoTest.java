@@ -27,14 +27,15 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
+import com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.settings.Proxy;
 import org.apache.maven.settings.Settings;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.*;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.verification.VerificationMode;
 
 import java.io.File;
@@ -46,13 +47,20 @@ import java.util.Map;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.TestUtils.join;
-import static java.util.Arrays.asList;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.newProxy;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder.newSettings;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.argThat;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
 
@@ -181,12 +189,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).info(skipMessage());
 	}
 
-	@SuppressWarnings("unchecked")
 	@Test
 	public void it_should_skip_mojo_execution_if_it_has_been_executed() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", true);
 
-		Map pluginContext = new HashMap();
+		Map<Object, Object> pluginContext = new HashMap<>();
 		pluginContext.put(script(), true);
 		mojo.setPluginContext(pluginContext);
 
@@ -305,14 +312,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_add_proxy_configuration() throws Exception {
 		T mojo = createMojo("mojo-with-parameters", false);
+		Settings settings = SettingsTestBuilder.newSettings(
+				newProxy("http", "localhost", 8080, "mjeanroy", "foo"),
+				newProxy("https", "localhost", 8080, "mjeanroy", "foo")
+		);
+
 		writePrivate(mojo, "ignoreProxies", false);
 		writePrivate(mojo, "color", true);
-
-		Proxy httpProxy = createProxy("http", "localhost", 8080, "mjeanroy", "foo");
-		Proxy httpsProxy = createProxy("https", "localhost", 8080, "mjeanroy", "foo");
-
-		Settings settings = mock(Settings.class);
-		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
 		writePrivate(mojo, "settings", settings);
 
 		CommandResult result = createResult(false);
@@ -347,13 +353,12 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_ignore_proxy_configuration() throws Exception {
 		T mojo = createMojo("mojo", false);
+		Settings settings = newSettings(
+				defaultHttpProxy(),
+				defaultHttpsProxy()
+		);
+
 		writePrivate(mojo, "ignoreProxies", true);
-
-		Proxy httpProxy = createProxy("http", "nginx.local", 80, "root", "password");
-		Proxy httpsProxy = createProxy("https", "nginx.local", 80, "root", "password");
-
-		Settings settings = mock(Settings.class);
-		when(settings.getProxies()).thenReturn(asList(httpProxy, httpsProxy));
 		writePrivate(mojo, "settings", settings);
 
 		CommandResult result = createResult(false);
@@ -435,17 +440,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	private boolean isStandardScript() {
 		String script = script();
 		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start") || script.equals("prune");
-	}
-
-	private Proxy createProxy(String protocol, String host, int port, String username, String password) {
-		Proxy proxy = mock(Proxy.class);
-		when(proxy.getProtocol()).thenReturn(protocol);
-		when(proxy.getHost()).thenReturn(host);
-		when(proxy.getPort()).thenReturn(port);
-		when(proxy.getUsername()).thenReturn(username);
-		when(proxy.getPassword()).thenReturn(password);
-		when(proxy.isActive()).thenReturn(true);
-		return proxy;
 	}
 
 	private List<String> defaultArguments(boolean withColors, boolean withMaven) {
