@@ -96,71 +96,31 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verify_mojo_success(T mojo, String pkg) throws Exception {
-		CommandResult result = successResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
-
+		givenSuccessfulExecutor(mojo);
 		mojo.execute();
-
-		String expectedArgs = join(defaultArguments(true, true));
-
-		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: " + pkg + " " + expectedArgs);
-		verify(logger, never()).error(anyString());
-
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
+		verifyMojoExecution(mojo, pkg, join(defaultArguments(true, true)));
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
 
-		CommandResult result = successResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		givenSuccessfulExecutor(mojo);
 
 		mojo.execute();
-
-		String expectedArgs = join(defaultArguments(false, true));
-
-		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm " + expectedArgs);
-		verify(logger, never()).error(anyString());
-
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
+		verifyMojoExecution(mojo, "npm", join(defaultArguments(false, true)));
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
-		overrideScript(mojo, "foobar");
 
-		CommandResult result = successResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		overrideScript(mojo, "foobar");
+		givenSuccessfulExecutor(mojo);
 
 		mojo.execute();
 
-		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm run foobar --maven");
-		verify(logger, never()).error(anyString());
-
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm run foobar --maven");
+		verifyMojoExecution(mojo, "npm", "run foobar --maven");
 	}
 
 	@Test
@@ -215,9 +175,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", false);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		givenFailExecutor(mojo);
 
 		mojo.execute();
 
@@ -227,12 +185,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger).error("Error during execution of: npm " + expectedArgs);
 		verify(logger).error("Exit status: 1");
 
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
+		verifyCommandExecution(mojo, "npm", expectedArgs);
 	}
 
 	@Test
@@ -242,9 +195,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", true);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		givenFailExecutor(mojo);
 
 		mojo.execute();
 	}
@@ -259,9 +210,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", true);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		givenFailExecutor(mojo);
 
 		mojo.execute();
 	}
@@ -271,9 +220,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", false);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		CommandExecutor executor = givenFailExecutor(mojo);
 
 		mojo.execute();
 
@@ -320,9 +267,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "color", true);
 		writePrivate(mojo, "settings", settings);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		CommandExecutor executor = givenFailExecutor(mojo);
 
 		mojo.execute();
 
@@ -362,9 +307,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "ignoreProxies", true);
 		writePrivate(mojo, "settings", settings);
 
-		CommandResult result = failureResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		CommandExecutor executor = givenFailExecutor(mojo);
 
 		mojo.execute();
 
@@ -382,24 +325,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "addMavenArgument", false);
 
-		CommandResult result = successResult();
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		givenSuccessfulExecutor(mojo);
 
 		mojo.execute();
 
+		String pkg = "npm";
 		String expectedArgs = join(defaultArguments(true, false));
-
-		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Running: npm " + expectedArgs);
-		verify(logger, never()).error(anyString());
-
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
-
-		Command cmd = cmdCaptor.getValue();
-		assertThat(cmd).isNotNull();
-		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
+		verifySuccessfulLogOutput(mojo, pkg, expectedArgs);
+		verifyCommandExecution(mojo, pkg, expectedArgs);
 	}
 
 	@Override
@@ -484,5 +417,84 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		return arguments;
+	}
+
+	/**
+	 * Verify mojo execution.
+	 *
+	 * @param mojo The mojo to verify.
+	 * @param pkg The script runner (i.e npm or yarn).
+	 * @param expectedArgs The expected arguments passed to the command executor.
+	 */
+	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
+		verifySuccessfulLogOutput(mojo, pkg, expectedArgs);
+		verifyCommandExecution(mojo, pkg, expectedArgs);
+	}
+
+	/**
+	 * Verify log outputs for a "basic" successful script.
+	 *
+	 * @param mojo The mojo with the logger to verify.
+	 * @param pkg The script runner (i.e npm or yarn).
+	 * @param expectedArgs The expected arguments passed to the script runner.
+	 */
+	private void verifySuccessfulLogOutput(T mojo, String pkg, String expectedArgs) {
+		Log logger = readPrivate(mojo, "log");
+		verify(logger).info("Running: " + pkg + " " + expectedArgs);
+		verify(logger, never()).error(anyString());
+	}
+
+	/**
+	 * Verify command that has been run.
+	 *
+	 * @param mojo The mojo with the command executor to verify.
+	 * @param pkg The script runner (i.e npm or yarn).
+	 * @param expectedArgs The expected arguments passed to the command executor.
+	 */
+	private void verifyCommandExecution(T mojo, String pkg, String expectedArgs) {
+		CommandExecutor executor = readPrivate(mojo, "executor");
+
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
+	}
+
+	/**
+	 * Create and override mojo executor with an mock instance that returns a success result for every command
+	 * it will run.
+	 *
+	 * @param mojo The mojo.
+	 * @return The mock executor created by this method.
+	 */
+	private CommandExecutor givenSuccessfulExecutor(T mojo) {
+		return givenExecutor(mojo, successResult());
+	}
+
+	/**
+	 * Create and override mojo executor with an mock instance that returns a failure result for every command
+	 * it will run.
+	 *
+	 * @param mojo The mojo.
+	 * @return The mock executor created by this method.
+	 */
+	private CommandExecutor givenFailExecutor(T mojo) {
+		return givenExecutor(mojo, failureResult());
+	}
+
+	/**
+	 * Create and override mojo executor with an mock instance that returns given result for every command
+	 * it will run.
+	 *
+	 * @param mojo The mojo.
+	 * @param result The command result returned by this executor.
+	 * @return The mock executor created by this method.
+	 */
+	private CommandExecutor givenExecutor(T mojo, CommandResult result) {
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		return executor;
 	}
 }
