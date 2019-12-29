@@ -146,6 +146,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	AbstractNpmScriptMojo() {
 		super();
+		this.color = false;
+		this.addMavenArgument = true;
+		this.failOnError = true;
+		this.failOnMissingScript = true;
+		this.ignoreProxies = true;
 		this.executor = newExecutor();
 	}
 

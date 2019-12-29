@@ -1,0 +1,11 @@
+{
+  "name": "test-project",
+  "version": "1.0",
+  "dependencies": {
+    "react": "0.13.3",
+    "jquery": "2.11"
+  },
+  "devDependencies": {
+    "gulp": "3.9.0"
+  }
+}
