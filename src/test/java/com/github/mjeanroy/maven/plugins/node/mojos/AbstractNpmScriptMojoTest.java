@@ -96,7 +96,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verify_mojo_success(T mojo, String pkg) throws Exception {
-		givenSuccessfulExecutor(mojo);
 		mojo.execute();
 		verifyMojoExecution(mojo, pkg, join(defaultArguments(true, true)));
 	}
@@ -104,9 +103,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
-
-		givenSuccessfulExecutor(mojo);
-
 		mojo.execute();
 		verifyMojoExecution(mojo, "npm", join(defaultArguments(false, true)));
 	}
@@ -116,7 +112,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 
 		overrideScript(mojo, "foobar");
-		givenSuccessfulExecutor(mojo);
 
 		mojo.execute();
 
@@ -325,8 +320,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "addMavenArgument", false);
 
-		givenSuccessfulExecutor(mojo);
-
 		mojo.execute();
 
 		String pkg = "npm";
@@ -350,8 +343,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private T configureMojo(T mojo) {
-		CommandExecutor executor = mock(CommandExecutor.class);
-		writePrivate(mojo, "executor", executor);
+		writePrivate(mojo, "executor", givenExecutor(successResult()));
 		writePrivate(mojo, "failOnMissingScript", false);
 		writePrivate(mojo, "ignoreProxies", true);
 		writePrivate(mojo, "addMavenArgument", true);
@@ -463,17 +455,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	/**
-	 * Create and override mojo executor with an mock instance that returns a success result for every command
-	 * it will run.
-	 *
-	 * @param mojo The mojo.
-	 * @return The mock executor created by this method.
-	 */
-	private CommandExecutor givenSuccessfulExecutor(T mojo) {
-		return givenExecutor(mojo, successResult());
-	}
-
-	/**
 	 * Create and override mojo executor with an mock instance that returns a failure result for every command
 	 * it will run.
 	 *
@@ -494,6 +475,30 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	 */
 	private CommandExecutor givenExecutor(T mojo, CommandResult result) {
 		CommandExecutor executor = readPrivate(mojo, "executor");
+		return givenExecutor(executor, result);
+	}
+
+	/**
+	 * Create new mojo executor with an mock instance that returns given result for every command
+	 * it will run.
+	 *
+	 * @param result The command result returned by this executor.
+	 * @return The mock executor created by this method.
+	 */
+	private CommandExecutor givenExecutor(CommandResult result) {
+		CommandExecutor executor = mock(CommandExecutor.class);
+		return givenExecutor(executor, result);
+	}
+
+	/**
+	 * Customizer mojo executor and returns given result for every command
+	 * it will run.
+	 *
+	 * @param executor The executor.
+	 * @param result The command result returned by this executor.
+	 * @return The mock executor created by this method.
+	 */
+	private CommandExecutor givenExecutor(CommandExecutor executor, CommandResult result) {
 		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
 		return executor;
 	}
