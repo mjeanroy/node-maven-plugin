@@ -49,7 +49,6 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResul
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
-import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.newProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder.newSettings;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hamcrest.core.StringEndsWith.endsWith;
@@ -63,6 +62,9 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest<T> {
+
+	private static final String NPM = "npm";
+	private static final String YARN = "yarn";
 
 	@Rule
 	public ExpectedException thrown = none();
@@ -84,13 +86,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
-		verify_mojo_success(mojo, "npm");
+		verify_mojo_success(mojo, NPM);
 	}
 
 	@Test
 	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-yarn");
-		verify_mojo_success(mojo, "yarn");
+		verify_mojo_success(mojo, YARN);
 	}
 
 	private void verify_mojo_success(T mojo, String pkg) throws Exception {
@@ -102,7 +104,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
 		mojo.execute();
-		verifyMojoExecution(mojo, "npm", join(defaultArguments(false, true)));
+		verifyMojoExecution(mojo, NPM, join(defaultArguments(false, true)));
 	}
 
 	@Test
@@ -113,7 +115,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyMojoExecution(mojo, "npm", "run foobar --maven");
+		verifyMojoExecution(mojo, NPM, "run foobar --maven");
 	}
 
 	@Test
@@ -159,7 +161,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 
-		String cmd = "npm" + (isStandardScript() ? "" : " run") + " " + script();
+		String cmd = NPM + (isStandardScript() ? "" : " run") + " " + script();
 		verify(logger).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
@@ -171,7 +173,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyMojoErrorExecution(mojo, "npm", join(defaultArguments(true, true)));
+		verifyMojoErrorExecution(mojo, NPM, join(defaultArguments(true, true)));
 	}
 
 	@Test
@@ -226,17 +228,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_add_proxy_configuration() throws Exception {
-		T mojo = lookupEmptyMojo("mojo-with-parameters");
-		Settings settings = newSettings(
-				newProxy("http", "localhost", 8080, "mjeanroy", "foo"),
-				newProxy("https", "localhost", 8080, "mjeanroy", "foo")
-		);
-
-		writePrivate(mojo, "ignoreProxies", false);
-		writePrivate(mojo, "color", true);
-		writePrivate(mojo, "settings", settings);
-		writePrivate(mojo, "failOnError", false);
-
+		T mojo = lookupMojo("mojo-with-proxy");
+		givenSettingsWithDefaultProxies(mojo);
 		givenFailExecutor(mojo);
 
 		mojo.execute();
@@ -248,13 +241,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_ignore_proxy_configuration() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
-		Settings settings = newSettings(
-				defaultHttpProxy(),
-				defaultHttpsProxy()
-		);
+		givenSettingsWithDefaultProxies(mojo);
 
 		writePrivate(mojo, "ignoreProxies", true);
-		writePrivate(mojo, "settings", settings);
 
 		mojo.execute();
 
@@ -265,7 +254,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_not_add_maven_argument_if_disabled() throws Exception {
 		T mojo = lookupMojo("mojo-without-maven-argument");
 		mojo.execute();
-		verifyMojoExecution(mojo, "npm", join(defaultArguments(true, false)));
+		verifyMojoExecution(mojo, NPM, join(defaultArguments(true, false)));
 	}
 
 	@Override
@@ -284,7 +273,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	private T configureMojo(T mojo) {
 		writePrivate(mojo, "executor", givenExecutor(successResult()));
-		writePrivate(mojo, "ignoreProxies", true);
 		return mojo;
 	}
 
@@ -482,6 +470,28 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	 */
 	private CommandExecutor givenFailExecutor(T mojo) {
 		return givenExecutor(mojo, failureResult());
+	}
+
+	/**
+	 * Set maven settings with default HTTP & HTTPS proxy on given Mojo.
+	 *
+	 * @param mojo The mojo.
+	 */
+	private void givenSettingsWithDefaultProxies(T mojo) {
+		givenSettings(mojo, newSettings(
+				defaultHttpProxy(),
+				defaultHttpsProxy()
+		));
+	}
+
+	/**
+	 * Set maven settings on given Mojo.
+	 *
+	 * @param mojo The mojo.
+	 * @param settings Maven Settings.
+	 */
+	private void givenSettings(T mojo, Settings settings) {
+		writePrivate(mojo, "settings", settings);
 	}
 
 	/**
