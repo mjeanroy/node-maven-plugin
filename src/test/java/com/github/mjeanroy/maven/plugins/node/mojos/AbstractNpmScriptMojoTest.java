@@ -62,20 +62,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest {
+public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest<T> {
 
 	@Rule
 	public ExpectedException thrown = none();
 
 	@Test
 	public void test_should_create_mojo() throws Exception {
-		T mojo = createMojo("mojo", false);
+		T mojo = lookupEmptyMojo("mojo");
 		assertThat(mojo).isNotNull();
 	}
 
 	@Test
 	public void test_should_create_mojo_with_configuration() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		assertThat(mojo).isNotNull();
 		assertThat((Boolean) readPrivate(mojo, "color")).isTrue();
 		assertThat((File) readPrivate(mojo, "workingDirectory")).isNotNull();
@@ -83,13 +83,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		verify_mojo_success(mojo, "npm");
 	}
 
 	@Test
 	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
-		T mojo = createMojo("mojo-with-yarn", true);
+		T mojo = lookupMojo("mojo-with-yarn");
 		verify_mojo_success(mojo, "yarn");
 	}
 
@@ -116,7 +116,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
-		T mojo = createMojo("mojo", false);
+		T mojo = lookupEmptyMojo("mojo");
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -140,7 +140,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		overrideScript(mojo, "foobar");
 
 		CommandResult result = createResult(true);
@@ -163,7 +163,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_skip_mojo_execution() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "skip", true);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -177,7 +177,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_skip_individual_mojo_execution() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		enableSkip(mojo);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -191,7 +191,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_skip_mojo_execution_if_it_has_been_executed() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 
 		Map<Object, Object> pluginContext = new HashMap<>();
 		pluginContext.put(script(), true);
@@ -210,7 +210,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_failure() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", false);
 
 		CommandResult result = createResult(false);
@@ -237,7 +237,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_failure_and_throw_exception() throws Exception {
 		thrown.expect(MojoExecutionException.class);
 
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", true);
 
 		CommandResult result = createResult(false);
@@ -255,7 +255,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 			thrown.expectMessage("Cannot execute npm run " + script() + " command: it is not defined in package.json");
 		}
 
-		T mojo = createMojo("mojo-without-scripts", false);
+		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", true);
 
 		CommandResult result = createResult(false);
@@ -268,7 +268,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_not_throw_exception_if_scripts_does_not_exist() throws Exception {
-		T mojo = createMojo("mojo-without-scripts", false);
+		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", false);
 
 		CommandResult result = createResult(false);
@@ -302,7 +302,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		thrown.expect(PackageJsonNotFoundException.class);
 		thrown.expectMessage("File " + new File(workingDirectory.getAbsolutePath(), "package.json") + " does not exist");
 
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", false);
 		writePrivate(mojo, "workingDirectory", workingDirectory);
 
@@ -311,7 +311,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_add_proxy_configuration() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", false);
+		T mojo = lookupEmptyMojo("mojo-with-parameters");
 		Settings settings = SettingsTestBuilder.newSettings(
 				newProxy("http", "localhost", 8080, "mjeanroy", "foo"),
 				newProxy("https", "localhost", 8080, "mjeanroy", "foo")
@@ -352,7 +352,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_ignore_proxy_configuration() throws Exception {
-		T mojo = createMojo("mojo", false);
+		T mojo = lookupEmptyMojo("mojo");
 		Settings settings = newSettings(
 				defaultHttpProxy(),
 				defaultHttpsProxy()
@@ -376,7 +376,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_not_add_maven_argument_if_disabled() throws Exception {
-		T mojo = createMojo("mojo-with-parameters", true);
+		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "addMavenArgument", false);
 
 		CommandResult result = createResult(true);
@@ -399,17 +399,26 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		assertThat(cmd.toString()).isEqualTo("npm " + expectedArgs);
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	T createMojo(String projectName, boolean hasConfiguration) throws Exception {
-		T mojo = super.createMojo(projectName, hasConfiguration);
+	T lookupMojo(String projectName) throws Exception {
+		return configureMojo(
+				super.lookupMojo(projectName)
+		);
+	}
 
+	@Override
+	T lookupEmptyMojo(String projectName) throws Exception {
+		return configureMojo(
+				super.lookupEmptyMojo(projectName)
+		);
+	}
+
+	private T configureMojo(T mojo) {
 		CommandExecutor executor = mock(CommandExecutor.class);
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "failOnMissingScript", false);
 		writePrivate(mojo, "ignoreProxies", true);
 		writePrivate(mojo, "addMavenArgument", true);
-
 		return mojo;
 	}
 
@@ -435,6 +444,15 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	 */
 	String skipMessage() {
 		return String.format("Npm %s is skipped.", script());
+	}
+
+	/**
+	 * Get the NPM/YARN script that is tested.
+	 *
+	 * @return The script name.
+	 */
+	String script() {
+		return mojoName();
 	}
 
 	private boolean isStandardScript() {

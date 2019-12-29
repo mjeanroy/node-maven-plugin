@@ -58,7 +58,7 @@ public class InstallMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
 
 	@Test
 	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
-		InstallMojo mojo = createMojo("mojo-with-yarn", true);
+		InstallMojo mojo = lookupMojo("mojo-with-yarn");
 
 		CommandResult result = createResult(true);
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);

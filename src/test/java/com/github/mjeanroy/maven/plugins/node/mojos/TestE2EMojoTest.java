@@ -55,7 +55,7 @@ public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 
 	@Test
 	public void it_should_skip_tests() throws Exception {
-		TestE2EMojo mojo = createMojo("mojo-with-parameters", true);
+		TestE2EMojo mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "skipTests", true);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");

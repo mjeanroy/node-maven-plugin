@@ -60,7 +60,7 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	@Test
 	public void it_should_skip_tests_with_skipTests() throws Exception {
-		TestMojo mojo = createMojo("mojo-with-parameters", true);
+		TestMojo mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "skipTests", true);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");
@@ -74,7 +74,7 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	@Test
 	public void it_should_skip_tests_with_mavenTestSkip() throws Exception {
-		TestMojo mojo = createMojo("mojo-with-parameters", true);
+		TestMojo mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "mavenTestSkip", true);
 
 		CommandExecutor executor = readPrivate(mojo, "executor");

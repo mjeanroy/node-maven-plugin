@@ -46,7 +46,7 @@ import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
-public class CheckNodeMojoTest extends AbstractNpmMojoTest {
+public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Rule
 	public ExpectedException thrown = none();
@@ -59,7 +59,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	@Test
 	public void it_should_execute_mojo() throws Exception {
 		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
 		CommandResult result = createResult(true);
@@ -80,7 +80,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 	@Test
 	public void it_should_execute_mojo_with_yarn() throws Exception {
 		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "yarn", true);
 
@@ -107,7 +107,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		thrown.expectMessage("Node is not available. Please install it on your operating system.");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
@@ -132,7 +132,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		thrown.expectMessage("Npm is not available. Please install it on your operating system.");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
@@ -157,7 +157,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest {
 		thrown.expectMessage("Yarn is not available. Please install it on your operating system.");
 
 		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = createMojo("mojo", false);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "yarn", true);
 

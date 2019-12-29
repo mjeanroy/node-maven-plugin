@@ -36,7 +36,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePri
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-public abstract class AbstractNpmMojoTest {
+public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 
 	@Rule
 	public TestResources resources = new TestResources();
@@ -52,12 +52,33 @@ public abstract class AbstractNpmMojoTest {
 		return result;
 	}
 
+	T lookupMojo(String projectName) throws Exception {
+		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public T build(String goal, File pom) throws Exception {
+				return (T) mojoRule.lookupMojo(goal, pom);
+			}
+		});
+	}
+
+	T lookupEmptyMojo(String projectName) throws Exception {
+		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public T build(String goal, File pom) throws Exception {
+				return (T) mojoRule.lookupEmptyMojo(goal, pom);
+			}
+		});
+	}
+
 	@SuppressWarnings("unchecked")
-	<T> T createMojo(String projectName, boolean hasConfiguration) throws Exception {
+	private T lookupAndConfigureMojo(String projectName, MojoFactory<T> factory) throws Exception {
 		File baseDir = resources.getBasedir(projectName);
 		File pom = new File(baseDir, "pom.xml");
 		Log logger = createLogger();
-		Mojo mojo = hasConfiguration ? mojoRule.lookupMojo(mojoName(), pom) : mojoRule.lookupEmptyMojo(mojoName(), pom);
+
+		Mojo mojo = factory.build(mojoName(), pom);
 
 		writePrivate(mojo, "workingDirectory", baseDir);
 		writePrivate(mojo, "log", logger);
@@ -65,13 +86,23 @@ public abstract class AbstractNpmMojoTest {
 		return (T) mojo;
 	}
 
+	/**
+	 * Get the mojo name to test.
+	 *
+	 * @return Mojo Name.
+	 */
 	abstract String mojoName();
 
-	String script() {
-		return mojoName();
+	/**
+	 * The logger that will be injected into created mojos.
+	 *
+	 * @return The Logger.
+	 */
+	private Log createLogger() {
+		return mock(Log.class);
 	}
 
-	Log createLogger() {
-		return mock(Log.class);
+	private interface MojoFactory<T extends AbstractNpmMojo> {
+		T build(String goal, File pom) throws Exception;
 	}
 }
