@@ -63,8 +63,7 @@ public class InstallMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
 
 		CommandResult result = successResult();
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
 
@@ -72,7 +71,8 @@ public class InstallMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {
 		verify(logger).info("Running: yarn install --maven");
 		verify(logger, never()).error(anyString());
 
-		verify(executor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();

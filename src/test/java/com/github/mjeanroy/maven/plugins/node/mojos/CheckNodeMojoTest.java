@@ -32,7 +32,6 @@ import org.apache.maven.plugin.logging.Log;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -45,7 +44,11 @@ import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePri
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
@@ -111,13 +114,12 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("node")) {
-					throw new CommandException(mock(IOException.class));
+					throw new CommandException(new IOException());
 				}
 
 				return successResult();
@@ -136,13 +138,12 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("npm")) {
-					throw new CommandException(mock(IOException.class));
+					throw new CommandException(new IOException());
 				}
 
 				return successResult();
@@ -162,13 +163,12 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "yarn", true);
 
-		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
 			@Override
 			public Object answer(InvocationOnMock invocation) {
 				Command command = (Command) invocation.getArguments()[1];
 				if (command.toString().contains("yarn")) {
-					throw new CommandException(mock(IOException.class));
+					throw new CommandException(new IOException());
 				}
 
 				return successResult();
