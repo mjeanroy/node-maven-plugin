@@ -23,7 +23,6 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.MojoRule;
@@ -34,7 +33,6 @@ import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 
@@ -43,14 +41,6 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 
 	@Rule
 	public MojoRule mojoRule = new MojoRule();
-
-	CommandResult createResult(boolean success) {
-		CommandResult result = mock(CommandResult.class);
-		when(result.isSuccess()).thenReturn(success);
-		when(result.isFailure()).thenReturn(!success);
-		when(result.getStatus()).thenReturn(success ? 0 : 1);
-		return result;
-	}
 
 	T lookupMojo(String projectName) throws Exception {
 		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {

@@ -47,6 +47,8 @@ import java.util.Map;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.TestUtils.join;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.failureResult;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.newProxy;
@@ -94,7 +96,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verify_mojo_success(T mojo, String pkg) throws Exception {
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -118,7 +120,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -143,7 +145,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		overrideScript(mojo, "foobar");
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -213,7 +215,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", false);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -240,7 +242,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "failOnError", true);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -258,7 +260,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", true);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -271,7 +273,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupEmptyMojo("mojo-without-scripts");
 		writePrivate(mojo, "failOnMissingScript", false);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -321,7 +323,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "color", true);
 		writePrivate(mojo, "settings", settings);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -361,7 +363,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "ignoreProxies", true);
 		writePrivate(mojo, "settings", settings);
 
-		CommandResult result = createResult(false);
+		CommandResult result = failureResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);
@@ -379,7 +381,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "addMavenArgument", false);
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);

@@ -33,6 +33,7 @@ import org.mockito.ArgumentCaptor;
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
@@ -67,7 +68,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptMojoTest<PreCleanMojo> {
 	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
 		PreCleanMojo mojo = lookupMojo("mojo-with-yarn");
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		when(executor.execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class))).thenReturn(result);

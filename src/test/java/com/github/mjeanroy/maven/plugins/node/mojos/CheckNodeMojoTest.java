@@ -42,6 +42,7 @@ import java.io.IOException;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static org.junit.rules.ExpectedException.none;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -62,7 +63,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
@@ -84,7 +85,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "yarn", true);
 
-		CommandResult result = createResult(true);
+		CommandResult result = successResult();
 		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
 
 		mojo.execute();
@@ -119,7 +120,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 					throw new CommandException(mock(IOException.class));
 				}
 
-				return createResult(true);
+				return successResult();
 			}
 		});
 
@@ -144,7 +145,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 					throw new CommandException(mock(IOException.class));
 				}
 
-				return createResult(true);
+				return successResult();
 			}
 		});
 
@@ -170,7 +171,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 					throw new CommandException(mock(IOException.class));
 				}
 
-				return createResult(true);
+				return successResult();
 			}
 		});
 
