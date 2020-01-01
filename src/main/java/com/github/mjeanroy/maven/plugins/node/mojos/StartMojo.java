@@ -82,7 +82,7 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return false;
 	}
 }

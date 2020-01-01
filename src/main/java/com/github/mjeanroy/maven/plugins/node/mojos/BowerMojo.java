@@ -91,7 +91,7 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipBower;
 	}
 }

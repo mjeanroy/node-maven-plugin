@@ -100,7 +100,7 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipInstall;
 	}
 }

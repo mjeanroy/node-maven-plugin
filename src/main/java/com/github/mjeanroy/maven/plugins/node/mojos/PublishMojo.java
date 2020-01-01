@@ -95,7 +95,7 @@ public class PublishMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipPublish;
 	}
 }

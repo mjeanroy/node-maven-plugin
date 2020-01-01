@@ -105,7 +105,7 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipTests || skipTestE2E;
 	}
 }

@@ -96,7 +96,7 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipPreClean;
 	}
 }

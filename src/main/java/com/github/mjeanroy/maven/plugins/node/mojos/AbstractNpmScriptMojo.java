@@ -29,6 +29,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
@@ -167,33 +168,22 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		cmd.addArgument(scriptToRun);
 
 		// Command already done ?
-		if (hasBeenRun()) {
-			// Skip execution.
+		if (hasBeenRunPreviously()) {
 			getLog().info("Command " + cmd.toString() + " already done, skipping.");
 			return;
 		}
 
-		// Should skip ?
-		if (skip || isSkipped()) {
+		// Should skip?
+		if (skip || shouldSkip()) {
 			getLog().info(getSkippedMessage());
 			return;
 		}
 
 		File packageJsonFile = lookupPackageJson();
 		PackageJson packageJson = parsePackageJson(packageJsonFile);
-
 		if (needRunScript(scriptToRun) && !packageJson.hasScript(scriptToRun)) {
-			// This command is not a standard command, and it is not defined in package.json.
-			// Fail as soon as possible.
-			String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json (please check file: " + packageJsonFile.getAbsolutePath() + ")";
-			if (failOnMissingScript) {
-				getLog().error(message + ".");
-				throw new MojoExecutionException(message);
-			} else {
-				// Do not fail, but log warning
-				getLog().warn(message + ", skipping.");
-				return;
-			}
+			handleMissingNpmScript(cmd, packageJsonFile);
+			return;
 		}
 
 		if (!color) {
@@ -215,6 +205,16 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			}
 		}
 
+		doExecute(cmd);
+	}
+
+	/**
+	 * Execute command.
+	 *
+	 * @param cmd The command to execute.
+	 * @throws MojoExecutionException If something bad happened.
+	 */
+	private void doExecute(Command cmd) throws MojoExecutionException {
 		getLog().info("Running: " + cmd.toString());
 
 		try {
@@ -228,6 +228,32 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	}
 
 	/**
+	 * Handle missing NPM script:
+	 *
+	 * <ul>
+	 *   <li>Fail if {@link #failOnMissingScript} is {@code true}</li>
+	 *   <li>Simply log a warning otherwise.</li>
+	 * </ul>
+	 *
+	 * @param cmd The command to run.
+	 * @param packageJsonFile The {@code package.json} file.
+	 * @throws MojoExecutionException Thrown if {@link #failOnMissingScript} is {@code true}.
+	 */
+	private void handleMissingNpmScript(Command cmd, File packageJsonFile) throws MojoExecutionException {
+		// This command is not a standard command, and it is not defined in package.json.
+		// Fail as soon as possible.
+		String message = "Cannot execute " + cmd.toString() + " command: it is not defined in package.json (please check file: " + packageJsonFile.getAbsolutePath() + ")";
+
+		if (failOnMissingScript) {
+			getLog().error(message + ".");
+			throw new MojoExecutionException(message);
+		}
+
+		// Do not fail, but log warning
+		getLog().warn(message + ", skipping.");
+	}
+
+	/**
 	 * Get the script to run.
 	 *
 	 * @param silent Disable log output to warn about script deprecation.
@@ -235,7 +261,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	private String getScriptToRun(boolean silent) {
 		if (this.script != null) {
-			if (silent) {
+			if (!silent) {
 				getLog().warn("Parameter `script` has been deprecated to avoid conflict issues, please use `" + getScriptParameterName() + "` instead");
 			}
 
@@ -250,7 +276,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 *
 	 * @return {@code true} if script command has been run, {@code false} otherwise.
 	 */
-	private boolean hasBeenRun() {
+	private boolean hasBeenRunPreviously() {
 		Map pluginContext = getPluginContext();
 		String script = getScriptToRun(true);
 		return pluginContext != null && pluginContext.containsKey(script) && ((Boolean) pluginContext.get(script));
@@ -291,7 +317,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 *
 	 * @return {@code true} if mojo execution should be skipped, {@code false} otherwise.
 	 */
-	abstract boolean isSkipped();
+	abstract boolean shouldSkip();
 
 	/**
 	 * Message logged when mojo execution is skipped.
@@ -311,17 +337,46 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private void executeCommand(Command cmd) throws MojoExecutionException {
 		CommandResult result = executor.execute(getWorkingDirectory(), cmd, npmLogger());
 		if (result.isFailure()) {
-			// Always display error log
-			getLog().error("Error during execution of: " + cmd.toString());
-			getLog().error("Exit status: " + result.getStatus());
-
-			// Throw exception if npm command does not succeed
-			if (failOnError) {
-				throw new MojoExecutionException("Error during: " + cmd.toString());
-			}
+			handleFailure(cmd, result);
 		} else {
-			// Display success log
-			getLog().debug("Execution succeed: " + cmd.toString());
+			handleSuccess(cmd);
+		}
+	}
+
+	/**
+	 * Display a success log if execution succeed.
+	 *
+	 * @param cmd The command.
+	 */
+	private void handleSuccess(Command cmd) {
+		Log log = getLog();
+		if (log.isDebugEnabled()) {
+			log.debug("Execution succeed: " + cmd.toString());
+		}
+	}
+
+	/**
+	 * Handle command execution failure:
+	 *
+	 * <ol>
+	 *   <li>Log an error.</li>
+	 *   <li>Fail if {@link #failOnError} is {@code true}.</li>
+	 * </ol>
+	 *
+	 * @param cmd The command that failed.
+	 * @param result The result status
+	 * @throws MojoExecutionException If
+	 */
+	private void handleFailure(Command cmd, CommandResult result) throws MojoExecutionException {
+		Log log = getLog();
+		String rawCmd = cmd.toString();
+
+		log.error("Error during execution of: " + rawCmd);
+		log.error("Exit status: " + result.getStatus());
+
+		// Throw exception if npm command does not succeed
+		if (failOnError) {
+			throw new MojoExecutionException("Error during: " + rawCmd);
 		}
 	}
 }

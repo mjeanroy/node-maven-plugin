@@ -106,7 +106,7 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipTests || mavenTestSkip || skipTest;
 	}
 

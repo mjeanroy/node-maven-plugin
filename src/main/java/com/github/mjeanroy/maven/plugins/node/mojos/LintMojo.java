@@ -99,7 +99,7 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipLint;
 	}
 }

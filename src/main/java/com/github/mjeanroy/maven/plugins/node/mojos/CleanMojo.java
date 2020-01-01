@@ -94,7 +94,7 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return skipClean;
 	}
 }

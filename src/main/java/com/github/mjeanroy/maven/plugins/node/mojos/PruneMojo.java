@@ -82,7 +82,7 @@ public class PruneMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	boolean isSkipped() {
+	boolean shouldSkip() {
 		return false;
 	}
 }
