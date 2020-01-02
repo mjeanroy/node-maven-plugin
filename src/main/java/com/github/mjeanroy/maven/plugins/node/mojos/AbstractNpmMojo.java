@@ -32,6 +32,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
+import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.json.Jsons.parseJson;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 
@@ -146,7 +147,8 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
 		getLog().debug("Searching for package.json file in: " + workingDirectory);
 
-		File packageJson = new File(workingDirectory, "package.json");
+		String absolutePath = getNormalizeAbsolutePath(workingDirectory);
+		File packageJson = new File(absolutePath, "package.json");
 		if (!packageJson.exists()) {
 			getLog().error("Missing package.json file, cannot find it in: " + workingDirectory);
 			throw new PackageJsonNotFoundException(packageJson);

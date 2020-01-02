@@ -34,9 +34,14 @@ import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.settings.Settings;
 
 import java.io.File;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
+import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
 import static java.util.Collections.unmodifiableSet;
@@ -278,8 +283,15 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	private boolean hasBeenRunPreviously() {
 		Map pluginContext = getPluginContext();
-		String script = getScriptToRun(true);
-		return pluginContext != null && pluginContext.containsKey(script) && ((Boolean) pluginContext.get(script));
+		if (pluginContext == null) {
+			return false;
+		}
+
+		String taskId = currentTaskId();
+
+		getLog().debug("Checking if task '" + taskId + "' has been already executed");
+
+		return pluginContext.containsKey(taskId) && ((Boolean) pluginContext.get(taskId));
 	}
 
 	/**
@@ -294,8 +306,18 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			pluginContext = new HashMap();
 		}
 
-		pluginContext.put(getScriptToRun(true), status);
+		String taskId = currentTaskId();
+
+		getLog().debug("Storing execution of: '" + taskId + "'");
+
+		pluginContext.put(taskId, status);
 		setPluginContext(pluginContext);
+	}
+
+	private String currentTaskId() {
+		String script = getScriptToRun(true);
+		String project = getNormalizeAbsolutePath(getWorkingDirectory());
+		return project + "::" + script;
 	}
 
 	/**

@@ -30,8 +30,10 @@ import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Rule;
 
 import java.io.File;
+import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
 
 public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
@@ -62,8 +64,23 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 		});
 	}
 
-	@SuppressWarnings("unchecked")
+	T lookupMojo(String projectName, Map<String, ?> configuration) throws Exception {
+		return lookupAndConfigureMojo(projectName, configuration, new MojoFactory<T>() {
+			@SuppressWarnings("unchecked")
+			@Override
+			public T build(String goal, File pom) throws Exception {
+				return (T) mojoRule.lookupEmptyMojo(goal, pom);
+			}
+		});
+	}
+
 	private T lookupAndConfigureMojo(String projectName, MojoFactory<T> factory) throws Exception {
+		Map<String, Object> configuration = emptyMap();
+		return lookupAndConfigureMojo(projectName, configuration, factory);
+	}
+
+	@SuppressWarnings("unchecked")
+	private T lookupAndConfigureMojo(String projectName, Map<String, ?> configuration, MojoFactory<T> factory) throws Exception {
 		File baseDir = resources.getBasedir(projectName);
 		File pom = new File(baseDir, "pom.xml");
 		Log logger = createLogger();
@@ -72,6 +89,10 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 
 		writePrivate(mojo, "workingDirectory", baseDir);
 		writePrivate(mojo, "log", logger);
+
+		for (Map.Entry<String, ?> property : configuration.entrySet()) {
+			writePrivate(mojo, property.getKey(), property.getValue());
+		}
 
 		return (T) mojo;
 	}
