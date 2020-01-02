@@ -23,7 +23,6 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import org.apache.maven.plugin.Mojo;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
@@ -79,13 +78,12 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 		return lookupAndConfigureMojo(projectName, configuration, factory);
 	}
 
-	@SuppressWarnings("unchecked")
 	private T lookupAndConfigureMojo(String projectName, Map<String, ?> configuration, MojoFactory<T> factory) throws Exception {
 		File baseDir = resources.getBasedir(projectName);
 		File pom = new File(baseDir, "pom.xml");
 		Log logger = createLogger();
 
-		Mojo mojo = factory.build(mojoName(), pom);
+		T mojo = factory.build(mojoName(), pom);
 
 		writePrivate(mojo, "workingDirectory", baseDir);
 		writePrivate(mojo, "log", logger);
@@ -94,7 +92,7 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
 			writePrivate(mojo, property.getKey(), property.getValue());
 		}
 
-		return (T) mojo;
+		return mojo;
 	}
 
 	/**

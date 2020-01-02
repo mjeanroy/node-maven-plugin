@@ -23,121 +23,68 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import com.github.mjeanroy.maven.plugins.node.commons.io.Environments;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.security.AccessController;
-import java.security.PrivilegedExceptionAction;
-
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
 import static com.github.mjeanroy.maven.plugins.node.commands.Commands.yarn;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writeStatic;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandsTest {
 
-	private boolean isWindows;
+	private String osName;
 
 	@Before
 	public void setUp() {
-		isWindows = Environments.isWindows();
+		osName = System.getProperty("os.name");
 	}
 
 	@After
-	public void tearDown() throws Exception {
-		setWindows(isWindows);
+	public void tearDown() {
+		System.setProperty("os.name", osName);
 	}
 
 	@Test
-	public void it_should_create_npm_command() throws Exception {
-		unsetWindows();
-
-		final String executable = null;
-		final String arg = "--no-color";
-
-		Command npm = npm(executable);
-		npm.addArgument(arg);
-
-		assertThat(npm.getExecutable()).isEqualTo("npm");
-		assertThat(npm.getArguments()).containsExactly(arg);
+	public void it_should_create_npm_command_on_linux() {
+		useLinux();
+		verify_npm_command_on_unix();
 	}
 
 	@Test
-	public void it_should_create_npm_command_with_custom_path() throws Exception {
-		unsetWindows();
-
-		final String executable = "./npm-cli";
-		final String arg = "--no-color";
-
-		Command npm = npm(executable);
-		npm.addArgument(arg);
-
-		assertThat(npm.getExecutable()).isEqualTo(executable);
-		assertThat(npm.getArguments()).containsExactly(arg);
+	public void it_should_create_npm_command_with_custom_path_on_linux() {
+		useLinux();
+		verify_npm_command_with_custom_path_on_unix();
 	}
 
 	@Test
-	public void it_should_create_yarn_command() throws Exception {
-		unsetWindows();
-
-		final String executable = null;
-		final String arg = "--no-color";
-
-		Command yarn = yarn(executable);
-		yarn.addArgument(arg);
-
-		assertThat(yarn.getExecutable()).isEqualTo("yarn");
-		assertThat(yarn.getArguments()).containsExactly(arg);
+	public void it_should_create_yarn_command_on_linux() {
+		useLinux();
+		verify_yarn_command_on_unix();
 	}
 
 	@Test
-	public void it_should_create_yarn_command_with_custom_path() throws Exception {
-		unsetWindows();
-
-		final String executable =  "./yarn-cli";
-		final String arg = "--no-color";
-
-		Command yarn = yarn(executable);
-		yarn.addArgument(arg);
-
-		assertThat(yarn.getExecutable()).isEqualTo(executable);
-		assertThat(yarn.getArguments()).containsExactly(arg);
+	public void it_should_create_yarn_command_with_custom_path_on_linux() {
+		useLinux();
+		verify_yarn_command_with_custom_path_on_unix();
 	}
 
 	@Test
-	public void it_should_create_node_command() throws Exception {
-		unsetWindows();
-
-		final String executable = null;
-		final String arg = "--no-color";
-
-		Command node = node(executable);
-		node.addArgument(arg);
-
-		assertThat(node.getExecutable()).isEqualTo("node");
-		assertThat(node.getArguments()).containsExactly(arg);
+	public void it_should_create_node_command_on_linux() {
+		useLinux();
+		verify_node_command_on_unix();
 	}
 
 	@Test
-	public void it_should_create_node_command_with_custom_path() throws Exception {
-		unsetWindows();
-
-		final String executable = "./node";
-		final String arg = "--no-color";
-
-		Command node = node(executable);
-		node.addArgument(arg);
-
-		assertThat(node.getExecutable()).isEqualTo(executable);
-		assertThat(node.getArguments()).containsExactly(arg);
+	public void it_should_create_node_command_with_custom_path_on_linux() {
+		useLinux();
+		verify_node_command_with_custom_path_on_unix();
 	}
 
 	@Test
-	public void it_should_create_npm_command_on_windows() throws Exception {
-		setWindows();
+	public void it_should_create_npm_command_on_windows() {
+		useWindows();
 
 		final String executable = null;
 		final String arg = "--no-color";
@@ -150,8 +97,8 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_on_windows_with_custom_path() throws Exception {
-		setWindows();
+	public void it_should_create_npm_command_on_windows_with_custom_path() {
+		useWindows();
 
 		final String executable = "./npm-cli";
 		final String arg = "--no-color";
@@ -164,8 +111,8 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_yarn_command_on_windows() throws Exception {
-		setWindows();
+	public void it_should_create_yarn_command_on_windows() {
+		useWindows();
 
 		final String executable = null;
 		final String arg = "--no-color";
@@ -178,8 +125,8 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_yarn_command_on_windows_with_custom_path() throws Exception {
-		setWindows();
+	public void it_should_create_yarn_command_on_windows_with_custom_path() {
+		useWindows();
 
 		final String executable = "./yarn-cli";
 		final String arg = "--no-color";
@@ -192,8 +139,8 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command_on_windows() throws Exception {
-		setWindows();
+	public void it_should_create_node_command_on_windows() {
+		useWindows();
 
 		final String executable = null;
 		final String arg = "--no-color";
@@ -206,8 +153,8 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_node_command_on_windows_with_custom_path() throws Exception {
-		setWindows();
+	public void it_should_create_node_command_on_windows_with_custom_path() {
+		useWindows();
 
 		String executable = "./node.exe";
 		String arg = "--no-color";
@@ -219,21 +166,121 @@ public class CommandsTest {
 		assertThat(node.getArguments()).containsExactly("/C", executable, arg);
 	}
 
-	private static void setWindows() throws Exception {
-		setWindows(true);
+	@Test
+	public void it_should_create_npm_command_on_mac_os_x() {
+		useMacOsX();
+		verify_npm_command_on_unix();
 	}
 
-	private static void unsetWindows() throws Exception {
-		setWindows(false);
+	@Test
+	public void it_should_create_npm_command_with_custom_path_on_mac_os_x() {
+		useMacOsX();
+		verify_npm_command_with_custom_path_on_unix();
 	}
 
-	private static void setWindows(final boolean isWindows) throws Exception {
-		AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
-			@Override
-			public Void run() {
-				writeStatic(Environments.class, "IS_WINDOWS", isWindows);
-				return null;
-			}
-		});
+	@Test
+	public void it_should_create_yarn_command_on_mac_os_x() {
+		useMacOsX();
+		verify_yarn_command_on_unix();
+	}
+
+	@Test
+	public void it_should_create_yarn_command_with_custom_path_on_mac_os_x() {
+		useMacOsX();
+		verify_yarn_command_with_custom_path_on_unix();
+	}
+
+	@Test
+	public void it_should_create_node_command_on_mac_os_x() {
+		useMacOsX();
+		verify_node_command_on_unix();
+	}
+
+	@Test
+	public void it_should_create_node_command_with_custom_path_on_mac_os_x() {
+		useMacOsX();
+		verify_yarn_command_with_custom_path_on_unix();
+	}
+
+	private void verify_npm_command_on_unix() {
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
+		assertThat(npm.getExecutable()).isEqualTo("npm");
+		assertThat(npm.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_npm_command_with_custom_path_on_unix() {
+		final String executable = "./npm-cli";
+		final String arg = "--no-color";
+
+		Command npm = npm(executable);
+		npm.addArgument(arg);
+
+		assertThat(npm.getExecutable()).isEqualTo(executable);
+		assertThat(npm.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_yarn_command_on_unix() {
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("yarn");
+		assertThat(yarn.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_yarn_command_with_custom_path_on_unix() {
+		final String executable =  "./yarn-cli";
+		final String arg = "--no-color";
+
+		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo(executable);
+		assertThat(yarn.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_node_command_on_unix() {
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
+		assertThat(node.getExecutable()).isEqualTo("node");
+		assertThat(node.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_node_command_with_custom_path_on_unix() {
+		final String executable = "./node";
+		final String arg = "--no-color";
+
+		Command node = node(executable);
+		node.addArgument(arg);
+
+		assertThat(node.getExecutable()).isEqualTo(executable);
+		assertThat(node.getArguments()).containsExactly(arg);
+	}
+
+	private static void useWindows() {
+		useOs("Windows");
+	}
+
+	private static void useLinux() {
+		useOs("Linux");
+	}
+
+	private static void useMacOsX() {
+		useOs("Mac OS X");
+	}
+
+	private static void useOs(String osName) {
+		System.setProperty("os.name", osName);
 	}
 }

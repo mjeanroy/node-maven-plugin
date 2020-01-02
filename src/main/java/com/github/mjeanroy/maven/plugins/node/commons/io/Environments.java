@@ -28,15 +28,6 @@ package com.github.mjeanroy.maven.plugins.node.commons.io;
  */
 public final class Environments {
 
-	/**
-	 * Flag that will be {@code true} if runtime operating system is windows.
-	 */
-	private static final boolean IS_WINDOWS;
-
-	static {
-			IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-	}
-
 	// Ensure non instantiation
 	private Environments() {
 	}
@@ -47,6 +38,6 @@ public final class Environments {
 	 * @return {@code true} if current operating-system is windows, {@code false} otherwise.
 	 */
 	public static boolean isWindows() {
-		return IS_WINDOWS;
+		return  System.getProperty("os.name").toLowerCase().contains("windows");
 	}
 }

@@ -36,8 +36,6 @@ import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePri
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class InstallMojoTest extends AbstractNpmScriptMojoTest<InstallMojo> {

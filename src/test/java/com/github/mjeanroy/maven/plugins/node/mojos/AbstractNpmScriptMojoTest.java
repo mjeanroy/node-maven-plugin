@@ -105,8 +105,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
+		String script = "foobar";
 
-		overrideScript(mojo, "foobar");
+		overrideScript(mojo, script);
 
 		mojo.execute();
 
@@ -213,6 +214,17 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verifyMojoErrorExecution(mojo, NPM, join(defaultArguments(true, true)));
+	}
+
+	@Test
+	public void it_should_execute_yarn_mojo_in_failure() throws Exception {
+		T mojo = lookupMojo("mojo-yarn-fail-on-error-false");
+
+		givenFailExecutor(mojo);
+
+		mojo.execute();
+
+		verifyMojoErrorExecution(mojo, YARN, join(defaultArguments(true, true)));
 	}
 
 	@Test
@@ -403,7 +415,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyMojoErrorExecution(T mojo, String pkg, String expectedArgs) {
-		verifyErrorOutput(mojo, expectedArgs);
+		verifyErrorOutput(mojo, pkg, expectedArgs);
 		verifyCommandExecution(mojo, pkg, expectedArgs);
 	}
 
@@ -413,9 +425,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger, never()).error(anyString());
 	}
 
-	private void verifyErrorOutput(T mojo, String expectedArgs) {
+	private void verifyErrorOutput(T mojo, String pkg, String expectedArgs) {
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).error("Error during execution of: npm " + expectedArgs);
+		verify(logger).error("Error during execution of: " + pkg + " " + expectedArgs);
 		verify(logger).error("Exit status: 1");
 	}
 
@@ -500,9 +512,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo, "settings", settings);
 	}
 
-	private CommandExecutor givenExecutor(T mojo, CommandResult result) {
+	private void givenExecutor(T mojo, CommandResult result) {
 		CommandExecutor executor = readPrivate(mojo, "executor");
-		return givenExecutor(executor, result);
+		givenExecutor(executor, result);
 	}
 
 	private CommandExecutor givenExecutor(CommandResult result) {

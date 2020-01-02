@@ -23,21 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.Command;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
-import org.apache.maven.plugin.logging.Log;
-import org.junit.Test;
-import org.mockito.ArgumentCaptor;
-
-import java.io.File;
-
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
-import static org.apache.commons.lang3.reflect.FieldUtils.readField;
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 public class PublishMojoTest extends AbstractNpmScriptMojoTest<PublishMojo> {
 
