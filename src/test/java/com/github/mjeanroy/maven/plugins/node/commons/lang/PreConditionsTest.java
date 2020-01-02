@@ -21,18 +21,34 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-public class EnvUtilsTest {
+public class PreConditionsTest {
 
 	@Test
-	public void it_should_check_if_os_is_windows() {
-		boolean isWindows = EnvUtils.isWindows();
-		assertThat(isWindows)
-			.isEqualTo(System.getProperty("os.name").toLowerCase().contains("windows"));
+	public void it_should_not_fail_with_non_null() {
+		String input = "test";
+		String message = "message";
+		assertThat(PreConditions.notNull(input, message)).isEqualTo(input);
+	}
+
+	@Test
+	public void it_should_fail_with_null() {
+		final String input = null;
+		final String message = "message";
+		final ThrowingCallable func = new ThrowingCallable() {
+			@Override
+			public void call() {
+				PreConditions.notNull(input, message);
+			}
+		};
+
+		assertThatThrownBy(func).isInstanceOf(NullPointerException.class).hasMessage(message);
 	}
 }

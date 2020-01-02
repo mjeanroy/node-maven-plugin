@@ -26,7 +26,7 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 
 /**
  * Prune Mojo.

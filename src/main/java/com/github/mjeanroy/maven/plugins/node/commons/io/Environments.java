@@ -21,44 +21,32 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.io;
 
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+/**
+ * Static Environment Utilities.
+ */
+public final class Environments {
 
-import java.io.File;
+	/**
+	 * Flag that will be {@code true} if runtime operating system is windows.
+	 */
+	private static final boolean IS_WINDOWS;
 
-import static org.assertj.core.api.Assertions.assertThat;
-
-public class JsonUtilsTest {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
-	@Test
-	public void it_should_parse_json_file() {
-		File file = new File(getClass().getResource("/test.json").getPath());
-		TestObject tstObject = JsonUtils.parseJson(file, TestObject.class);
-		assertThat(tstObject).isNotNull();
-		assertThat(tstObject.getId()).isEqualTo(1);
-		assertThat(tstObject.getFoo()).isEqualTo("bar");
+	static {
+			IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
 	}
 
-	public static class TestObject {
-		private int id;
+	// Ensure non instantiation
+	private Environments() {
+	}
 
-		private String foo;
-
-		TestObject() {
-		}
-
-		int getId() {
-			return id;
-		}
-
-		String getFoo() {
-			return foo;
-		}
+	/**
+	 * Check if current operating system is Windows.
+	 *
+	 * @return {@code true} if current operating-system is windows, {@code false} otherwise.
+	 */
+	public static boolean isWindows() {
+		return IS_WINDOWS;
 	}
 }

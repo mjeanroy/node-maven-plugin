@@ -37,8 +37,8 @@ import java.io.File;
 import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
-import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
-import static com.github.mjeanroy.maven.plugins.node.commons.ProxyUtils.findHttpActiveProfiles;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
 import static java.util.Collections.unmodifiableSet;
 
 abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {

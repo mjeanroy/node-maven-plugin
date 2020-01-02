@@ -32,8 +32,8 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
 
-import static com.github.mjeanroy.maven.plugins.node.commons.JsonUtils.parseJson;
-import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.json.Jsons.parseJson;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 
 abstract class AbstractNpmMojo extends AbstractMojo {
 

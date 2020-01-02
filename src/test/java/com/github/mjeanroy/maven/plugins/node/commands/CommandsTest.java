@@ -23,7 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import com.github.mjeanroy.maven.plugins.node.commons.EnvUtils;
+import com.github.mjeanroy.maven.plugins.node.commons.io.Environments;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -43,7 +43,7 @@ public class CommandsTest {
 
 	@Before
 	public void setUp() {
-		isWindows = EnvUtils.isWindows();
+		isWindows = Environments.isWindows();
 	}
 
 	@After
@@ -231,7 +231,7 @@ public class CommandsTest {
 		AccessController.doPrivileged(new PrivilegedExceptionAction<Void>() {
 			@Override
 			public Void run() {
-				writeStatic(EnvUtils.class, "IS_WINDOWS", isWindows);
+				writeStatic(Environments.class, "IS_WINDOWS", isWindows);
 				return null;
 			}
 		});

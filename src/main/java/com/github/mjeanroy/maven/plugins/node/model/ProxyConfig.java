@@ -31,7 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Objects;
 
-import static com.github.mjeanroy.maven.plugins.node.commons.PreConditions.notNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 
 /**
  * Proxy Configuration.

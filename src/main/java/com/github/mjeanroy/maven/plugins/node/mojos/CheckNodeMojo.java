@@ -27,12 +27,11 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
-import static com.github.mjeanroy.maven.plugins.node.commons.StringUtils.capitalize;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.capitalize;
 
 /**
  * Check Mojo.

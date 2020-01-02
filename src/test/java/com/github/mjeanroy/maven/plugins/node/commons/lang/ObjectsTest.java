@@ -21,32 +21,19 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
-/**
- * Static Environment Utilities.
- */
-public final class EnvUtils {
+import org.junit.Test;
 
-	/**
-	 * Flag that will be {@code true} if runtime operating system is windows.
-	 */
-	private static final boolean IS_WINDOWS;
+import static org.assertj.core.api.Assertions.assertThat;
 
-	static {
-			IS_WINDOWS = System.getProperty("os.name").toLowerCase().contains("windows");
-	}
+public class ObjectsTest {
 
-	// Ensure non instantiation
-	private EnvUtils() {
-	}
-
-	/**
-	 * Check if current operating system is Windows.
-	 *
-	 * @return {@code true} if current operating-system is windows, {@code false} otherwise.
-	 */
-	public static boolean isWindows() {
-		return IS_WINDOWS;
+	@Test
+	public void it_should_get_first_non_null_object() {
+		assertThat(Objects.firstNonNull(null, null)).isNull();
+		assertThat(Objects.firstNonNull("", null)).isEqualTo("");
+		assertThat(Objects.firstNonNull(null, "")).isEqualTo("");
+		assertThat(Objects.firstNonNull("one", "two")).isEqualTo("one");
 	}
 }

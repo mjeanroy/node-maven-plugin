@@ -21,57 +21,37 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.mvn;
 
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
+import com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder;
 import org.apache.maven.settings.Proxy;
+import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
-import static com.github.mjeanroy.maven.plugins.node.model.ProxyConfig.proxyConfiguration;
+import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
 
-/**
- * Static Proxy Utilities.
- */
-public final class ProxyUtils {
+public class MvnUtilsTest {
 
-	/**
-	 * The {@code "http"} protocol value.
-	 */
-	private static final String HTTP_SCHEME = "http";
+	@Test
+	public void it_should_get_active_http_proxies() {
+		Proxy p1 = new ProxyTestBuilder().withProtocol("http").withHost("foo1").build();
+		Proxy p2 = new ProxyTestBuilder().withProtocol("https").withHost("foo2").build();
 
-	/**
-	 * The {@code "https"} protocol value.
-	 */
-	private static final String HTTPS_SCHEME = "https";
+		Proxy p3 = new ProxyTestBuilder().withProtocol("http").withHost("foo3").withActive(false).build();
+		Proxy p4 = new ProxyTestBuilder().withProtocol("https").withHost("foo4").withActive(false).build();
+		Proxy p5 = new ProxyTestBuilder().withProtocol("socks").withHost("foo5").withActive(true).build();
 
-	// Ensure non instantiation.
-	private ProxyUtils() {
-	}
+		List<ProxyConfig> configs = findHttpActiveProfiles(asList(p1, p2, p3, p4, p5));
 
-	/**
-	 * Return configuration for active profiles.
-	 *
-	 * <p>
-	 *
-	 * Note that {@code npm} does not support socks proxy, so filter against http or https
-	 * protocol is enough.
-	 *
-	 * @param proxies Proxies.
-	 * @return Active configurations.
-	 */
-	public static List<ProxyConfig> findHttpActiveProfiles(Collection<Proxy> proxies) {
-		List<ProxyConfig> configs = new ArrayList<>(proxies.size());
-		for (Proxy proxy : proxies) {
-			if (proxy.isActive()) {
-				String protocol = proxy.getProtocol().toLowerCase();
-				if (protocol.equals(HTTP_SCHEME) || protocol.equals(HTTPS_SCHEME)) {
-					configs.add(proxyConfiguration(proxy));
-				}
-			}
-		}
-		return configs;
+		assertThat(configs)
+			.isNotNull()
+			.isNotEmpty()
+			.hasSize(2)
+			.extracting("host")
+			.containsExactly("foo1", "foo2");
 	}
 }

@@ -21,44 +21,25 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
-
-import com.github.mjeanroy.maven.plugins.node.exceptions.JsonException;
-import com.google.gson.Gson;
-
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
 /**
- * Json Static Utilities.
+ * Static Object Utilities.
  */
-public final class JsonUtils {
+public final class Objects {
+
+	private Objects() {
+	}
 
 	/**
-	 * Read json file and return object representation.
+	 * Return first non {@code null} value.
 	 *
-	 * @param jsonFile Json File.
-	 * @param klass Class to use for deserialization.
-	 * @param <T> Type of object to return.
-	 * @return Object representation of json file.
+	 * @param v1 Value 1.
+	 * @param v2 Value 2.
+	 * @param <T> Type of parameters.
+	 * @return First parameter if it is not {@code null}, second parameter otherwise.
 	 */
-	public static <T> T parseJson(File jsonFile, Class<T> klass) {
-		try {
-			FileReader reader = new FileReader(jsonFile);
-			BufferedReader buf = new BufferedReader(reader);
-
-			StringBuilder json = new StringBuilder();
-			String line;
-			while ((line = buf.readLine()) != null) {
-				json.append(line);
-			}
-
-			return new Gson().fromJson(json.toString(), klass);
-		}
-		catch (IOException ex) {
-			throw new JsonException(ex);
-		}
+	public static <T> T firstNonNull(T v1, T v2) {
+		return v1 == null ? v2 : v1;
 	}
 }

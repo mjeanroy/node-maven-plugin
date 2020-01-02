@@ -27,8 +27,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.github.mjeanroy.maven.plugins.node.commons.EnvUtils.isWindows;
-import static com.github.mjeanroy.maven.plugins.node.commons.ObjectUtils.firstNonNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.io.Environments.isWindows;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 
 /**
  * Static factories for commons commands.

@@ -21,30 +21,16 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.io;
 
-/**
- * Static PreCondition Utilities.
- */
-public final class PreConditions {
+import org.junit.Test;
 
-	// Ensure non instantiation.
-	private PreConditions() {
-	}
+import static org.assertj.core.api.Assertions.assertThat;
 
-	/**
-	 * Throw new {@link NullPointerException} if first parameter is {@code null}
-	 * with given exception message.
-	 *
-	 * @param v1 Value to check.
-	 * @param message Message thrown.
-	 * @param <T> Type of first parameter.
-	 * @return First parameter if it is not {@code null}.
-	 */
-	public static <T> T notNull(T v1, String message) {
-		if (v1 == null) {
-			throw new NullPointerException(message);
-		}
-		return v1;
+public class EnvironmentsTest {
+
+	@Test
+	public void it_should_check_if_os_is_windows() {
+		assertThat(Environments.isWindows()).isEqualTo(System.getProperty("os.name").toLowerCase().contains("windows"));
 	}
 }

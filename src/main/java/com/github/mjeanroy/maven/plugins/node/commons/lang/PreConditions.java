@@ -21,28 +21,30 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
 /**
- * Static String Utilities.
+ * Static PreCondition Utilities.
  */
-public class StringUtils {
+public final class PreConditions {
 
 	// Ensure non instantiation.
-	private StringUtils() {
+	private PreConditions() {
 	}
 
 	/**
-	 * Turn a string to a capitalized string.
+	 * Throw new {@link NullPointerException} if first parameter is {@code null}
+	 * with given exception message.
 	 *
-	 * @param text String to capitalized.
-	 * @return Capitalized string.
+	 * @param v1 Value to check.
+	 * @param message Message thrown.
+	 * @param <T> Type of first parameter.
+	 * @return First parameter if it is not {@code null}.
 	 */
-	public static String capitalize(String text) {
-		if (text == null || text.isEmpty()) {
-			return text;
+	public static <T> T notNull(T v1, String message) {
+		if (v1 == null) {
+			throw new NullPointerException(message);
 		}
-
-		return Character.toUpperCase(text.charAt(0)) + text.substring(1);
+		return v1;
 	}
 }

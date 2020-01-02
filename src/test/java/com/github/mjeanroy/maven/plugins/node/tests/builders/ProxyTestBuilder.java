@@ -98,6 +98,25 @@ public class ProxyTestBuilder {
 	private String password;
 
 	/**
+	 * Active State.
+	 *
+	 * @see Proxy#isActive()
+	 */
+	private boolean active;
+
+	/**
+	 * Create proxy with defaut configuration.
+	 */
+	public ProxyTestBuilder() {
+		this.protocol = "http";
+		this.host = "localhost";
+		this.port = 80;
+		this.username = "mjeanroy";
+		this.password = "Azerty123!";
+		this.active = true;
+	}
+
+	/**
 	 * Set new {@link #protocol}
 	 *
 	 * @param protocol New {@link #protocol}
@@ -153,6 +172,17 @@ public class ProxyTestBuilder {
 	}
 
 	/**
+	 * Set new {@link #active} state
+	 *
+	 * @param active New {@link #active} value
+	 * @return The builder.
+	 */
+	public ProxyTestBuilder withActive(boolean active) {
+		this.active = active;
+		return this;
+	}
+
+	/**
 	 * Build {@link Proxy} instance.
 	 *
 	 * @return The new instance.
@@ -164,7 +194,7 @@ public class ProxyTestBuilder {
 		proxy.setPort(port);
 		proxy.setUsername(username);
 		proxy.setPassword(password);
-		proxy.setActive(true);
+		proxy.setActive(active);
 		return proxy;
 	}
 }

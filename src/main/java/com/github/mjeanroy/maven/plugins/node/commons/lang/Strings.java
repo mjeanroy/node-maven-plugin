@@ -21,25 +21,28 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
 /**
- * Static Object Utilities.
+ * Static String Utilities.
  */
-public final class ObjectUtils {
+public class Strings {
 
-	private ObjectUtils() {
+	// Ensure non instantiation.
+	private Strings() {
 	}
 
 	/**
-	 * Return first non {@code null} value.
+	 * Turn a string to a capitalized string.
 	 *
-	 * @param v1 Value 1.
-	 * @param v2 Value 2.
-	 * @param <T> Type of parameters.
-	 * @return First parameter if it is not {@code null}, second parameter otherwise.
+	 * @param text String to capitalized.
+	 * @return Capitalized string.
 	 */
-	public static <T> T firstNonNull(T v1, T v2) {
-		return v1 == null ? v2 : v1;
+	public static String capitalize(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		return Character.toUpperCase(text.charAt(0)) + text.substring(1);
 	}
 }

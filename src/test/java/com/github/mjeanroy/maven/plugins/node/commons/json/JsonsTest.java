@@ -21,46 +21,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.commons;
+package com.github.mjeanroy.maven.plugins.node.commons.json;
 
-import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
-import org.apache.maven.settings.Proxy;
+import com.github.mjeanroy.maven.plugins.node.commons.json.Jsons;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-import java.util.List;
+import java.io.File;
 
-import static com.github.mjeanroy.maven.plugins.node.commons.ProxyUtils.findHttpActiveProfiles;
-import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-public class ProxyConfigUtilsTest {
+public class JsonsTest {
+
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
-	public void it_should_get_active_http_proxies() {
-		Proxy p1 = createProxy("http", "foo1", true);
-		Proxy p2 = createProxy("https", "foo2", true);
-
-		Proxy p3 = createProxy("http", "foo3", false);
-		Proxy p4 = createProxy("https", "foo4", false);
-		Proxy p5 = createProxy("socks", "foo5", true);
-
-		List<ProxyConfig> configs = findHttpActiveProfiles(asList(p1, p2, p3, p4, p5));
-
-		assertThat(configs)
-			.isNotNull()
-			.isNotEmpty()
-			.hasSize(2)
-			.extracting("host")
-			.containsExactly("foo1", "foo2");
+	public void it_should_parse_json_file() {
+		File file = new File(getClass().getResource("/test.json").getPath());
+		TestObject tstObject = Jsons.parseJson(file, TestObject.class);
+		assertThat(tstObject).isNotNull();
+		assertThat(tstObject.getId()).isEqualTo(1);
+		assertThat(tstObject.getFoo()).isEqualTo("bar");
 	}
 
-	private Proxy createProxy(String protocol, String host, boolean active) {
-		Proxy proxy = mock(Proxy.class);
-		when(proxy.getProtocol()).thenReturn(protocol);
-		when(proxy.isActive()).thenReturn(active);
-		when(proxy.getHost()).thenReturn(host);
-		return proxy;
+	public static class TestObject {
+		private int id;
+
+		private String foo;
+
+		TestObject() {
+		}
+
+		int getId() {
+			return id;
+		}
+
+		String getFoo() {
+			return foo;
+		}
 	}
 }
