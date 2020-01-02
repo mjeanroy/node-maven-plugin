@@ -25,22 +25,18 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Rule;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
-import static org.junit.rules.ExpectedException.none;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
 
 public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> {
-
-	@Rule
-	public ExpectedException thrown = none();
 
 	@Override
 	String mojoName() {
@@ -78,11 +74,16 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> 
 
 	@Test
 	public void it_should_fail_if_package_json_does_not_exist() throws Exception {
-		thrown.expect(PackageJsonNotFoundException.class);
+		final DependenciesMojo mojo = lookupEmptyMojo("mojo-with-parameters");
+		final ThrowingCallable func = new ThrowingCallable() {
+			@Override
+			public void call() {
+				mojo.execute();
+			}
+		};
 
-		DependenciesMojo mojo = lookupEmptyMojo("mojo-with-parameters");
 		writePrivate(mojo, "workingDirectory", new File("."));
 
-		mojo.execute();
+		assertThatThrownBy(func).isInstanceOf(PackageJsonNotFoundException.class);
 	}
 }

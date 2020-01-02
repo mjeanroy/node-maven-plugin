@@ -30,9 +30,8 @@ import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundExce
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.settings.Settings;
-import org.junit.Rule;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.verification.VerificationMode;
 
@@ -51,8 +50,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBui
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder.newSettings;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hamcrest.core.StringEndsWith.endsWith;
-import static org.junit.rules.ExpectedException.none;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -65,9 +63,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	private static final String NPM = "npm";
 	private static final String YARN = "yarn";
-
-	@Rule
-	public ExpectedException thrown = none();
 
 	@Test
 	public void test_should_create_mojo() throws Exception {
@@ -222,25 +217,34 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_failure_and_throw_exception() throws Exception {
-		thrown.expect(MojoExecutionException.class);
-
-		T mojo = lookupMojo("mojo-fail-on-error-true");
+		final T mojo = lookupMojo("mojo-fail-on-error-true");
+		final ThrowingCallable mojoExecute = new ThrowingCallable() {
+			@Override
+			public void call() throws Throwable {
+				mojo.execute();
+			}
+		};
 
 		givenFailExecutor(mojo);
 
-		mojo.execute();
+		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class);
 	}
 
 	@Test
-	public void it_should_throw_exception_if_scripts_does_not_exist() throws Exception {
-		if (!isStandardScript()) {
-			thrown.expect(MojoExecutionException.class);
-			thrown.expectMessage("Cannot execute npm run " + script() + " command: it is not defined in package.json");
+	public void it_should_throw_exception_if_scripts_does_not_exist() throws Throwable {
+		final T mojo = lookupMojo("mojo-without-scripts-fail");
+		final ThrowingCallable mojoExecute = new ThrowingCallable() {
+			@Override
+			public void call() throws Throwable {
+				mojo.execute();
+			}
+		};
+
+		if (isStandardScript()) {
+			mojoExecute.call();
+		} else {
+			assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessageStartingWith("Cannot execute npm run " + script() + " command: it is not defined in package.json");
 		}
-
-		T mojo = lookupMojo("mojo-without-scripts-fail");
-
-		mojo.execute();
 	}
 
 	@Test
@@ -264,10 +268,15 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_throw_exception_if_package_json_does_not_exist() throws Exception {
-		thrown.expect(PackageJsonNotFoundException.class);
-		thrown.expectMessage(endsWith("package.json does not exist"));
+		final T mojo = lookupMojo("mojo-without-package-json");
+		final ThrowingCallable mojoExecute = new ThrowingCallable() {
+			@Override
+			public void call() throws Throwable {
+				mojo.execute();
+			}
+		};
 
-		lookupMojo("mojo-without-package-json").execute();
+		assertThatThrownBy(mojoExecute).isInstanceOf(PackageJsonNotFoundException.class).hasMessageEndingWith("package.json does not exist");
 	}
 
 	@Test

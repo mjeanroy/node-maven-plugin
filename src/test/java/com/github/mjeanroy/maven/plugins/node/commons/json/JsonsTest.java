@@ -23,19 +23,13 @@
 
 package com.github.mjeanroy.maven.plugins.node.commons.json;
 
-import com.github.mjeanroy.maven.plugins.node.commons.json.Jsons;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.File;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class JsonsTest {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void it_should_parse_json_file() {

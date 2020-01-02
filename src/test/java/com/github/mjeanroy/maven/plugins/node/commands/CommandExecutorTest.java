@@ -24,25 +24,16 @@
 package com.github.mjeanroy.maven.plugins.node.commands;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 import java.io.File;
 
-import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
-import static org.junit.rules.ExpectedException.none;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class CommandExecutorTest {
-
-	@Rule
-	public ExpectedException thrown = none();
 
 	private CommandExecutor commandExecutor;
 
@@ -107,28 +98,21 @@ public class CommandExecutorTest {
 		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
 	}
 
-	private Command createUnixCommand(String script) {
-		String executable = "/bin/sh";
-
-		Command command = mock(Command.class);
-		when(command.getExecutable()).thenReturn(executable);
-		when(command.getArguments()).thenReturn(singletonList(script));
-
+	private static Command createUnixCommand(String script) {
+		Command command = new Command("/bin/sh");
+		command.addArgument(script);
 		return command;
 	}
 
-	private Command createMsDosCommand(String script) {
-		String executable = "cmd";
-
-		Command command = mock(Command.class);
-		when(command.getExecutable()).thenReturn(executable);
-		when(command.getArguments()).thenReturn(asList("/C", script));
-
+	private static Command createMsDosCommand(String script) {
+		Command command = new Command("cmd");
+		command.addArgument("/C");
+		command.addArgument(script);
 		return command;
 	}
 
-	private File workingDirectory(String script) {
-		String path = getClass().getResource("/" + script).getPath();
+	private static File workingDirectory(String script) {
+		String path = CommandExecutorTest.class.getResource("/" + script).getPath();
 		File file = new File(path);
 		return file.getParentFile();
 	}

@@ -29,9 +29,8 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
-import org.junit.Rule;
+import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.mockito.InOrder;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
@@ -42,7 +41,7 @@ import java.io.IOException;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
-import static org.junit.rules.ExpectedException.none;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
@@ -51,9 +50,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
-
-	@Rule
-	public ExpectedException thrown = none();
 
 	@Override
 	String mojoName() {
@@ -107,74 +103,73 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_fail_if_node_is_not_available() throws Exception {
-		thrown.expect(MojoExecutionException.class);
-		thrown.expectMessage("Node is not available. Please install it on your operating system.");
+		final CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+		final CommandExecutor executor = mock(CommandExecutor.class);
 
-		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) {
-				Command command = (Command) invocation.getArguments()[1];
-				if (command.toString().contains("node")) {
-					throw new CommandException(new IOException());
-				}
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(
+				new CommandExecutionExceptionAnswer("node")
+		);
 
-				return successResult();
-			}
-		});
-
-		mojo.execute();
+		verifyMojoExecutionException(mojo, "Node is not available. Please install it on your operating system.");
 	}
 
 	@Test
 	public void it_should_fail_if_npm_is_not_available() throws Exception {
-		thrown.expect(MojoExecutionException.class);
-		thrown.expectMessage("Npm is not available. Please install it on your operating system.");
+		final CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+		final CommandExecutor executor = mock(CommandExecutor.class);
 
-		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
-			@Override
-			public Object answer(InvocationOnMock invocation) {
-				Command command = (Command) invocation.getArguments()[1];
-				if (command.toString().contains("npm")) {
-					throw new CommandException(new IOException());
-				}
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(
+				new CommandExecutionExceptionAnswer("npm")
+		);
 
-				return successResult();
-			}
-		});
-
-		mojo.execute();
+		verifyMojoExecutionException(mojo, "Npm is not available. Please install it on your operating system.");
 	}
 
 	@Test
 	public void it_should_fail_if_yarn_is_not_available() throws Exception {
-		thrown.expect(MojoExecutionException.class);
-		thrown.expectMessage("Yarn is not available. Please install it on your operating system.");
+		final CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+		final CommandExecutor executor = mock(CommandExecutor.class);
 
-		CommandExecutor executor = mock(CommandExecutor.class);
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		writePrivate(mojo, "executor", executor);
 		writePrivate(mojo, "yarn", true);
 
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(new Answer<Object>() {
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenAnswer(
+				new CommandExecutionExceptionAnswer("yarn")
+		);
+
+		verifyMojoExecutionException(mojo, "Yarn is not available. Please install it on your operating system.");
+	}
+
+	private void verifyMojoExecutionException(final CheckNodeMojo mojo, final String message) {
+		ThrowingCallable mojoExecute = new ThrowingCallable() {
 			@Override
-			public Object answer(InvocationOnMock invocation) {
-				Command command = (Command) invocation.getArguments()[1];
-				if (command.toString().contains("yarn")) {
-					throw new CommandException(new IOException());
-				}
-
-				return successResult();
+			public void call() throws Throwable {
+				mojo.execute();
 			}
-		});
+		};
 
-		mojo.execute();
+		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessage(message);
+	}
+
+	private static class CommandExecutionExceptionAnswer implements Answer<CommandResult> {
+		private final String cmd;
+
+		public CommandExecutionExceptionAnswer(String cmd) {
+			this.cmd = cmd;
+		}
+
+		@Override
+		public CommandResult answer(InvocationOnMock invocation) {
+			Command command = (Command) invocation.getArguments()[1];
+			if (command.toString().contains(cmd)) {
+				throw new CommandException(new IOException());
+			}
+
+			return successResult();
+		}
 	}
 }
