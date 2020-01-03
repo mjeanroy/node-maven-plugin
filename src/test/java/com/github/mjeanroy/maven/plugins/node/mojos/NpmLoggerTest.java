@@ -71,9 +71,25 @@ public class NpmLoggerTest {
 
 		npmLogger.process(line);
 
-		verify(log).warn(line);
-		verify(log, never()).error(anyString());
-		verify(log, never()).info(anyString());
+		verifyWarnOutput(line);
+	}
+
+	@Test
+	public void it_should_use_warn_level_with_webpack_warning() {
+		String line = "WARNING in webpack performance recommendations:";
+
+		npmLogger.process(line);
+
+		verifyWarnOutput(line);
+	}
+
+	@Test
+	public void it_should_use_warn_level_with_deprecated_dependency() {
+		String line = "(node:29567) DeprecationWarning: Tapable.plugin is deprecated.";
+
+		npmLogger.process(line);
+
+		verifyWarnOutput(line);
 	}
 
 	@Test
@@ -82,9 +98,7 @@ public class NpmLoggerTest {
 
 		npmLogger.process(line);
 
-		verify(log).warn(line);
-		verify(log, never()).error(anyString());
-		verify(log, never()).info(anyString());
+		verifyWarnOutput(line);
 	}
 
 	@Test
@@ -96,5 +110,11 @@ public class NpmLoggerTest {
 		verify(log).info(line);
 		verify(log, never()).error(anyString());
 		verify(log, never()).warn(anyString());
+	}
+
+	private void verifyWarnOutput(String line) {
+		verify(log).warn(line);
+		verify(log, never()).error(anyString());
+		verify(log, never()).info(anyString());
 	}
 }
