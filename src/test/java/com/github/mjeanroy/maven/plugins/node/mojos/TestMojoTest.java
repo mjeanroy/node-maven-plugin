@@ -23,18 +23,15 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 
-import java.io.File;
-
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
+import static java.util.Collections.singletonMap;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 
 public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
@@ -60,29 +57,49 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	@Test
 	public void it_should_skip_tests_with_skipTests() throws Exception {
-		TestMojo mojo = lookupMojo("mojo-with-parameters");
-		writePrivate(mojo, "skipTests", true);
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		Log logger = readPrivate(mojo, "log");
+		TestMojo mojo = lookupMojo("mojo", singletonMap(
+				"skipTests", true
+		));
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
-		verify(logger).info(skipMessage());
+		verifyTestsHaveBeenSkipped(mojo);
 	}
 
 	@Test
 	public void it_should_skip_tests_with_mavenTestSkip() throws Exception {
-		TestMojo mojo = lookupMojo("mojo-with-parameters");
-		writePrivate(mojo, "mavenTestSkip", true);
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		Log logger = readPrivate(mojo, "log");
+		TestMojo mojo = lookupMojo("mojo", singletonMap(
+				"mavenTestSkip", true
+		));
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verifyTestsHaveBeenSkipped(mojo);
+	}
+
+	@Test
+	public void it_should_skip_tests_with_mavenTestSkipExec() throws Exception {
+		TestMojo mojo = lookupMojo("mojo", singletonMap(
+				"mavenTestSkipExec", true
+		));
+
+		mojo.execute();
+
+		verifyTestsHaveBeenSkipped(mojo);
+	}
+
+	private void verifyTestsHaveBeenSkipped(TestMojo mojo) {
+		verifyExecutorNotRunned(mojo);
+		verifySkipMessageOutput(mojo);
+	}
+
+	private void verifyExecutorNotRunned(TestMojo mojo) {
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		verifyZeroInteractions(executor);
+	}
+
+	private void verifySkipMessageOutput(TestMojo mojo) {
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).info(skipMessage());
 	}
 }

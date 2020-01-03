@@ -78,8 +78,22 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	 * Check if end to end tests must be skipped.
 	 * By default, end to end tests are skipped if maven.test.skip property is set to true.
 	 */
-	@Parameter(defaultValue = "${maven.test.skip}")
-	private boolean skipTests;
+	@Parameter(defaultValue = "${maven.test.skip}", readonly = true)
+	private boolean mavenTestSkip;
+
+	/**
+	 * Bind maven {@code maven.test.skip} property, will be used to check if test
+	 * must be skipped.
+	 */
+	@Parameter(defaultValue = "${maven.test.skip.exec}", readonly = true)
+	private boolean mavenTestSkipExec;
+
+	/**
+	 * Bind maven {@code maven.test.skip} property, will be used to check if test
+	 * must be skipped.
+	 */
+	@Parameter(defaultValue = "${skipITs}", readonly = true)
+	private boolean skipITs;
 
 	/**
 	 * Flag to skip mojo execution.
@@ -106,6 +120,6 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	boolean shouldSkip() {
-		return skipTests || skipTestE2E;
+		return mavenTestSkip || mavenTestSkipExec || skipITs || skipTestE2E;
 	}
 }

@@ -32,6 +32,7 @@ import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static java.util.Collections.singletonMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -54,16 +55,50 @@ public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 	}
 
 	@Test
-	public void it_should_skip_tests() throws Exception {
-		TestE2EMojo mojo = lookupMojo("mojo-with-parameters");
-		writePrivate(mojo, "skipTests", true);
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		Log logger = readPrivate(mojo, "log");
+	public void it_should_skip_tests_with_mavenTestSkip() throws Exception {
+		TestE2EMojo mojo = lookupMojo("mojo", singletonMap(
+				"mavenTestSkip", true
+		));
 
 		mojo.execute();
 
+		verifyTestsSkipped(mojo);
+	}
+
+	@Test
+	public void it_should_skip_tests_with_mavenTestSkipExec() throws Exception {
+		TestE2EMojo mojo = lookupMojo("mojo", singletonMap(
+				"mavenTestSkipExec", true
+		));
+
+		mojo.execute();
+
+		verifyTestsSkipped(mojo);
+	}
+
+	@Test
+	public void it_should_skip_tests_with_skipITs() throws Exception {
+		TestE2EMojo mojo = lookupMojo("mojo", singletonMap(
+				"skipITs", true
+		));
+
+		mojo.execute();
+
+		verifyTestsSkipped(mojo);
+	}
+
+	private void verifyTestsSkipped(TestE2EMojo mojo) {
+		verifyExecutorNotRunned(mojo);
+		verifySkipTestOutput(mojo);
+	}
+
+	private void verifyExecutorNotRunned(TestE2EMojo mojo) {
+		CommandExecutor executor = readPrivate(mojo, "executor");
 		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+	}
+
+	private void verifySkipTestOutput(TestE2EMojo mojo) {
+		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Npm test-e2e is skipped.");
 	}
 }
