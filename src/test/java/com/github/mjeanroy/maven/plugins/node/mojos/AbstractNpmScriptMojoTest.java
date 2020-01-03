@@ -49,6 +49,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResul
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder.newSettings;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -57,6 +58,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest<T> {
@@ -116,30 +118,40 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_skip_mojo_execution() throws Exception {
-		T mojo = lookupMojo("mojo-with-parameters");
-		writePrivate(mojo, "skip", true);
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		Log logger = readPrivate(mojo, "log");
+		T mojo = lookupMojo("mojo", singletonMap(
+				"skip", true
+		));
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
-		verify(logger).info(skipMessage());
+		verifySkippedMojo(mojo, false);
 	}
 
 	@Test
 	public void it_should_skip_individual_mojo_execution() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
-		enableSkip(mojo);
 
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		Log logger = readPrivate(mojo, "log");
+		// Enable individual skip.
+		enableSkip(mojo);
 
 		mojo.execute();
 
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
-		verify(logger).info(skipMessage());
+		verifySkippedMojo(mojo, false);
+	}
+
+	@Test
+	public void it_should_skip_individual_mojo_execution_with_yarn() throws Exception {
+		T mojo = lookupMojo("mojo-with-parameters");
+
+		// Enable yarn
+		writePrivate(mojo, "yarn", true);
+
+		// Enable individual skip.
+		enableSkip(mojo);
+
+		mojo.execute();
+
+		verifySkippedMojo(mojo, true);
 	}
 
 	@Test
@@ -366,10 +378,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	/**
 	 * The expected skipped message.
 	 *
+	 * @param yarn If yarn is enabled, or not.
 	 * @return Skipped message.
 	 */
-	String skipMessage() {
-		return String.format("Npm %s is skipped.", script());
+	String skipMessage(boolean yarn) {
+		String pkg = yarn ? "yarn" : "npm";
+		String command = pkg + " " + (isStandardScript() ? "" : "run ") + script();
+		return "Command '" + command + "' is skipped.";
 	}
 
 	/**
@@ -407,6 +422,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		return arguments;
+	}
+
+	private void verifySkippedMojo(T mojo, boolean yarn) {
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		verifyZeroInteractions(executor);
+
+		Log logger = readPrivate(mojo, "log");
+		verify(logger).info(skipMessage(yarn));
 	}
 
 	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {

@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -124,7 +125,7 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getSkippedMessage() {
+	String getSkippedMessage(Command cmd) {
 		return "Tests are skipped.";
 	}
 }

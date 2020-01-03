@@ -99,6 +99,6 @@ public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 
 	private void verifySkipTestOutput(TestE2EMojo mojo) {
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info("Npm test-e2e is skipped.");
+		verify(logger).info("Command 'npm run test-e2e' is skipped.");
 	}
 }

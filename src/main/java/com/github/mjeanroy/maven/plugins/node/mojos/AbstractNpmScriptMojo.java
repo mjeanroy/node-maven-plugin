@@ -180,7 +180,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		// Should skip?
 		if (skip || shouldSkip()) {
-			getLog().info(getSkippedMessage());
+			getLog().info(getSkippedMessage(cmd));
 			return;
 		}
 
@@ -344,10 +344,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	/**
 	 * Message logged when mojo execution is skipped.
 	 *
+	 * @param cmd The command to skip.
 	 * @return Message.
 	 */
-	String getSkippedMessage() {
-		return String.format("Npm %s is skipped.", getScript());
+	String getSkippedMessage(Command cmd) {
+		return "Command '" + cmd.toString() + "' is skipped.";
 	}
 
 	/**
