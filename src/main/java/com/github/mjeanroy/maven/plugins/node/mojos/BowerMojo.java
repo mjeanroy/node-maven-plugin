@@ -27,7 +27,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collection;
+
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static java.util.Arrays.asList;
 
 /**
  * Bower Mojo.
@@ -81,6 +84,11 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(bowerScript, DEFAULT_SCRIPT);
 	}
@@ -93,5 +101,13 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipBower;
+	}
+
+	@Override
+	Collection<String> getDefaultIncrementalBuildIncludes() {
+		return asList(
+				"**/bower.json",
+				"**/.bowerrc"
+		);
 	}
 }

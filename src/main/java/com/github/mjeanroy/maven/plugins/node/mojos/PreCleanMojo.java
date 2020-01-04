@@ -86,6 +86,11 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(preCleanScript, DEFAULT_SCRIPT);
 	}

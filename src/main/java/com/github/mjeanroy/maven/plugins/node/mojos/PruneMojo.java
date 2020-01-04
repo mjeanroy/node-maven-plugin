@@ -72,6 +72,11 @@ public class PruneMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(pruneScript, DEFAULT_SCRIPT);
 	}

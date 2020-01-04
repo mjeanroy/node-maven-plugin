@@ -110,6 +110,11 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(testScript, DEFAULT_SCRIPT);
 	}

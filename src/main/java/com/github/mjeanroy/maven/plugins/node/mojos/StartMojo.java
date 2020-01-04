@@ -72,6 +72,11 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(startScript, DEFAULT_SCRIPT);
 	}

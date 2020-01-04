@@ -27,7 +27,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collection;
+
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static java.util.Arrays.asList;
 
 /**
  * Build Mojo.
@@ -79,6 +82,11 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(buildScript, DEFAULT_SCRIPT);
 	}
@@ -91,5 +99,86 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipBuild;
+	}
+
+	@Override
+	Collection<String> getDefaultIncrementalBuildIncludes() {
+		return asList(
+				"**/package.json",
+				"**/package-lock.json",
+				"**/yarn.lock",
+				"**/bower.json",
+				"**/lerna.json",
+				"**/.browserslistrc",
+				"**/browserslistrc",
+				"**/.babelrc*",
+
+				// JS
+				"**/*.js",
+				"**/*.cjs",
+				"**/*.mjs",
+				"**/*.jsx",
+				"**/*.vue",
+
+				// TS
+				"**/*.ts",
+				"**/*.tsx",
+
+				// CSS/SASS/LESS
+				"**/*.css",
+				"**/*.sass",
+				"**/*.scss",
+				"**/*.less",
+
+				// Templates
+				"**/*.html",
+				"**/*.htm",
+				"**/*.hbs",
+				"**/*.mustache",
+
+				// Static Resources
+				"**/*.svg",
+				"**/*.png",
+				"**/*.jpg",
+				"**/*.jpeg",
+				"**/*.gif",
+				"**/*.ico",
+
+				// Fonts
+				"**/*.otf",
+				"**/*.eot",
+				"**/*.ttf",
+				"**/*.woff",
+				"**/*.woff2",
+
+				// Others
+				"**/*.json",
+				"**/*.yml",
+				"**/*.yaml",
+				"**/*.xml",
+				"**/*.env",
+				"**/*.graphql"
+		);
+	}
+
+	@Override
+	Collection<String> getDefaultIncrementalBuildExcludes() {
+		return asList(
+				"**/pom.xml",
+
+				"**/*.spec.js",
+				"**/*.test.js",
+				"**/*.spec.ts",
+				"**/*.test.ts",
+				"**/*.test.json",
+				"**/*.spec.json",
+
+				"**/__tests__/*.js",
+				"**/__tests__/*.ts",
+
+				"**/tslint*",
+				"**/eslint*",
+				"**/jshint*"
+		);
 	}
 }

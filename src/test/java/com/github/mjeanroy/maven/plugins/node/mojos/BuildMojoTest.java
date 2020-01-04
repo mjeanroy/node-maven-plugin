@@ -23,9 +23,17 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import org.apache.maven.plugin.logging.Log;
+import org.junit.Test;
 
-public class BuildMojoTest extends AbstractNpmScriptMojoTest<BuildMojo> {
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+
+public class BuildMojoTest extends AbstractNpmScriptIncrementalMojoTest<BuildMojo> {
 
 	@Override
 	String mojoName() {
@@ -40,5 +48,46 @@ public class BuildMojoTest extends AbstractNpmScriptMojoTest<BuildMojo> {
 	@Override
 	void enableSkip(BuildMojo mojo) {
 		writePrivate(mojo, "skipBuild", true);
+	}
+
+	@Test
+	public void it_should_write_input_state_after_build() throws Exception {
+		BuildMojo mojo = lookupMojo("mojo-with-eslint");
+
+		mojo.execute();
+
+		verifyStateFile(mojo, asList(
+				"/index.js::18565ddcc053760b5c8e41de0f692d1a",
+				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e",
+				"/src/hello-world.js::23e84ea87061dfba92cb42373b34ee82"
+		));
+	}
+
+	@Test
+	public void it_should_write_input_state_from_ts_project_after_build() throws Exception {
+		BuildMojo mojo = lookupMojo("mojo-with-tslint");
+
+		mojo.execute();
+
+		verifyStateFile(mojo, asList(
+				"/index.ts::67d3d4750c38b23b8255b9148f72e0af",
+				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e",
+				"/src/hello-world.ts::56edefd6256658c7605b003051a9cbdd"
+		));
+	}
+
+	@Test
+	public void it_should_run_mojo_after_incremental_build() throws Exception {
+		BuildMojo mojo = lookupMojo("mojo-with-tslint");
+
+		mojo.execute();
+		resetMojo(mojo);
+		mojo.execute();
+
+		Log log = readPrivate(mojo, "log");
+		verify(log).info("Command npm run build already done, no changes detected, skipping.");
+
+		CommandExecutor executor = readPrivate(mojo, "executor");
+		verifyZeroInteractions(executor);
 	}
 }

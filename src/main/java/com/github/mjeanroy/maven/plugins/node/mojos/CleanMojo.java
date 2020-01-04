@@ -84,6 +84,11 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(cleanScript, DEFAULT_SCRIPT);
 	}

@@ -85,6 +85,11 @@ public class PublishMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(publishScript, DEFAULT_SCRIPT);
 	}
