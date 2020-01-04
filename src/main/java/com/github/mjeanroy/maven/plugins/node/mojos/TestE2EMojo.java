@@ -109,6 +109,11 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(testE2EScript, DEFAULT_SCRIPT);
 	}

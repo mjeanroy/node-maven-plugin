@@ -43,7 +43,7 @@ import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
-import static com.github.mjeanroy.maven.plugins.node.tests.TestUtils.join;
+import static com.github.mjeanroy.maven.plugins.node.tests.StringTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.failureResult;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;

@@ -27,7 +27,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collection;
+
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static java.util.Arrays.asList;
 
 /**
  * Install Mojo.
@@ -90,6 +93,11 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(installScript, DEFAULT_SCRIPT);
 	}
@@ -102,5 +110,16 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipInstall;
+	}
+
+	@Override
+	Collection<String> getDefaultIncrementalBuildIncludes() {
+		return asList(
+				"**/package.json",
+				"**/package-lock.json",
+				"**/yarn.lock",
+				"**/bower.json",
+				"**/lerna.json"
+		);
 	}
 }

@@ -27,7 +27,10 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.util.Collection;
+
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static java.util.Arrays.asList;
 
 /**
  * Lint Mojo.
@@ -87,6 +90,11 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
+	String getGoalName() {
+		return GOAL_NAME;
+	}
+
+	@Override
 	String getScript() {
 		return firstNonNull(lintScript, DEFAULT_SCRIPT);
 	}
@@ -99,5 +107,33 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipLint;
+	}
+
+	@Override
+	Collection<String> getDefaultIncrementalBuildIncludes() {
+		return asList(
+				// Config and/or dependency
+				"**/package.json",
+				"**/package-lock.json",
+				"**/yarn.lock",
+				"**/bower.json",
+				"**/lerna.json",
+
+				// TypeScript
+				"**/tslint*",
+				"**/*.ts",
+				"**/*.tsx",
+
+				// JS
+				"**/.eslint*",
+				"**/.jshint*",
+				"**/*.js",
+				"**/*.jsx",
+				"**/*.cjs",
+				"**/*.mjs",
+
+				// Other
+				"**/*.vue"
+		);
 	}
 }

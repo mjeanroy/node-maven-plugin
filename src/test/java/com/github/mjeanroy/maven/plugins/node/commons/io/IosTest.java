@@ -21,31 +21,40 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.tests;
+package com.github.mjeanroy.maven.plugins.node.commons.io;
 
-import java.util.Collection;
+import org.junit.Test;
 
-/**
- * Static Test Utilities.
- */
-public final class TestUtils {
+import java.io.File;
+import java.util.Map;
 
-	// Ensure non instantiation.
-	private TestUtils() {
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.getFileFromClasspath;
+import static java.util.Arrays.asList;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.entry;
+
+public class IosTest {
+
+	@Test
+	public void it_should_compute_md5_hash_of_given_file() {
+		File file = getFileFromClasspath("/test.json");
+		String md5 = Ios.md5(file);
+		assertThat(md5).isEqualTo("bb6b928e501ba98b81d7b686590b1c59");
 	}
 
-	/**
-	 * Join collection of strings into a single string, each item being separated by a space.
-	 *
-	 * @param collection The collection of strings.
-	 * @return The final string.
-	 */
-	public static String join(Collection<String> collection) {
-		StringBuilder sb = new StringBuilder();
-		for (String arg : collection) {
-			sb.append(arg).append(" ");
-		}
+	@Test
+	public void it_should_compute_md5_hash_of_given_files() {
+		File file1 = getFileFromClasspath("/test.json");
+		File file2 = getFileFromClasspath("/error.sh");
+		File file3 = getFileFromClasspath("/success.sh");
 
-		return sb.toString().trim();
+		Map<String, String> md5 = Ios.md5(asList(file1, file2, file3));
+
+		assertThat(md5).hasSize(3)
+			.contains(
+					entry(file1.getAbsolutePath(), "bb6b928e501ba98b81d7b686590b1c59"),
+					entry(file2.getAbsolutePath(), "3447717aff3f978dab310b05d2a6fccb"),
+					entry(file3.getAbsolutePath(), "faa25c6c7940f930d70538c673a39726")
+			);
 	}
 }
