@@ -36,7 +36,7 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.
 /**
  * Proxy Configuration.
  */
-public class ProxyConfig implements CommandArg {
+public final class ProxyConfig implements CommandArg {
 
 	/**
 	 * Extract configuration from given maven proxy settings.
@@ -145,10 +145,11 @@ public class ProxyConfig implements CommandArg {
 
 		if (o instanceof ProxyConfig) {
 			ProxyConfig p = (ProxyConfig) o;
-			return Objects.equals(username, p.username) &&
-				Objects.equals(password, p.password) &&
-				Objects.equals(host, p.host) &&
-				Objects.equals(port, p.port);
+			return Objects.equals(protocol, p.protocol)
+				&& Objects.equals(username, p.username)
+				&& Objects.equals(password, p.password)
+				&& Objects.equals(host, p.host)
+				&& Objects.equals(port, p.port);
 		}
 
 		return false;
@@ -156,6 +157,6 @@ public class ProxyConfig implements CommandArg {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(username, password, host, port);
+		return Objects.hash(protocol, username, password, host, port);
 	}
 }

@@ -24,6 +24,7 @@
 package com.github.mjeanroy.maven.plugins.node.models;
 
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
+import nl.jqno.equalsverifier.EqualsVerifier;
 import org.apache.maven.settings.Proxy;
 import org.junit.Test;
 
@@ -83,5 +84,10 @@ public class ProxyConfigTest {
 		assertThat(config.hasAuthentication()).isTrue();
 		assertThat(config.toArgument()).isEqualTo("http://mjeanroy:foobar@squid.local:8080");
 		assertThat(config.toString()).isEqualTo("http://mjeanroy:********@squid.local:8080");
+	}
+
+	@Test
+	public void it_should_implement_equals_hash_code() {
+		EqualsVerifier.forClass(ProxyConfig.class).verify();
 	}
 }
