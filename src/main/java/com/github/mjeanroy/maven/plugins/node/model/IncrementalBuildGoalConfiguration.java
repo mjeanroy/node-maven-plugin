@@ -23,6 +23,8 @@
 
 package com.github.mjeanroy.maven.plugins.node.model;
 
+import com.github.mjeanroy.maven.plugins.node.commons.lang.ToStringBuilder;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -176,5 +178,16 @@ public final class IncrementalBuildGoalConfiguration {
 	@Override
 	public int hashCode() {
 		return Objects.hash(enabled, useDefaultIncludes, useDefaultExcludes, includes, excludes);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.builder(getClass())
+				.append("enabled", enabled)
+				.append("useDefaultIncludes", useDefaultIncludes)
+				.append("useDefaultExcludes", useDefaultExcludes)
+				.append("includes", includes)
+				.append("excludes", excludes)
+				.build();
 	}
 }

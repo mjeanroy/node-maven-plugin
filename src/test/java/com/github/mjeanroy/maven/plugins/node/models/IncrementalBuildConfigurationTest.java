@@ -24,9 +24,17 @@
 package com.github.mjeanroy.maven.plugins.node.models;
 
 import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildConfiguration;
+import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildGoalConfiguration;
 import nl.jqno.equalsverifier.EqualsVerifier;
 import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
+
+import java.util.Collections;
+import java.util.List;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
+import static org.assertj.core.api.Assertions.assertThat;
 
 public class IncrementalBuildConfigurationTest {
 
@@ -35,5 +43,64 @@ public class IncrementalBuildConfigurationTest {
 		EqualsVerifier.forClass(IncrementalBuildConfiguration.class)
 				.suppress(Warning.NONFINAL_FIELDS)
 				.verify();
+	}
+
+	@Test
+	public void it_should_implement_to_string() {
+		IncrementalBuildConfiguration c = new IncrementalBuildConfiguration();
+		c.setInstall(givenConfiguration(singletonList("**/*.json"), Collections.<String>emptyList()));
+		c.setBuild(givenConfiguration(singletonList("**/*.js"), asList("**/*.css", "**/*.scss")));
+
+		// @formatter:off
+		assertThat(c).hasToString(
+				"IncrementalBuildConfiguration{" +
+					"enabled=false, " +
+					"useDefaultExcludes=true, " +
+					"useDefaultIncludes=true, " +
+					"install=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[**/*.json], " +
+						"excludes=[]" +
+					"}, " +
+					"bower=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[], " +
+						"excludes=[]" +
+					"}, " +
+					"lint=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[], " +
+						"excludes=[]" +
+					"}, " +
+					"build=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[**/*.js], " +
+						"excludes=[**/*.css, **/*.scss]" +
+					"}, " +
+					"preClean=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[], " +
+						"excludes=[]" +
+					"}" +
+				"}"
+		);
+		// @formatter:on
+	}
+
+	private static IncrementalBuildGoalConfiguration givenConfiguration(List<String> includes, List<String> excludes) {
+		IncrementalBuildGoalConfiguration config = new IncrementalBuildGoalConfiguration();
+		config.setIncludes(includes);
+		config.setExcludes(excludes);
+		return config;
 	}
 }

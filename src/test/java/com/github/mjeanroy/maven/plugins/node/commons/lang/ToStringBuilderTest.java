@@ -21,40 +21,33 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.models;
+package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
-import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildGoalConfiguration;
-import nl.jqno.equalsverifier.EqualsVerifier;
-import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 
 import static java.util.Arrays.asList;
-import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class IncrementalBuildGoalConfigurationTest {
+public class ToStringBuilderTest {
 
 	@Test
-	public void it_should_implement_equals_hash_code() {
-		EqualsVerifier.forClass(IncrementalBuildGoalConfiguration.class)
-				.suppress(Warning.NONFINAL_FIELDS)
-				.verify();
-	}
+	public void it_should_build_string_value() {
+		String str = ToStringBuilder.builder(ToStringBuilderTest.class)
+				.append("name", "John Doe")
+				.append("nullish", null)
+				.append("flag", true)
+				.append("list", asList("one", "two", "three"))
+				.build();
 
-	@Test
-	public void it_should_implement_to_string() {
-		IncrementalBuildGoalConfiguration c = new IncrementalBuildGoalConfiguration();
-		c.setIncludes(asList("**/*.json", "**/*.lock"));
-		c.setExcludes(singletonList("**/.gitignore"));
-
-		assertThat(c).hasToString(
-				"IncrementalBuildGoalConfiguration{" +
-						"enabled=true, " +
-						"useDefaultIncludes=true, " +
-						"useDefaultExcludes=true, " +
-						"includes=[**/*.json, **/*.lock], " +
-						"excludes=[**/.gitignore]" +
+		// @formatter:off
+		assertThat(str).isEqualTo(
+				"ToStringBuilderTest{" +
+					"name=\"John Doe\", " +
+					"nullish=null, " +
+					"flag=true, " +
+					"list=[one, two, three]" +
 				"}"
 		);
+		// @formatter:on
 	}
 }
