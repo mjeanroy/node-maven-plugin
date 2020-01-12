@@ -25,9 +25,13 @@ package com.github.mjeanroy.maven.plugins.node.model;
 
 import com.github.mjeanroy.maven.plugins.node.commons.lang.ToStringBuilder;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 /**
  * Configuration for incremental build.
@@ -48,6 +52,16 @@ public final class IncrementalBuildConfiguration {
 	 * Enable/Disable default file exclusion, default is {@code true}.
 	 */
 	private boolean useDefaultExcludes;
+
+	/**
+	 * Set of inclusions for all goals.
+	 */
+	private List<String> includes;
+
+	/**
+	 * Set of exclusions for all goals.
+	 */
+	private List<String> excludes;
 
 	/**
 	 * The specific configuration for the INSTALL goal.
@@ -78,6 +92,10 @@ public final class IncrementalBuildConfiguration {
 		this.enabled = false;
 		this.useDefaultIncludes = true;
 		this.useDefaultExcludes = true;
+
+		this.includes = new ArrayList<>();
+		this.excludes = new ArrayList<>();
+
 		this.install = new IncrementalBuildGoalConfiguration();
 		this.bower = new IncrementalBuildGoalConfiguration();
 		this.lint = new IncrementalBuildGoalConfiguration();
@@ -101,6 +119,42 @@ public final class IncrementalBuildConfiguration {
 	 */
 	public void setEnabled(boolean enabled) {
 		this.enabled = enabled;
+	}
+
+	/**
+	 * Get {@link #includes}
+	 *
+	 * @return {@link #includes}
+	 */
+	public List<String> getIncludes() {
+		return includes;
+	}
+
+	/**
+	 * Set {@link #includes}
+	 *
+	 * @param includes New {@link #includes}
+	 */
+	public void setIncludes(List<String> includes) {
+		this.includes = includes;
+	}
+
+	/**
+	 * Get {@link #excludes}
+	 *
+	 * @return {@link #excludes}
+	 */
+	public List<String> getExcludes() {
+		return excludes;
+	}
+
+	/**
+	 * Set {@link #excludes}
+	 *
+	 * @param excludes New {@link #excludes}
+	 */
+	public void setExcludes(List<String> excludes) {
+		this.excludes = excludes;
 	}
 
 	/**
@@ -247,8 +301,10 @@ public final class IncrementalBuildConfiguration {
 	 * @return The included inputs.
 	 */
 	public Collection<String> getIncludes(String goal) {
-		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
-		return configuration == null ? Collections.<String>emptySet() : configuration.getIncludes();
+		Set<String> allIncludes = new LinkedHashSet<>();
+		allIncludes.addAll(includes);
+		allIncludes.addAll(goalIncludes(goal));
+		return Collections.unmodifiableSet(allIncludes);
 	}
 
 	/**
@@ -258,8 +314,20 @@ public final class IncrementalBuildConfiguration {
 	 * @return The included inputs.
 	 */
 	public Collection<String> getExcludes(String goal) {
+		Set<String> allIncludes = new LinkedHashSet<>();
+		allIncludes.addAll(excludes);
+		allIncludes.addAll(goalExcludes(goal));
+		return Collections.unmodifiableSet(allIncludes);
+	}
+
+	private List<String> goalIncludes(String goal) {
 		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
-		return configuration == null ? Collections.<String>emptySet() : configuration.getExcludes();
+		return configuration == null ? Collections.<String>emptyList() : configuration.getIncludes();
+	}
+
+	public List<String> goalExcludes(String goal) {
+		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
+		return configuration == null ? Collections.<String>emptyList() : configuration.getExcludes();
 	}
 
 	/**
@@ -327,6 +395,8 @@ public final class IncrementalBuildConfiguration {
 			return Objects.equals(enabled, c.enabled)
 					&& Objects.equals(useDefaultIncludes, c.useDefaultIncludes)
 					&& Objects.equals(useDefaultExcludes, c.useDefaultExcludes)
+					&& Objects.equals(includes, c.includes)
+					&& Objects.equals(excludes, c.excludes)
 					&& Objects.equals(install, c.install)
 					&& Objects.equals(bower, c.bower)
 					&& Objects.equals(lint, c.lint)
@@ -339,7 +409,18 @@ public final class IncrementalBuildConfiguration {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(enabled, useDefaultExcludes, useDefaultIncludes, install, bower, lint, build, preClean);
+		return Objects.hash(
+				enabled,
+				useDefaultExcludes,
+				useDefaultIncludes,
+				includes,
+				excludes,
+				install,
+				bower,
+				lint,
+				build,
+				preClean
+		);
 	}
 
 	@Override
@@ -348,6 +429,8 @@ public final class IncrementalBuildConfiguration {
 				.append("enabled", enabled)
 				.append("useDefaultExcludes", useDefaultExcludes)
 				.append("useDefaultIncludes", useDefaultIncludes)
+				.append("includes", includes)
+				.append("excludes", excludes)
 				.append("install", install)
 				.append("bower", bower)
 				.append("lint", lint)
