@@ -24,6 +24,8 @@
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commands.Commands;
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
@@ -31,6 +33,8 @@ import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.io.File;
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.json.Jsons.parseJson;
@@ -85,9 +89,22 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	private String npmClient;
 
 	/**
+	 * A list of environment variables that will be set during command executions.
+	 */
+	@Parameter(property = "environment")
+	private Map<String, String> environment;
+
+	/**
+	 * The command executor.
+	 */
+	private final CommandExecutor executor;
+
+	/**
 	 * Default Constructor.
 	 */
-	AbstractNpmMojo() {
+	AbstractNpmMojo(CommandExecutor executor) {
+		this.executor = executor;
+		this.environment = new LinkedHashMap<>();
 	}
 
 	/**
@@ -95,41 +112,16 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return {@link #workingDirectory}
 	 */
-	File getWorkingDirectory() {
+	final File getWorkingDirectory() {
 		return workingDirectory;
 	}
 
 	/**
-	 * Create new {@code npm} command instance.
+	 * Create new npm client command instance.
 	 *
-	 * @return NPM Command.
+	 * @return NPM Client.
 	 */
-	Command npm() {
-		if (npmPath != null) {
-			getLog().warn("Parameter 'npmPath' is deprecated, please use 'npmClient' instead.");
-		}
-
-		return Commands.npm(npmPath);
-	}
-
-	/**
-	 * Create new yarn command instance.
-	 *
-	 * @return Yarn Command.
-	 */
-	private Command yarn() {
-		if (yarn) {
-			getLog().warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
-		}
-
-		if (yarnPath != null) {
-			getLog().warn("Parameter 'yarnPath' is deprecated, please use 'npmClient' instead.");
-		}
-
-		return Commands.yarn(yarnPath);
-	}
-
-	Command npmClient() {
+	final Command npmClient() {
 		if (yarn || yarnPath != null) {
 			return yarn();
 		}
@@ -146,18 +138,21 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return NODE Command.
 	 */
-	Command node() {
+	final Command node() {
 		return Commands.node(nodePath);
 	}
 
 	/**
-	 * Create new logger for {@code npm} command output (use the appropriate maven
-	 * log level, depending on NPM log level).
+	 * Create new {@code npm} command instance.
 	 *
-	 * @return NPM Logger.
+	 * @return NPM Command.
 	 */
-	NpmLogger npmLogger() {
-		return NpmLogger.npmLogger(getLog());
+	final Command npm() {
+		if (npmPath != null) {
+			getLog().warn("Parameter 'npmPath' is deprecated, please use 'npmClient' instead.");
+		}
+
+		return Commands.npm(npmPath);
 	}
 
 	/**
@@ -165,7 +160,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return The `package.json` file.
 	 */
-	File lookupPackageJson() {
+	final File lookupPackageJson() {
 		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
 		getLog().debug("Searching for package.json file in: " + workingDirectory);
 
@@ -185,7 +180,44 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @param packageJson The packageJson file.
 	 * @return Instance of {@code package.json} content.
 	 */
-	PackageJson parsePackageJson(File packageJson) {
+	final PackageJson parsePackageJson(File packageJson) {
 		return parseJson(packageJson, PackageJson.class);
+	}
+
+	/**
+	 * Execute given command.
+	 *
+	 * @param cmd The command to execute.
+	 * @return The execution result.
+	 */
+	final CommandResult execute(Command cmd) {
+		return executor.execute(workingDirectory, cmd, npmLogger(), environment);
+	}
+
+	/**
+	 * Create new yarn command instance.
+	 *
+	 * @return Yarn Command.
+	 */
+	private Command yarn() {
+		if (yarn) {
+			getLog().warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
+		}
+
+		if (yarnPath != null) {
+			getLog().warn("Parameter 'yarnPath' is deprecated, please use 'npmClient' instead.");
+		}
+
+		return Commands.yarn(yarnPath);
+	}
+
+	/**
+	 * Create new logger for {@code npm} command output (use the appropriate maven
+	 * log level, depending on NPM log level).
+	 *
+	 * @return NPM Logger.
+	 */
+	private NpmLogger npmLogger() {
+		return NpmLogger.npmLogger(getLog());
 	}
 }

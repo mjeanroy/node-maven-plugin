@@ -27,6 +27,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
+import org.mockito.ArgumentMatchers;
 
 import java.io.File;
 
@@ -94,7 +95,7 @@ public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 
 	private void verifyExecutorNotRunned(TestE2EMojo mojo) {
 		CommandExecutor executor = readPrivate(mojo, "executor");
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
 	}
 
 	private void verifySkipTestOutput(TestE2EMojo mojo) {

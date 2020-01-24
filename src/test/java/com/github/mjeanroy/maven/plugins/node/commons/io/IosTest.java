@@ -54,7 +54,7 @@ public class IosTest {
 			.contains(
 					entry(file1.getAbsolutePath(), "bb6b928e501ba98b81d7b686590b1c59"),
 					entry(file2.getAbsolutePath(), "3447717aff3f978dab310b05d2a6fccb"),
-					entry(file3.getAbsolutePath(), "faa25c6c7940f930d70538c673a39726")
+					entry(file3.getAbsolutePath(), "b00de0da9a17d258d728fa296578ff98")
 			);
 	}
 }

@@ -31,6 +31,7 @@ import com.github.mjeanroy.maven.plugins.node.tests.builders.IncrementalBuildCon
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
 import java.io.File;
 
@@ -77,7 +78,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 
 		CommandResult result = successResult();
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap())).thenReturn(result);
 
 		mojo.execute();
 
@@ -86,7 +87,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 		verify(logger, never()).error(anyString());
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
+		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();

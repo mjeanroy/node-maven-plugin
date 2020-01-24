@@ -25,7 +25,6 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -56,16 +55,10 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	static final String GOAL_NAME = "check";
 
 	/**
-	 * Executor used to run command line.
-	 */
-	private final CommandExecutor executor;
-
-	/**
 	 * Create Mojo.
 	 */
 	public CheckNodeMojo() {
-		super();
-		this.executor = newExecutor();
+		super(newExecutor());
 	}
 
 	@Override
@@ -94,7 +87,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		getLog().debug("Running: " + cmd.toString());
 
 		try {
-			executor.execute(getWorkingDirectory(), cmd, npmLogger());
+			execute(cmd);
 		}
 		catch (CommandException ex) {
 			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available. Please install it on your operating system.");

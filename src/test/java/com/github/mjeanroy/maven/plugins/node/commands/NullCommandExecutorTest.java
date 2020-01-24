@@ -27,75 +27,32 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
 
-public class CommandExecutorTest {
+public class NullCommandExecutorTest {
 
-	private CommandExecutor commandExecutor;
+	private NullCommandExecutor commandExecutor;
 
 	@Before
 	public void setUp() {
-		commandExecutor = new CommandExecutor();
+		commandExecutor = NullCommandExecutor.getInstance();
 	}
 
 	@Test
 	public void it_should_execute_success_command_on_unix() {
-		assumeFalse(isWindows());
-
 		String script = "success.sh";
 		Command command = createUnixCommand(script);
 		File workingDirectory = workingDirectory(script);
 		OutputHandler out = mock(OutputHandler.class);
+		Map<String, String> environment = Collections.emptyMap();
 
-		CommandResult result = commandExecutor.execute(workingDirectory, command, out);
-
-		assertThat(result.getStatus()).isZero();
-	}
-
-	@Test
-	public void it_should_execute_error_command_on_unix() {
-		assumeFalse(isWindows());
-
-		String script = "error.sh";
-		Command command = createUnixCommand(script);
-		File workingDirectory = workingDirectory(script);
-		OutputHandler out = mock(OutputHandler.class);
-
-		CommandResult result = commandExecutor.execute(workingDirectory, command, out);
-
-		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
-	}
-
-	@Test
-	public void it_should_execute_success_command_on_windows() {
-		assumeTrue(isWindows());
-
-		String script = "success.bat";
-		Command command = createMsDosCommand(script);
-		File workingDirectory = workingDirectory(script);
-		OutputHandler out = mock(OutputHandler.class);
-
-		CommandResult result = commandExecutor.execute(workingDirectory, command, out);
+		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isZero();
-	}
-
-	@Test
-	public void it_should_execute_error_command_on_windows() {
-		assumeTrue(isWindows());
-
-		String script = "error.bat";
-		Command command = createMsDosCommand(script);
-		File workingDirectory = workingDirectory(script);
-		OutputHandler logger = mock(OutputHandler.class);
-
-		CommandResult result = commandExecutor.execute(workingDirectory, command, logger);
-
-		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
 	}
 
 	private static Command createUnixCommand(String script) {
@@ -104,20 +61,9 @@ public class CommandExecutorTest {
 		return command;
 	}
 
-	private static Command createMsDosCommand(String script) {
-		Command command = new Command("cmd");
-		command.addArgument("/C");
-		command.addArgument(script);
-		return command;
-	}
-
 	private static File workingDirectory(String script) {
-		String path = CommandExecutorTest.class.getResource("/" + script).getPath();
+		String path = NullCommandExecutorTest.class.getResource("/" + script).getPath();
 		File file = new File(path);
 		return file.getParentFile();
-	}
-
-	private static boolean isWindows() {
-		return System.getProperty("os.name").toLowerCase().contains("windows");
 	}
 }

@@ -24,12 +24,12 @@
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
-import org.apache.maven.plugin.MojoExecutionException;
-import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Mojo;
 
 import java.io.File;
 import java.util.Map;
+
+import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.nullExecutor;
 
 /**
  * Dependencies Mojo.
@@ -52,6 +52,13 @@ public class DependenciesMojo extends AbstractNpmMojo {
 	 * This is the name that will be used in the {@code pom.xml} file.
 	 */
 	static final String GOAL_NAME = "dependencies";
+
+	/**
+	 * Create MOJO.
+	 */
+	public DependenciesMojo() {
+		super(nullExecutor());
+	}
 
 	@Override
 	public void execute() {

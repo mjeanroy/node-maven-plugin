@@ -23,30 +23,37 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import java.io.File;
+import java.util.Map;
+
 /**
- * Static factories used to create instance of {@link CommandExecutor}.
+ * Execute command line (i.e instance of {@link Command} object.
+ *
+ * <p>
+ *
+ * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
  */
-public final class CommandExecutors {
-
-	// Ensure non instantiation.
-	private CommandExecutors() {
-	}
+class NullCommandExecutor implements CommandExecutor {
 
 	/**
-	 * Create new executor.
-	 *
-	 * @return New Executor.
+     * The command executor instance.
 	 */
-	public static CommandExecutor newExecutor() {
-		return DefaultCommandExecutor.getInstance();
+	private static final NullCommandExecutor INSTANCE = new NullCommandExecutor();
+
+    /**
+     * Get the command executor.
+	 *
+	 * @return The command executor.
+	 */
+	static NullCommandExecutor getInstance() {
+		return INSTANCE;
 	}
 
-	/**
-	 * Create new executor that will do nothing.
-	 *
-	 * @return New Executor.
-	 */
-	public static CommandExecutor nullExecutor() {
-		return NullCommandExecutor.getInstance();
+	private NullCommandExecutor() {
+	}
+
+	@Override
+	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
+		return new CommandResult(0);
 	}
 }

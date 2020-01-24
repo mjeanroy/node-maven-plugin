@@ -23,7 +23,10 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import org.apache.commons.exec.*;
+
 import java.io.File;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -33,15 +36,50 @@ import java.util.Map;
  *
  * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
  */
-public interface CommandExecutor {
+class DefaultCommandExecutor implements CommandExecutor {
 
 	/**
-	 * Execute command line and return the result status.
-	 *
-	 * @param workingDirectory Working directory (i.e where the command line is executed).
-	 * @param command Command, containing executable path with arguments.
-	 * @param logger Logger to use to log command output.
-	 * @return Command result object.
+	 * The command executor instance.
 	 */
-	CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment);
+	private static final DefaultCommandExecutor INSTANCE = new DefaultCommandExecutor();
+
+	/**
+	 * Get the command executor.
+	 *
+	 * @return The command executor.
+	 */
+	static DefaultCommandExecutor getInstance() {
+		return INSTANCE;
+	}
+
+	private DefaultCommandExecutor() {
+	}
+
+	@Override
+	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
+		CommandLine commandLine = new CommandLine(command.getExecutable());
+		for (String argument : command.getArguments()) {
+			commandLine.addArgument(argument);
+		}
+
+		try {
+			Executor executor = new DefaultExecutor();
+			executor.setWorkingDirectory(workingDirectory);
+			executor.setExitValue(0);
+
+			// Define custom output stream
+			LogStreamHandler stream = new LogStreamHandler(logger);
+			PumpStreamHandler handler = new PumpStreamHandler(stream);
+			executor.setStreamHandler(handler);
+
+			int status = executor.execute(commandLine, environment);
+			return new CommandResult(status);
+		}
+		catch (ExecuteException ex) {
+			return new CommandResult(ex.getExitValue());
+		}
+		catch (IOException ex) {
+			throw new CommandException(ex);
+		}
+	}
 }

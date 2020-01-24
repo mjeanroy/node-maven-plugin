@@ -33,13 +33,11 @@ import org.apache.maven.settings.Settings;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 import org.mockito.verification.VerificationMode;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
@@ -52,8 +50,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTest
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -84,6 +81,22 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
 		verify_mojo_success(mojo, NPM);
+	}
+
+	@Test
+	public void it_should_execute_mojo_given_environment_variables() throws Exception {
+		Map<String, String> environment = singletonMap("maven", "true");
+
+		T mojo = lookupMojo("mojo-with-parameters");
+		writePrivate(mojo, "environment", environment);
+
+		verify_mojo_success(mojo, NPM);
+		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
+				any(File.class),
+				any(Command.class),
+				any(NpmLogger.class),
+				eq(environment)
+		);
 	}
 
 	@Test
@@ -309,8 +322,12 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(logger, verificationModeLog).warn("Cannot execute npm run " + script() + " command: it is not defined in package.json (please check file: " + expectedPackageJsonPath + "), skipping.");
 		verify(logger, never()).error(anyString());
 
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		verify(executor, verificationModeExecutor).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(readPrivate(mojo, "executor", CommandExecutor.class), verificationModeExecutor).execute(
+				any(File.class),
+				any(Command.class),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 	}
 
 	@Test
@@ -496,9 +513,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyCommandExecutionWithProxy(T mojo) {
-		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
+		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
+				any(File.class),
+				cmdCaptor.capture(),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 
 		Command command = cmdCaptor.getValue();
 		assertThat(command.toString())
@@ -507,10 +528,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyCommandExecution(T mojo, String pkg, String expectedArgs) {
-		CommandExecutor executor = readPrivate(mojo, "executor");
-
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
+		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
+				any(File.class),
+				cmdCaptor.capture(),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
@@ -518,9 +542,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyCommandExecutionIgnoringProxies(T mojo) {
-		CommandExecutor executor = readPrivate(mojo, "executor");
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class));
+		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
+				any(File.class),
+				cmdCaptor.capture(),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 
 		Command command = cmdCaptor.getValue();
 		assertThat(command.toString())
@@ -533,7 +561,12 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyExecutorHasBeenRunOnce(T mojo1) {
-		verify(readPrivate(mojo1, "executor", CommandExecutor.class), times(1)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(readPrivate(mojo1, "executor", CommandExecutor.class), times(1)).execute(
+				any(File.class),
+				any(Command.class),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 	}
 
 	private void verifyCommandSkippedHasBeenLoggedOnce(T mojo1, String cmd) {
@@ -564,7 +597,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private CommandExecutor givenExecutor(CommandExecutor executor, CommandResult result) {
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap())).thenReturn(result);
 		return executor;
 	}
 }

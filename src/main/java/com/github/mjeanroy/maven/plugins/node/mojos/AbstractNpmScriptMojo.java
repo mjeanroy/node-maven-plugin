@@ -24,7 +24,6 @@
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Files;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Ios;
@@ -40,26 +39,14 @@ import org.codehaus.plexus.util.DirectoryScanner;
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
 import static java.util.Arrays.asList;
-import static java.util.Collections.emptyMap;
-import static java.util.Collections.emptySet;
-import static java.util.Collections.unmodifiableMap;
-import static java.util.Collections.unmodifiableSet;
+import static java.util.Collections.*;
 
 abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
@@ -162,22 +149,16 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private IncrementalBuildConfiguration incrementalBuild;
 
 	/**
-	 * Executor used to run command line.
-	 */
-	private final CommandExecutor executor;
-
-	/**
 	 * Default Constructor.
 	 */
 	AbstractNpmScriptMojo() {
-		super();
+		super(newExecutor());
 		this.color = false;
 		this.addMavenArgument = true;
 		this.failOnError = true;
 		this.failOnMissingScript = true;
 		this.ignoreProxies = true;
 		this.incrementalBuild = new IncrementalBuildConfiguration();
-		this.executor = newExecutor();
 	}
 
 	@Override
@@ -684,7 +665,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * @throws MojoExecutionException In case of errors.
 	 */
 	private void executeCommand(Command cmd) throws MojoExecutionException {
-		CommandResult result = executor.execute(getWorkingDirectory(), cmd, npmLogger());
+		CommandResult result = execute(cmd);
 		if (result.isFailure()) {
 			handleFailure(cmd, result);
 		} else {
