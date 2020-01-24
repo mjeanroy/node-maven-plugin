@@ -57,6 +57,7 @@ public class IncrementalBuildConfigurationTest {
 					"enabled=false, " +
 					"useDefaultExcludes=true, " +
 					"useDefaultIncludes=true, " +
+					"excludeBackendSources=true, " +
 					"includes=[], " +
 					"excludes=[], " +
 					"install=IncrementalBuildGoalConfiguration{" +

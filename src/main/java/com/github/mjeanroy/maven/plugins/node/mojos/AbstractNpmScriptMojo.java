@@ -55,6 +55,7 @@ import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.n
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
+import static java.util.Arrays.asList;
 import static java.util.Collections.emptyMap;
 import static java.util.Collections.emptySet;
 import static java.util.Collections.unmodifiableMap;
@@ -636,7 +637,19 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	private Set<String> excludes() {
 		Set<String> excludes = new LinkedHashSet<>();
+
+		// NPM/YARN dependencies
 		excludes.add("node_modules/**/*");
+
+		// Backend Source Files (main or test)
+		if (incrementalBuild.isExcludeBackendSources()) {
+			for (String lang : asList("java", "kotlin", "scala", "groovy")) {
+				excludes.add("src/main/" + lang + "/**/*");
+				excludes.add("src/test/" + lang + "/**/*");
+			}
+		}
+
+		// Build output
 		excludes.add("/target/**/*");
 
 		String goal = getGoalName();

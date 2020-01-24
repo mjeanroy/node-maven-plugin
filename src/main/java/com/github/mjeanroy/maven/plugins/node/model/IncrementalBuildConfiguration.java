@@ -54,6 +54,18 @@ public final class IncrementalBuildConfiguration {
 	private boolean useDefaultExcludes;
 
 	/**
+	 * Enable/Disable exclusion of backend source files, defined in following directories:
+	 *
+	 * <ul>
+	 *     <li>src/(main|test)/java</li>
+	 *     <li>src/(main|test)/kotlin</li>
+	 *     <li>src/(main|test)/scala</li>
+	 *     <li>src/(main|test)/groovy</li>
+	 * </ul>
+	 */
+	private boolean excludeBackendSources;
+
+	/**
 	 * Set of inclusions for all goals.
 	 */
 	private List<String> includes;
@@ -92,6 +104,7 @@ public final class IncrementalBuildConfiguration {
 		this.enabled = false;
 		this.useDefaultIncludes = true;
 		this.useDefaultExcludes = true;
+		this.excludeBackendSources = true;
 
 		this.includes = new ArrayList<>();
 		this.excludes = new ArrayList<>();
@@ -284,6 +297,24 @@ public final class IncrementalBuildConfiguration {
 	}
 
 	/**
+	 * Get {@link #excludeBackendSources}
+	 *
+	 * @return {@link #excludeBackendSources}
+	 */
+	public boolean isExcludeBackendSources() {
+		return excludeBackendSources;
+	}
+
+	/**
+	 * Set {@link #excludeBackendSources}
+	 *
+	 * @param excludeBackendSources New {@link #excludeBackendSources}
+	 */
+	public void setExcludeBackendSources(boolean excludeBackendSources) {
+		this.excludeBackendSources = excludeBackendSources;
+	}
+
+	/**
 	 * Check if incremental build is enabled for the given goal.
 	 *
 	 * @param goal Goal name.
@@ -395,6 +426,7 @@ public final class IncrementalBuildConfiguration {
 			return Objects.equals(enabled, c.enabled)
 					&& Objects.equals(useDefaultIncludes, c.useDefaultIncludes)
 					&& Objects.equals(useDefaultExcludes, c.useDefaultExcludes)
+					&& Objects.equals(excludeBackendSources, c.excludeBackendSources)
 					&& Objects.equals(includes, c.includes)
 					&& Objects.equals(excludes, c.excludes)
 					&& Objects.equals(install, c.install)
@@ -413,6 +445,7 @@ public final class IncrementalBuildConfiguration {
 				enabled,
 				useDefaultExcludes,
 				useDefaultIncludes,
+				excludeBackendSources,
 				includes,
 				excludes,
 				install,
@@ -429,6 +462,7 @@ public final class IncrementalBuildConfiguration {
 				.append("enabled", enabled)
 				.append("useDefaultExcludes", useDefaultExcludes)
 				.append("useDefaultIncludes", useDefaultIncludes)
+				.append("excludeBackendSources", excludeBackendSources)
 				.append("includes", includes)
 				.append("excludes", excludes)
 				.append("install", install)
