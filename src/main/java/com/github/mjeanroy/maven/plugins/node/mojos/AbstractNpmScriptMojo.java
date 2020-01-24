@@ -126,7 +126,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * By default, this argument is automatically added to be able to know that maven triggered
 	 * the command during the build.
 	 */
-	@Parameter(defaultValue = "true")
+	@Parameter(defaultValue = "false")
 	private boolean addMavenArgument;
 
 	/**
