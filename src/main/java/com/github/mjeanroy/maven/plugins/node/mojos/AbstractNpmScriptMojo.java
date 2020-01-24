@@ -174,6 +174,12 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		Log log = getLog();
 
+		// Should skip?
+		if (skip || shouldSkip()) {
+			log.info(getSkippedMessage(cmd));
+			return;
+		}
+
 		// Command already done during build?
 		if (hasBeenRunPreviously()) {
 			log.info("Command " + cmd.toString() + " already done, skipping.");
@@ -190,12 +196,6 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 		else if (log.isDebugEnabled()) {
 			printIncrementalBuildDiff(previousState, newState);
-		}
-
-		// Should skip?
-		if (skip || shouldSkip()) {
-			log.info(getSkippedMessage(cmd));
-			return;
 		}
 
 		File packageJsonFile = lookupPackageJson();
