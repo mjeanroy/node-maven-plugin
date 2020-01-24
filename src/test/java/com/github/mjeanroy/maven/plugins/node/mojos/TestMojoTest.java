@@ -41,8 +41,8 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 	}
 
 	@Override
-	String skipMessage(boolean yarn) {
-		return "Tests are skipped.";
+	String skipMessage(String npmClient) {
+		return skipMessage();
 	}
 
 	@Override
@@ -100,6 +100,10 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	private void verifySkipMessageOutput(TestMojo mojo) {
 		Log logger = readPrivate(mojo, "log");
-		verify(logger).info(skipMessage(false));
+		verify(logger).info(skipMessage());
+	}
+
+	private String skipMessage() {
+		return "Tests are skipped.";
 	}
 }

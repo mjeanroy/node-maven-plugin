@@ -60,22 +60,29 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * Get {@code npm} path.
 	 * The path should point to the npm executable file.
 	 */
-	@Parameter(property = "npm.path", defaultValue = "npm")
+	@Parameter(property = "npm.path")
 	private String npmPath;
 
 	/**
 	 * Get npm path.
 	 * The path should point to the npm executable file.
 	 */
-	@Parameter(property = "yarn.path", defaultValue = "yarn")
+	@Parameter(property = "yarn.path")
 	private String yarnPath;
 
 	/**
 	 * Flag to check if yarn command should be used instead of npm to install dependencies.
 	 * Default is false, since yarn may not be installed.
 	 */
-	@Parameter(property = "yarn", defaultValue = "false")
+	@Parameter(property = "yarn")
 	private boolean yarn;
+
+	/**
+	 * Flag to check if yarn command should be used instead of npm to install dependencies.
+	 * Default is false, since yarn may not be installed.
+	 */
+	@Parameter(property = "npmClient", defaultValue = "${npm.client}")
+	private String npmClient;
 
 	/**
 	 * Default Constructor.
@@ -93,20 +100,15 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	}
 
 	/**
-	 * Check if yarn should be used instead of npm to install dependencies.
-	 *
-	 * @return {@code true} if {@code yarn} should be used to install dependencies, {@code false} otherwise.
-	 */
-	boolean isUseYarn() {
-		return yarn;
-	}
-
-	/**
 	 * Create new {@code npm} command instance.
 	 *
 	 * @return NPM Command.
 	 */
 	Command npm() {
+		if (npmPath != null) {
+			getLog().warn("Parameter 'npmPath' is deprecated, please use 'npmClient' instead.");
+		}
+
 		return Commands.npm(npmPath);
 	}
 
@@ -115,8 +117,28 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return Yarn Command.
 	 */
-	Command yarn() {
+	private Command yarn() {
+		if (yarn) {
+			getLog().warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
+		}
+
+		if (yarnPath != null) {
+			getLog().warn("Parameter 'yarnPath' is deprecated, please use 'npmClient' instead.");
+		}
+
 		return Commands.yarn(yarnPath);
+	}
+
+	Command npmClient() {
+		if (yarn || yarnPath != null) {
+			return yarn();
+		}
+
+		if (npmPath != null) {
+			return npm();
+		}
+
+		return Commands.npmClient(npmClient);
 	}
 
 	/**

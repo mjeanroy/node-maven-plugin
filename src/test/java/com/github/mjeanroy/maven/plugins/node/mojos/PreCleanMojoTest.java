@@ -73,7 +73,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 
 	@Test
 	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
-		PreCleanMojo mojo = lookupMojo("mojo-with-yarn");
+		PreCleanMojo mojo = lookupMojo("mojo-with-npm-client");
 
 		CommandResult result = successResult();
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);

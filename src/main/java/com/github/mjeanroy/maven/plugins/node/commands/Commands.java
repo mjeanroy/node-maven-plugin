@@ -67,6 +67,19 @@ public final class Commands {
 	}
 
 	/**
+	 * Create new npm client command with
+	 *
+	 * Executable path should be given as the first argument.
+	 * If path is null, then `npm` executable should be globally available.
+	 *
+	 * @param npmClient NPM Client (such as `npm` or `yarn`) or NPM executable path.
+	 * @return New command.
+	 */
+	public static Command npmClient(String npmClient) {
+		return wrap(new Command(firstNonNull(npmClient, "npm")));
+	}
+
+	/**
 	 * Create new {@code node} command.
 	 *
 	 * <p>

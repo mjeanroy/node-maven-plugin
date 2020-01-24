@@ -78,6 +78,30 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	}
 
 	@Test
+	public void it_should_execute_mojo_with_specified_npm_client() throws Exception {
+		CommandExecutor executor = mock(CommandExecutor.class);
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+		writePrivate(mojo, "executor", executor);
+		writePrivate(mojo, "npmClient", "yarn");
+
+		CommandResult result = successResult();
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class))).thenReturn(result);
+
+		mojo.execute();
+
+		verify(executor, times(3)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+
+		Log logger = readPrivate(mojo, "log");
+		InOrder inOrder = inOrder(logger);
+		inOrder.verify(logger).info("Checking node command");
+		inOrder.verify(logger).debug("Running: node --version");
+		inOrder.verify(logger).info("Checking npm command");
+		inOrder.verify(logger).debug("Running: npm --version");
+		inOrder.verify(logger).info("Checking yarn command");
+		inOrder.verify(logger).debug("Running: yarn --version");
+	}
+
+	@Test
 	public void it_should_execute_mojo_with_yarn() throws Exception {
 		CommandExecutor executor = mock(CommandExecutor.class);
 		CheckNodeMojo mojo = lookupEmptyMojo("mojo");

@@ -90,6 +90,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-yarn");
 		verify_mojo_success(mojo, YARN);
+		verify(readPrivate(mojo, "log", Log.class)).warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
+	}
+
+	@Test
+	public void it_should_execute_mojo_with_custom_npm_client_in_success() throws Exception {
+		T mojo = lookupMojo("mojo-with-npm-client");
+		verify_mojo_success(mojo, YARN);
+		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
 	}
 
 	private void verify_mojo_success(T mojo, String pkg) throws Exception {
@@ -124,7 +132,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifySkippedMojo(mojo, false);
+		verifySkippedMojo(mojo);
 	}
 
 	@Test
@@ -136,7 +144,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifySkippedMojo(mojo, false);
+		verifySkippedMojo(mojo);
 	}
 
 	@Test
@@ -151,7 +159,22 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifySkippedMojo(mojo, true);
+		verifySkippedMojo(mojo, "yarn");
+	}
+
+	@Test
+	public void it_should_skip_individual_mojo_execution_with_custom_npm_client() throws Exception {
+		T mojo = lookupMojo("mojo-with-parameters");
+
+		// Enable yarn
+		writePrivate(mojo, "npmClient", "yarn");
+
+		// Enable individual skip.
+		enableSkip(mojo);
+
+		mojo.execute();
+
+		verifySkippedMojo(mojo, "yarn");
 	}
 
 	@Test
@@ -378,12 +401,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	/**
 	 * The expected skipped message.
 	 *
-	 * @param yarn If yarn is enabled, or not.
+	 * @param npmClient The npm client name.
 	 * @return Skipped message.
 	 */
-	String skipMessage(boolean yarn) {
-		String pkg = yarn ? "yarn" : "npm";
-		String command = pkg + " " + (isStandardScript() ? "" : "run ") + script();
+	String skipMessage(String npmClient) {
+		String command = npmClient + " " + (isStandardScript() ? "" : "run ") + script();
 		return "Command '" + command + "' is skipped.";
 	}
 
@@ -424,12 +446,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return arguments;
 	}
 
-	private void verifySkippedMojo(T mojo, boolean yarn) {
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		verifyZeroInteractions(executor);
+	private void verifySkippedMojo(T mojo, String npmClient) {
+		verifyZeroInteractions(readPrivate(mojo, "executor"));
+		verify(readPrivate(mojo, "log", Log.class)).info(skipMessage(npmClient));
+	}
 
-		Log logger = readPrivate(mojo, "log");
-		verify(logger).info(skipMessage(yarn));
+	private void verifySkippedMojo(T mojo) {
+		verifySkippedMojo(mojo, "npm");
 	}
 
 	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
@@ -506,18 +529,15 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyCommandSkippedHasNotBeenLogged(T mojo1, String cmd) {
-		Log logger1 = readPrivate(mojo1, "log");
-		verify(logger1, never()).info(String.format("Command %s already done, skipping.", cmd));
+		verify(readPrivate(mojo1, "log", Log.class), never()).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
 	private void verifyExecutorHasBeenRunOnce(T mojo1) {
-		CommandExecutor executor1 = readPrivate(mojo1, "executor");
-		verify(executor1, times(1)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
+		verify(readPrivate(mojo1, "executor", CommandExecutor.class), times(1)).execute(any(File.class), any(Command.class), any(NpmLogger.class));
 	}
 
 	private void verifyCommandSkippedHasBeenLoggedOnce(T mojo1, String cmd) {
-		Log logger1 = readPrivate(mojo1, "log");
-		verify(logger1, times(1)).info(String.format("Command %s already done, skipping.", cmd));
+		verify(readPrivate(mojo1, "log", Log.class), times(1)).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
 	private void givenFailExecutor(T mojo) {
@@ -536,13 +556,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void givenExecutor(T mojo, CommandResult result) {
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		givenExecutor(executor, result);
+		givenExecutor(readPrivate(mojo, "executor", CommandExecutor.class), result);
 	}
 
 	private CommandExecutor givenExecutor(CommandResult result) {
-		CommandExecutor executor = mock(CommandExecutor.class);
-		return givenExecutor(executor, result);
+		return givenExecutor(mock(CommandExecutor.class), result);
 	}
 
 	private CommandExecutor givenExecutor(CommandExecutor executor, CommandResult result) {

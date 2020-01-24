@@ -30,6 +30,8 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 
+import java.util.Objects;
+
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.capitalize;
 
@@ -68,11 +70,14 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
-		check(node());
-		check(npm());
+		Command npm = npm();
 
-		if (isUseYarn()) {
-			check(yarn());
+		check(node());
+		check(npm);
+
+		Command npmClient = npmClient();
+		if (!Objects.equals(npm.getExecutable(), npmClient.getExecutable())) {
+			check(npmClient);
 		}
 	}
 

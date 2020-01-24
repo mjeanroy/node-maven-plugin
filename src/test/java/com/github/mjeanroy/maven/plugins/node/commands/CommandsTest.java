@@ -27,9 +27,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.node;
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.npm;
-import static com.github.mjeanroy.maven.plugins.node.commands.Commands.yarn;
+import static com.github.mjeanroy.maven.plugins.node.commands.Commands.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class CommandsTest {
@@ -68,6 +66,18 @@ public class CommandsTest {
 	public void it_should_create_yarn_command_with_custom_path_on_linux() {
 		useLinux();
 		verify_yarn_command_with_custom_path_on_unix();
+	}
+
+	@Test
+	public void it_should_create_npm_client_command_on_linux() {
+		useLinux();
+		verify_npm_client_command_on_unix();
+	}
+
+	@Test
+	public void it_should_create_custom_npm_client_command_on_linux() {
+		useLinux();
+		verify_custom_npm_client_command_on_unix();
 	}
 
 	@Test
@@ -132,6 +142,34 @@ public class CommandsTest {
 		final String arg = "--no-color";
 
 		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("cmd");
+		assertThat(yarn.getArguments()).containsExactly("/C", executable, arg);
+	}
+
+	@Test
+	public void it_should_create_npm_client_command_on_windows() {
+		useWindows();
+
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command yarn = npmClient(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("cmd");
+		assertThat(yarn.getArguments()).containsExactly("/C", "npm", arg);
+	}
+
+	@Test
+	public void it_should_create_custom_npm_client_command_on_windows_with_custom_path() {
+		useWindows();
+
+		final String executable = "yarn";
+		final String arg = "--no-color";
+
+		Command yarn = npmClient(executable);
 		yarn.addArgument(arg);
 
 		assertThat(yarn.getExecutable()).isEqualTo("cmd");
@@ -229,6 +267,28 @@ public class CommandsTest {
 		final String arg = "--no-color";
 
 		Command yarn = yarn(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("yarn");
+		assertThat(yarn.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_npm_client_command_on_unix() {
+		final String executable = null;
+		final String arg = "--no-color";
+
+		Command yarn = npmClient(executable);
+		yarn.addArgument(arg);
+
+		assertThat(yarn.getExecutable()).isEqualTo("npm");
+		assertThat(yarn.getArguments()).containsExactly(arg);
+	}
+
+	private void verify_custom_npm_client_command_on_unix() {
+		final String executable = "yarn";
+		final String arg = "--no-color";
+
+		Command yarn = npmClient(executable);
 		yarn.addArgument(arg);
 
 		assertThat(yarn.getExecutable()).isEqualTo("yarn");

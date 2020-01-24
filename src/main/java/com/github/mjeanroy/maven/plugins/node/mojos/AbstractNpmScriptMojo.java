@@ -183,8 +183,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	@Override
 	public void execute() throws MojoExecutionException {
 		String scriptToRun = getScriptToRun(false);
-		boolean isYarn = isUseYarn();
-		Command cmd = isYarn ? yarn() : npm();
+		Command cmd = npmClient();
 
 		if (needRunScript(scriptToRun)) {
 			cmd.addArgument("run");

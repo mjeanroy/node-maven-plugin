@@ -75,6 +75,19 @@ public final class ReflectUtils {
 	}
 
 	/**
+	 * Read private field on given instance.
+	 *
+	 * @param instance Object instance.
+	 * @param name Filed name.
+	 * @param <T> Type of value to read.
+	 * @return The value of field on instance.
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T> T readPrivate(Object instance, String name, Class<T> klass) {
+		return (T) readPrivate(instance, name);
+	}
+
+	/**
 	 * Write private field on given instance.
 	 *
 	 * @param instance Object instance.
