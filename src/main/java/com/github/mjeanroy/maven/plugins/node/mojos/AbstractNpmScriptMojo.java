@@ -66,13 +66,13 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	// Initialize commands
 	static {
-		BASIC_COMMANDS = unmodifiableSet(new HashSet<String>() {{
-			add(NPM_INSTALL);
-			add(NPM_TEST);
-			add(NPM_PUBLISH);
-			add(NPM_START);
-			add(NPM_PRUNE);
-		}});
+		BASIC_COMMANDS = unmodifiableSet(new HashSet<String>(asList(
+			NPM_INSTALL,
+			NPM_TEST,
+			NPM_PUBLISH,
+			NPM_START,
+			NPM_PRUNE
+		)));
 	}
 
 	/**
