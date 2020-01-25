@@ -49,10 +49,7 @@ public final class Jsons {
 	 * @return Object representation of json file.
 	 */
 	public static <T> T parseJson(File jsonFile, Class<T> klass) {
-		try {
-			FileReader reader = new FileReader(jsonFile);
-			BufferedReader buf = new BufferedReader(reader);
-
+		try(FileReader reader = new FileReader(jsonFile); BufferedReader buf = new BufferedReader(reader)) {
 			StringBuilder json = new StringBuilder();
 			String line;
 			while ((line = buf.readLine()) != null) {
