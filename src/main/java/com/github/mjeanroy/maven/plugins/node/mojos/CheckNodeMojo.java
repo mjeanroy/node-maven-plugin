@@ -69,7 +69,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		check(npm);
 
 		Command npmClient = npmClient();
-		if (!Objects.equals(npm.getExecutable(), npmClient.getExecutable())) {
+		if (!Objects.equals(npm.getName(), npmClient.getName())) {
 			check(npmClient);
 		}
 	}

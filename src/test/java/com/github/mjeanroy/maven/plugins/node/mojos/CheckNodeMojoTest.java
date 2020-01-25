@@ -23,7 +23,11 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.*;
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
+import com.github.mjeanroy.maven.plugins.node.commands.OutputHandler;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -35,10 +39,15 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Map;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMap;
+import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMapEntry;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.inOrder;
@@ -49,6 +58,8 @@ import static org.mockito.Mockito.when;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
+	private String osName;
+
 	@Override
 	String mojoName() {
 		return "check";
@@ -56,14 +67,13 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo() throws Exception {
-		CommandExecutor executor = givenExecutor();
-
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-		writePrivate(mojo, "executor", executor);
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
+				newMapEntry("executor", (Object) givenExecutor())
+		)));
 
 		mojo.execute();
 
-		verifyMojoExecution(executor, 2);
+		verifyMojoExecution(mojo, 2);
 
 		Log logger = readPrivate(mojo, "log");
 		InOrder inOrder = inOrder(logger);
@@ -75,15 +85,14 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo_with_specified_npm_client() throws Exception {
-		CommandExecutor executor = givenExecutor();
-
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-		writePrivate(mojo, "executor", executor);
-		writePrivate(mojo, "npmClient", "yarn");
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("executor", (Object) givenExecutor()),
+				newMapEntry("npmClient", (Object) "yarn")
+		)));
 
 		mojo.execute();
 
-		verifyMojoExecution(executor, 3);
+		verifyMojoExecution(mojo, 3);
 
 		Log logger = readPrivate(mojo, "log");
 		InOrder inOrder = inOrder(logger);
@@ -97,15 +106,14 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo_with_yarn() throws Exception {
-		CommandExecutor executor = givenExecutor();
-
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-		writePrivate(mojo, "executor", executor);
-		writePrivate(mojo, "yarn", true);
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("executor", (Object) givenExecutor()),
+				newMapEntry("yarn", (Object) true)
+		)));
 
 		mojo.execute();
 
-		verifyMojoExecution(executor, 3);
+		verifyMojoExecution(mojo, 3);
 
 		Log logger = readPrivate(mojo, "log");
 		InOrder inOrder = inOrder(logger);
@@ -119,37 +127,39 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_fail_if_node_is_not_available() throws Exception {
-		CommandExecutor executor = givenExecutor("node");
-
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-		writePrivate(mojo, "executor", executor);
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
+				newMapEntry("executor", givenExecutor("node"))
+		)));
 
 		verifyMojoExecutionException(mojo, "Node is not available. Please install it on your operating system.");
 	}
 
 	@Test
 	public void it_should_fail_if_npm_is_not_available() throws Exception {
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-
-		CommandExecutor executor = givenExecutor("npm");
-		writePrivate(mojo, "executor", executor);
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
+				newMapEntry("executor", givenExecutor("npm"))
+		)));
 
 		verifyMojoExecutionException(mojo, "Npm is not available. Please install it on your operating system.");
 	}
 
 	@Test
 	public void it_should_fail_if_yarn_is_not_available() throws Exception {
-		CommandExecutor executor = givenExecutor("yarn");
-
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
-		writePrivate(mojo, "executor", executor);
-		writePrivate(mojo, "yarn", true);
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("executor", (Object) givenExecutor("yarn")),
+				newMapEntry("yarn", (Object) true)
+		)));
 
 		verifyMojoExecutionException(mojo, "Yarn is not available. Please install it on your operating system.");
 	}
 
-	private void verifyMojoExecution(CommandExecutor executor, int numberOfCommand) {
-		verify(executor, times(numberOfCommand)).execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
+	private void verifyMojoExecution(CheckNodeMojo mojo, int numberOfCommand) {
+		verify(readPrivate(mojo, "executor", CommandExecutor.class), times(numberOfCommand)).execute(
+				any(File.class),
+				any(Command.class),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 	}
 
 	private void verifyMojoExecutionException(final CheckNodeMojo mojo, final String message) {
@@ -161,6 +171,15 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		};
 
 		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessage(message);
+	}
+
+	private CheckNodeMojo givenMojo(Map<String, ?> props) throws Exception {
+		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+		for (Map.Entry<String, ?> prop : props.entrySet()) {
+			writePrivate(mojo, prop.getKey(), prop.getValue());
+		}
+
+		return mojo;
 	}
 
 	private static class CommandExecutionExceptionAnswer implements Answer<CommandResult> {
