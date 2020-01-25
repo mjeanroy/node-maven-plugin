@@ -31,6 +31,7 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.util.List;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.absolutePath;
 import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.getFileFromClasspath;
 import static com.github.mjeanroy.maven.plugins.node.tests.StringTestUtils.join;
 import static java.util.Arrays.asList;
@@ -44,9 +45,9 @@ public class FilesTest {
 	@Test
 	public void it_should_normalize_file_path() {
 		assertThat(Files.getNormalizeAbsolutePath(null)).isEqualTo(null);
-		assertThat(Files.getNormalizeAbsolutePath(new File("/foo.txt"))).isEqualTo("/foo.txt");
-		assertThat(Files.getNormalizeAbsolutePath(new File("/./foo.txt"))).isEqualTo("/foo.txt");
-		assertThat(Files.getNormalizeAbsolutePath(new File("/bar/.././foo.txt"))).isEqualTo("/foo.txt");
+		assertThat(Files.getNormalizeAbsolutePath(new File("/foo.txt"))).isEqualTo(absolutePath("/foo.txt"));
+		assertThat(Files.getNormalizeAbsolutePath(new File("/./foo.txt"))).isEqualTo(absolutePath("/foo.txt"));
+		assertThat(Files.getNormalizeAbsolutePath(new File("/bar/.././foo.txt"))).isEqualTo(absolutePath("/foo.txt"));
 	}
 
 	@Test

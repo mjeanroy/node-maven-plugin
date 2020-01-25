@@ -67,4 +67,14 @@ public final class FileTestUtils {
 
 		return out;
 	}
+
+	/**
+	 * Get absolute path of given file.
+	 *
+	 * @param path The path.
+	 * @return The absolute path.
+	 */
+	public static String absolutePath(String path) {
+		return new File(path).getAbsolutePath();
+	}
 }
