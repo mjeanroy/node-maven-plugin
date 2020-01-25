@@ -91,6 +91,7 @@
 		<commons-lang3.version>3.8.1</commons-lang3.version>
 		<logback.version>1.2.3</logback.version>
 		<equalsverifier.version>2.5.2</equalsverifier.version>
+		<commons-codec.version>1.13</commons-codec.version>
 	</properties>
 
 	<dependencies>
@@ -191,6 +192,12 @@
 			<groupId>nl.jqno.equalsverifier</groupId>
 			<artifactId>equalsverifier</artifactId>
 			<version>${equalsverifier.version}</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>commons-codec</groupId>
+			<artifactId>commons-codec</artifactId>
+			<version>${commons-codec.version}</version>
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
