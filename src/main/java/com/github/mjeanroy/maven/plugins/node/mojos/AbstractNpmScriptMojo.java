@@ -62,7 +62,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * argument.
 	 */
 	private static final Set<String> BASIC_COMMANDS;
-	public static final String INPUT_STATE_SEPARATOR = "::";
+
+	/**
+	 * The separator used to split file name and hash signature in persisted file.
+	 */
+	private static final String INPUT_STATE_SEPARATOR = "::";
 
 	// Initialize commands
 	static {
