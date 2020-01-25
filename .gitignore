@@ -30,6 +30,7 @@
 /.project
 /.settings
 /.factorypath
+/.vscode
 
 # Build
 /target/
