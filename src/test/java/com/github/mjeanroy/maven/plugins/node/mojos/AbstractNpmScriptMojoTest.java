@@ -37,8 +37,14 @@ import org.mockito.ArgumentMatchers;
 import org.mockito.verification.VerificationMode;
 
 import java.io.File;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMap;
+import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMapEntry;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.StringTestUtils.join;
@@ -47,10 +53,13 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResul
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.ProxyTestBuilder.defaultHttpsProxy;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.SettingsTestBuilder.newSettings;
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -81,45 +90,32 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
-		verify_mojo_success(mojo, NPM);
+		execute_and_verify_successful_mojo_execution(mojo, NPM);
 	}
 
 	@Test
 	public void it_should_execute_mojo_given_environment_variables() throws Exception {
 		Map<String, String> environment = singletonMap("maven", "true");
-		T mojo = lookupMojo("mojo-with-parameters");
-		writePrivate(mojo, "environment", environment);
+		T mojo = lookupMojo("mojo-with-parameters", newMap(asList(
+				newMapEntry("environment", (Object) environment),
+				newMapEntry("color", (Object) true)
+		)));
 
-		verify_mojo_success(mojo, NPM, environment);
+		execute_and_verify_successful_mojo_execution(mojo, NPM, environment);
 	}
 
 	@Test
 	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-yarn");
-		verify_mojo_success(mojo, YARN);
+		execute_and_verify_successful_mojo_execution(mojo, YARN);
 		verify(readPrivate(mojo, "log", Log.class)).warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
 	}
 
 	@Test
 	public void it_should_execute_mojo_with_custom_npm_client_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-npm-client");
-		verify_mojo_success(mojo, YARN);
+		execute_and_verify_successful_mojo_execution(mojo, YARN);
 		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
-	}
-
-	private void verify_mojo_success(T mojo, String pkg, Map<String, String> environment) throws Exception {
-		mojo.execute();
-		String expectedArgs = join(defaultArguments(true, true));
-		verifyMojoExecution(
-				mojo,
-				pkg,
-				expectedArgs,
-				environment
-		);
-	}
-
-	private void verify_mojo_success(T mojo, String pkg) throws Exception {
-		verify_mojo_success(mojo, pkg, Collections.<String, String>emptyMap());
 	}
 
 	@Test
@@ -132,9 +128,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
-		String script = "foobar";
 
-		overrideScript(mojo, script);
+		// Override the script name
+		overrideScript(mojo, "foobar");
 
 		mojo.execute();
 
@@ -183,7 +179,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_skip_individual_mojo_execution_with_custom_npm_client() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
 
-		// Enable yarn
+		// Enable npmClient
 		writePrivate(mojo, "npmClient", "yarn");
 
 		// Enable individual skip.
@@ -235,11 +231,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo2 = lookupEmptyMojo("mojo");
 
 		// Override working directories with relative path
-		File workingDirectory1 = readPrivate(mojo1, "workingDirectory");
-		writePrivate(mojo1, "workingDirectory", new File(workingDirectory1, "foo/.."));
-
-		File workingDirectory2 = readPrivate(mojo1, "workingDirectory");
-		writePrivate(mojo2, "workingDirectory", new File(workingDirectory2, "."));
+		writePrivate(mojo1, "workingDirectory", new File(readPrivate(mojo1, "workingDirectory", File.class), "foo/.."));
+		writePrivate(mojo2, "workingDirectory", new File(readPrivate(mojo1, "workingDirectory", File.class), "."));
 
 		// Share plugin context as in a "normal" build
 		Map pluginContext = new HashMap();
@@ -363,7 +356,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_ignore_proxy_configuration() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
 		givenSettingsWithDefaultProxies(mojo);
-
 		writePrivate(mojo, "ignoreProxies", true);
 
 		mojo.execute();
@@ -475,6 +467,23 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	private void verifySkippedMojo(T mojo) {
 		verifySkippedMojo(mojo, "npm");
 	}
+
+
+	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg, Map<String, String> environment) throws Exception {
+		mojo.execute();
+		String expectedArgs = join(defaultArguments(true, true));
+		verifyMojoExecution(
+				mojo,
+				pkg,
+				expectedArgs,
+				environment
+		);
+	}
+
+	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg) throws Exception {
+		execute_and_verify_successful_mojo_execution(mojo, pkg, Collections.<String, String>emptyMap());
+	}
+
 
 	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
 		verifyMojoExecution(
