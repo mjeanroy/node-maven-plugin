@@ -29,6 +29,7 @@
 /.classpath
 /.project
 /.settings
+/.factorypath
 
 # Build
 /target/
