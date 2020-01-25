@@ -5,9 +5,11 @@ on: [push]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
+
     strategy:
       matrix:
+        os: [ windows-latest, ubuntu-latest ]
         java: [ 7, 8, 9, 10, 11, 12, 13 ]
 
     steps:
