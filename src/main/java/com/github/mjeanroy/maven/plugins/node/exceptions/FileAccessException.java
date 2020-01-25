@@ -26,6 +26,7 @@ package com.github.mjeanroy.maven.plugins.node.exceptions;
 /**
  * Exception thrown when error occurred during reading/writing to files.
  */
+@SuppressWarnings("serial")
 public class FileAccessException extends RuntimeException {
 
 	/**

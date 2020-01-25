@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
  * Proxy Exception.
  * Thrown when some proxy parameters are invalid.
  */
+@SuppressWarnings("serial")
 public class ProxyException extends RuntimeException {
 
 	/**

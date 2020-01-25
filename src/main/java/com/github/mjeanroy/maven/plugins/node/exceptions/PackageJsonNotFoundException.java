@@ -29,6 +29,7 @@ import java.io.File;
  * Exception thrown when {@code package.json} file cannot
  * be found (this file is required by {@code npm} project).
  */
+@SuppressWarnings("serial")
 public class PackageJsonNotFoundException extends RuntimeException {
 
 	/**

@@ -28,6 +28,7 @@ import java.io.IOException;
 /**
  * Exception related to json parsing.
  */
+@SuppressWarnings("serial")
 public class JsonException extends RuntimeException {
 
 	/**

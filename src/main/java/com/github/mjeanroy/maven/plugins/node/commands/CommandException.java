@@ -29,6 +29,7 @@ import java.io.IOException;
  * Wrap IOException that may occur with command line
  * execution.
  */
+@SuppressWarnings("serial")
 public class CommandException extends RuntimeException {
 
 	/**

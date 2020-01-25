@@ -26,6 +26,7 @@ package com.github.mjeanroy.maven.plugins.node.exceptions;
 /**
  * Exception thrown when error occurred during MD5 hash computation.
  */
+@SuppressWarnings("serial")
 public class Md5Exception extends RuntimeException {
 
 	/**
