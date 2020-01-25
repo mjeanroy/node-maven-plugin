@@ -23,10 +23,12 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 
+import java.io.File;
+
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static java.util.Arrays.asList;
@@ -53,29 +55,31 @@ public class LintMojoTest extends AbstractNpmScriptIncrementalMojoTest<LintMojo>
 	@Test
 	public void it_should_write_input_state_after_build() throws Exception {
 		LintMojo mojo = lookupMojo("mojo-with-eslint");
+		File workingDirectory = readPrivate(mojo, "workingDirectory");
 
 		mojo.execute();
 
 		verifyStateFile(mojo, asList(
-				"/.eslintignore::960c5944048e43674c97709b78203a4a",
-				"/.eslintrc::4ab191c2be5319dc3932d7f1a0920fde",
-				"/index.js::18565ddcc053760b5c8e41de0f692d1a",
-				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e",
-				"/src/hello-world.js::23e84ea87061dfba92cb42373b34ee82"
+				join(workingDirectory, ".eslintignore"),
+				join(workingDirectory, ".eslintrc"),
+				join(workingDirectory, "index.js"),
+				join(workingDirectory, "package.json"),
+				join(workingDirectory, "src", "hello-world.js")
 		));
 	}
 
 	@Test
 	public void it_should_write_input_from_tslint_state_after_build() throws Exception {
 		LintMojo mojo = lookupMojo("mojo-with-tslint");
+		File workingDirectory = readPrivate(mojo, "workingDirectory");
 
 		mojo.execute();
 
 		verifyStateFile(mojo, asList(
-				"/index.ts::67d3d4750c38b23b8255b9148f72e0af",
-				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e",
-				"/src/hello-world.ts::56edefd6256658c7605b003051a9cbdd",
-				"/tslint.json::dc6f6093d267125aafe57f7689b207a1"
+				join(workingDirectory, "index.ts"),
+				join(workingDirectory, "package.json"),
+				join(workingDirectory, "src", "hello-world.ts"),
+				join(workingDirectory, "tslint.json")
 		));
 	}
 
@@ -87,10 +91,7 @@ public class LintMojoTest extends AbstractNpmScriptIncrementalMojoTest<LintMojo>
 		resetMojo(mojo);
 		mojo.execute();
 
-		Log log = readPrivate(mojo, "log");
-		verify(log).info("Command npm run lint already done, no changes detected, skipping.");
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		verifyZeroInteractions(executor);
+		verify(readPrivate(mojo, "log", Log.class)).info("Command npm run lint already done, no changes detected, skipping.");
+		verifyZeroInteractions(readPrivate(mojo, "executor"));
 	}
 }

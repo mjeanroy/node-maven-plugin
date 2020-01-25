@@ -23,8 +23,6 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils;
-
 import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
@@ -33,6 +31,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.DigestTestUtils.computeMd5;
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
@@ -46,7 +46,7 @@ public abstract class AbstractNpmScriptIncrementalMojoTest<T extends AbstractNpm
 	 * @param entries Expected file entries.
 	 * @throws Exception If something bas happen while reading state file.
 	 */
-	void verifyStateFile(T mojo, Collection<String> entries) throws Exception {
+	void verifyStateFile(T mojo, Collection<File> entries) throws Exception {
 		File stateFile = stateFile(mojo);
 		assertThat(stateFile).exists();
 
@@ -56,8 +56,11 @@ public abstract class AbstractNpmScriptIncrementalMojoTest<T extends AbstractNpm
 		Collections.sort(lines);
 
 		int i = 0;
-		for (String entry : entries) {
-			assertThat(lines.get(i)).endsWith(entry);
+		for (File entry : entries) {
+			assertThat(lines.get(i)).isEqualTo(
+					entry.getAbsolutePath() + "::" + computeMd5(entry)
+			);
+
 			i++;
 		}
 	}
@@ -70,7 +73,7 @@ public abstract class AbstractNpmScriptIncrementalMojoTest<T extends AbstractNpm
 	 */
 	File stateFile(T mojo) {
 		File workingDirectory = readPrivate(mojo, "workingDirectory");
-		return FileTestUtils.join(workingDirectory, "target", "node-maven-plugin", script());
+		return join(workingDirectory, "target", "node-maven-plugin", script());
 	}
 
 	@SuppressWarnings("rawtypes")

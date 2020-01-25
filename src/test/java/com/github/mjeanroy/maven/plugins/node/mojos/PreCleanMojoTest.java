@@ -35,6 +35,7 @@ import org.mockito.ArgumentMatchers;
 
 import java.io.File;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
@@ -97,38 +98,39 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 	@Test
 	public void it_should_write_input_state_after_build() throws Exception {
 		IncrementalBuildConfiguration incrementalBuild = IncrementalBuildConigurationTestBuilder.of(true);
-		PreCleanMojo mojo = lookupMojo("mojo", singletonMap(
-				"incrementalBuild", incrementalBuild
-		));
+		PreCleanMojo mojo = lookupMojo("mojo", singletonMap("incrementalBuild", incrementalBuild));
+		File workingDirectory = readPrivate(mojo, "workingDirectory");
 
 		mojo.execute();
 
 		verifyStateFile(mojo, singleton(
-				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e"
+				join(workingDirectory, "package.json")
 		));
 	}
 
 	@Test
 	public void it_should_write_input_state_with_package_lock_after_build() throws Exception {
 		PreCleanMojo mojo = lookupMojo("mojo-with-package-lock");
+		File workingDirectory = readPrivate(mojo, "workingDirectory");
 
 		mojo.execute();
 
 		verifyStateFile(mojo, asList(
-				"/package-lock.json::fd91509b9ecf0dc441648f3b3bf8afb0",
-				"/package.json::674bd4434e796d287569fd104ac758b2"
+				join(workingDirectory, "package-lock.json"),
+				join(workingDirectory, "package.json")
 		));
 	}
 
 	@Test
 	public void it_should_write_input_state_with_yarn_lock_after_build() throws Exception {
 		PreCleanMojo mojo = lookupMojo("mojo-with-yarn-lock");
+		File workingDirectory = readPrivate(mojo, "workingDirectory");
 
 		mojo.execute();
 
 		verifyStateFile(mojo, asList(
-				"/package.json::243dbc1eb941ea6d7339d2d42b0fa05e",
-				"/yarn.lock::878b0a273b8bc2b90691663789c4ed83"
+				join(workingDirectory, "package.json"),
+				join(workingDirectory, "yarn.lock")
 		));
 	}
 
@@ -143,10 +145,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 		resetMojo(mojo);
 		mojo.execute();
 
-		Log log = readPrivate(mojo, "log");
-		verify(log).info("Command npm install already done, no changes detected, skipping.");
-
-		CommandExecutor executor = readPrivate(mojo, "executor");
-		verifyZeroInteractions(executor);
+		verify(readPrivate(mojo, "log", Log.class)).info("Command npm install already done, no changes detected, skipping.");
+		verifyZeroInteractions(readPrivate(mojo, "executor"));
 	}
 }
