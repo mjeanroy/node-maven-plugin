@@ -72,9 +72,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void test_should_create_mojo_with_configuration() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
+
 		assertThat(mojo).isNotNull();
-		assertThat((Boolean) readPrivate(mojo, "color")).isTrue();
-		assertThat((File) readPrivate(mojo, "workingDirectory")).isNotNull();
+		assertThat(readPrivate(mojo, "color", Boolean.class)).isTrue();
+		assertThat(readPrivate(mojo, "workingDirectory", File.class)).isNotNull();
 	}
 
 	@Test
@@ -86,17 +87,10 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_given_environment_variables() throws Exception {
 		Map<String, String> environment = singletonMap("maven", "true");
-
 		T mojo = lookupMojo("mojo-with-parameters");
 		writePrivate(mojo, "environment", environment);
 
-		verify_mojo_success(mojo, NPM);
-		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
-				any(File.class),
-				any(Command.class),
-				any(NpmLogger.class),
-				eq(environment)
-		);
+		verify_mojo_success(mojo, NPM, environment);
 	}
 
 	@Test
@@ -113,9 +107,19 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
 	}
 
-	private void verify_mojo_success(T mojo, String pkg) throws Exception {
+	private void verify_mojo_success(T mojo, String pkg, Map<String, String> environment) throws Exception {
 		mojo.execute();
-		verifyMojoExecution(mojo, pkg, join(defaultArguments(true, true)));
+		String expectedArgs = join(defaultArguments(true, true));
+		verifyMojoExecution(
+				mojo,
+				pkg,
+				expectedArgs,
+				environment
+		);
+	}
+
+	private void verify_mojo_success(T mojo, String pkg) throws Exception {
+		verify_mojo_success(mojo, pkg, Collections.<String, String>emptyMap());
 	}
 
 	@Test
@@ -473,13 +477,22 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
+		verifyMojoExecution(
+				mojo,
+				pkg,
+				expectedArgs,
+				Collections.<String, String>emptyMap()
+		);
+	}
+
+	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environment) {
 		verifySuccessOutput(mojo, pkg, expectedArgs);
-		verifyCommandExecution(mojo, pkg, expectedArgs);
+		verifyCommandExecution(mojo, pkg, expectedArgs, environment);
 	}
 
 	private void verifyMojoErrorExecution(T mojo, String pkg, String expectedArgs) {
 		verifyErrorOutput(mojo, pkg, expectedArgs);
-		verifyCommandExecution(mojo, pkg, expectedArgs);
+		verifyCommandExecution(mojo, pkg, expectedArgs, Collections.<String, String>emptyMap());
 	}
 
 	private void verifySuccessOutput(T mojo, String pkg, String expectedArgs) {
@@ -527,16 +540,25 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				.contains("--https-proxy http://mjeanroy:********@localhost:8080");
 	}
 
-	private void verifyCommandExecution(T mojo, String pkg, String expectedArgs) {
+	private void verifyCommandExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environment) {
+		ArgumentCaptor<File> workingDirectoryCaptor = ArgumentCaptor.forClass(File.class);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		ArgumentCaptor<NpmLogger> npmLoggerCaptor = ArgumentCaptor.forClass(NpmLogger.class);
+
 		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
-				any(File.class),
+				workingDirectoryCaptor.capture(),
 				cmdCaptor.capture(),
-				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				npmLoggerCaptor.capture(),
+				eq(environment)
 		);
 
+		File workingDirectory = workingDirectoryCaptor.getValue();
 		Command cmd = cmdCaptor.getValue();
+		NpmLogger npmLogger = npmLoggerCaptor.getValue();
+
+		assertThat(workingDirectory).isEqualTo(readPrivate(mojo, "workingDirectory"));
+		assertThat(npmLogger).isNotNull();
+		assertThat(readPrivate(npmLogger, "log")).isEqualTo(readPrivate(mojo, "log"));
 		assertThat(cmd).isNotNull();
 		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
 	}
