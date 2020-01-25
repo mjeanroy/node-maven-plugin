@@ -95,13 +95,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_given_environment_variables() throws Exception {
-		Map<String, String> environment = singletonMap("maven", "true");
+		Map<String, String> environmentVariables = singletonMap("maven", "true");
 		T mojo = lookupMojo("mojo-with-parameters", newMap(asList(
-				newMapEntry("environment", (Object) environment),
+				newMapEntry("environmentVariables", (Object) environmentVariables),
 				newMapEntry("color", (Object) true)
 		)));
 
-		execute_and_verify_successful_mojo_execution(mojo, NPM, environment);
+		execute_and_verify_successful_mojo_execution(mojo, NPM, environmentVariables);
 	}
 
 	@Test
@@ -469,21 +469,20 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 
-	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg, Map<String, String> environment) throws Exception {
+	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg, Map<String, String> environmentVariables) throws Exception {
 		mojo.execute();
 		String expectedArgs = join(defaultArguments(true, true));
 		verifyMojoExecution(
 				mojo,
 				pkg,
 				expectedArgs,
-				environment
+				environmentVariables
 		);
 	}
 
 	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg) throws Exception {
 		execute_and_verify_successful_mojo_execution(mojo, pkg, Collections.<String, String>emptyMap());
 	}
-
 
 	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
 		verifyMojoExecution(
@@ -494,9 +493,9 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		);
 	}
 
-	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environment) {
+	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environmentVariables) {
 		verifySuccessOutput(mojo, pkg, expectedArgs);
-		verifyCommandExecution(mojo, pkg, expectedArgs, environment);
+		verifyCommandExecution(mojo, pkg, expectedArgs, environmentVariables);
 	}
 
 	private void verifyMojoErrorExecution(T mojo, String pkg, String expectedArgs) {

@@ -91,8 +91,8 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	/**
 	 * A list of environment variables that will be set during command executions.
 	 */
-	@Parameter(property = "environment")
-	private Map<String, String> environment;
+	@Parameter(property = "environmentVariables")
+	private Map<String, String> environmentVariables;
 
 	/**
 	 * The command executor.
@@ -104,7 +104,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	AbstractNpmMojo(CommandExecutor executor) {
 		this.executor = executor;
-		this.environment = new LinkedHashMap<>();
+		this.environmentVariables = new LinkedHashMap<>();
 	}
 
 	/**
@@ -191,7 +191,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return The execution result.
 	 */
 	final CommandResult execute(Command cmd) {
-		return executor.execute(workingDirectory, cmd, npmLogger(), environment);
+		return executor.execute(workingDirectory, cmd, npmLogger(), environmentVariables);
 	}
 
 	/**
