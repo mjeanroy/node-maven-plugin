@@ -5,6 +5,7 @@
     "clean": "gulp clean",
     "lint": "gulp lint",
     "build": "gulp build",
+    "package": "gulp package",
     "bower": "gulp bower",
     "test-e2e": "gulp e2e",
     "foobar": "gulp"
