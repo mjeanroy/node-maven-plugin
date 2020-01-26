@@ -45,4 +45,18 @@ public class Strings {
 
 		return Character.toUpperCase(text.charAt(0)) + text.substring(1);
 	}
+
+	/**
+	 * Turn a string to a non capitalized string.
+	 *
+	 * @param text String to un-capitalized.
+	 * @return Non capitalized string.
+	 */
+	public static String uncapitalize(String text) {
+		if (text == null || text.isEmpty()) {
+			return text;
+		}
+
+		return Character.toLowerCase(text.charAt(0)) + text.substring(1);
+	}
 }

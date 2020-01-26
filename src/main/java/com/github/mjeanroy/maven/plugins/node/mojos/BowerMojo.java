@@ -94,11 +94,6 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "bowerScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipBower;
 	}

@@ -82,11 +82,6 @@ public class PruneMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "pruneScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return false;
 	}

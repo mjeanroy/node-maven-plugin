@@ -46,8 +46,8 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 	}
 
 	@Override
-	void overrideScript(TestMojo mojo, String script) {
-		writePrivate(mojo, "testScript", script);
+	String scriptParameterName() {
+		return "testScript";
 	}
 
 	@Override

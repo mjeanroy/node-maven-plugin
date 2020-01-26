@@ -43,8 +43,8 @@ public class BuildMojoTest extends AbstractNpmScriptIncrementalMojoTest<BuildMoj
 	}
 
 	@Override
-	void overrideScript(BuildMojo mojo, String script) {
-		writePrivate(mojo, "buildScript", script);
+	String scriptParameterName() {
+		return "buildScript";
 	}
 
 	@Override

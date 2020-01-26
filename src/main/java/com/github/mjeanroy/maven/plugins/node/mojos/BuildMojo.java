@@ -92,11 +92,6 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "buildScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipBuild;
 	}

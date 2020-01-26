@@ -125,11 +125,6 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "testScript";
-	}
-
-	@Override
 	String getSkippedMessage(Command cmd) {
 		return "Tests are skipped.";
 	}

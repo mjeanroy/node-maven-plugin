@@ -19,7 +19,8 @@
     "test:foobar": "gulp test",
     "test-e2e:foobar": "gulp e2e",
     "start:foobar": "gulp serve",
-    "publish:foobar": "gulp publush"
+    "publish:foobar": "gulp publish",
+    "foobar": "gulp foobar"
   },
   "dependencies": {
     "react": "0.13.3",

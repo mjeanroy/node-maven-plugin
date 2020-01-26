@@ -25,8 +25,6 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import org.junit.Test;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
-
 public class PruneMojoTest extends AbstractNpmScriptMojoTest<PruneMojo> {
 
 	@Override
@@ -35,8 +33,8 @@ public class PruneMojoTest extends AbstractNpmScriptMojoTest<PruneMojo> {
 	}
 
 	@Override
-	void overrideScript(PruneMojo mojo, String script) {
-		writePrivate(mojo, "pruneScript", script);
+	String scriptParameterName() {
+		return "pruneScript";
 	}
 
 	@Override

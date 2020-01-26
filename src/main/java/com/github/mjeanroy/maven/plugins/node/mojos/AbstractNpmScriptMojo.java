@@ -27,6 +27,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Files;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Ios;
+import com.github.mjeanroy.maven.plugins.node.commons.lang.Strings;
 import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildConfiguration;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
@@ -246,13 +247,6 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	abstract String getScript();
 
 	/**
-	 * Return the script parameter to be able to display a useful log.
-	 *
-	 * @return Script parameter name.
-	 */
-	abstract String getScriptParameterName();
-
-	/**
 	 * Check if mojo execution should be skipped.
 	 *
 	 * @return {@code true} if mojo execution should be skipped, {@code false} otherwise.
@@ -305,6 +299,20 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			onRun(false);
 			throw ex;
 		}
+	}
+
+	/**
+	 * Return the script parameter to be able to display a useful log.
+	 *
+	 * @return Script parameter name.
+	 */
+	private String getScriptParameterName() {
+		String klassName = getClass().getSimpleName();
+		String name = Strings.uncapitalize(
+				klassName.substring(0, klassName.length() - 4)
+		);
+
+		return name + "Script";
 	}
 
 	/**

@@ -33,8 +33,8 @@ public class CleanMojoTest extends AbstractNpmScriptMojoTest<CleanMojo> {
 	}
 
 	@Override
-	void overrideScript(CleanMojo mojo, String script) {
-		writePrivate(mojo, "cleanScript", script);
+	String scriptParameterName() {
+		return "cleanScript";
 	}
 
 	@Override

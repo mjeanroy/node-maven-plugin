@@ -99,11 +99,6 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "preCleanScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipPreClean;
 	}

@@ -103,11 +103,6 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "installScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipInstall;
 	}

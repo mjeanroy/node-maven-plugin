@@ -64,8 +64,8 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 	}
 
 	@Override
-	void overrideScript(PreCleanMojo mojo, String script) {
-		writePrivate(mojo, "preCleanScript", script);
+	String scriptParameterName() {
+		return "preCleanScript";
 	}
 
 	@Override

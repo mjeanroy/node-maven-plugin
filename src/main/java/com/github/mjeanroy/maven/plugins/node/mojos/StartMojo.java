@@ -82,11 +82,6 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "startScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return false;
 	}

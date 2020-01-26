@@ -127,15 +127,28 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
-		T mojo = lookupMojo("mojo-with-parameters");
 		String script = script() + ":foobar";
-
-		// Override the script name
-		overrideScript(mojo, script);
+		T mojo = lookupMojo("mojo-with-parameters", singletonMap(
+				scriptParameterName(), script
+		));
 
 		mojo.execute();
 
 		verify_mojo_execution(mojo, NPM, "run " + script + " --maven");
+	}
+
+	@Test
+	public void it_should_execute_mojo_in_success_with_custom_script_and_warn_if_deprecated_option_is_used() throws Exception {
+		T mojo = lookupMojo("mojo-with-parameters", singletonMap(
+				"script", "foobar"
+		));
+
+		mojo.execute();
+
+		verify_mojo_execution(mojo, NPM, "run foobar --maven");
+		verify(readPrivate(mojo, "log", Log.class)).warn(
+				"Parameter `script` has been deprecated to avoid conflict issues, please use `" + scriptParameterName() + "` instead"
+		);
 	}
 
 	@Test
@@ -397,12 +410,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	/**
-	 * Override mojo script value.
+	 * Get the script parameter name used by this mojo.
 	 *
-	 * @param mojo The mojo.
-	 * @param script The script value to set.
+	 * @return The script parameter name.
 	 */
-	abstract void overrideScript(T mojo, String script);
+	abstract String scriptParameterName();
 
 	/**
 	 * Override mojo script value.

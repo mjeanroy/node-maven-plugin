@@ -89,11 +89,6 @@ public class PackageMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "packageScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipPackage;
 	}

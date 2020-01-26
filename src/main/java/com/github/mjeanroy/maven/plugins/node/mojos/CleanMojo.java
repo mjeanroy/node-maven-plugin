@@ -94,11 +94,6 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "cleanScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipClean;
 	}

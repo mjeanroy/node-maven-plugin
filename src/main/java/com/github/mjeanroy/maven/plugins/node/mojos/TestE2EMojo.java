@@ -119,11 +119,6 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "testE2EScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return mavenTestSkip || mavenTestSkipExec || skipITs || skipTestE2E;
 	}

@@ -95,11 +95,6 @@ public class PublishMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "publishScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipPublish;
 	}

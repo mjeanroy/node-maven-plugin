@@ -33,8 +33,8 @@ public class PackageMojoTest extends AbstractNpmScriptIncrementalMojoTest<Packag
 	}
 
 	@Override
-	void overrideScript(PackageMojo mojo, String script) {
-		writePrivate(mojo, "packageScript", script);
+	String scriptParameterName() {
+		return "packageScript";
 	}
 
 	@Override

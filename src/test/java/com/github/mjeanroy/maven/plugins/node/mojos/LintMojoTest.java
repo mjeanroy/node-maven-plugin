@@ -43,8 +43,8 @@ public class LintMojoTest extends AbstractNpmScriptIncrementalMojoTest<LintMojo>
 	}
 
 	@Override
-	void overrideScript(LintMojo mojo, String script) {
-		writePrivate(mojo, "lintScript", script);
+	String scriptParameterName() {
+		return "lintScript";
 	}
 
 	@Override

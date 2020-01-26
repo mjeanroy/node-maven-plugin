@@ -36,4 +36,26 @@ public class StringsTest {
 		assertThat(Strings.capitalize("x")).isEqualTo("X");
 		assertThat(Strings.capitalize("test")).isEqualTo("Test");
 	}
+
+	@Test
+	public void it_should_un_captitalize_input() {
+		assertThat(Strings.uncapitalize(null)).isNull();
+		assertThat(Strings.uncapitalize("")).isEmpty();
+		assertThat(Strings.uncapitalize("x")).isEqualTo("x");
+		assertThat(Strings.uncapitalize("X")).isEqualTo("x");
+		assertThat(Strings.uncapitalize("test")).isEqualTo("test");
+
+		assertThat(Strings.uncapitalize("Bower")).isEqualTo("bower");
+		assertThat(Strings.uncapitalize("Build")).isEqualTo("build");
+		assertThat(Strings.uncapitalize("Clean")).isEqualTo("clean");
+		assertThat(Strings.uncapitalize("Install")).isEqualTo("install");
+		assertThat(Strings.uncapitalize("Lint")).isEqualTo("lint");
+		assertThat(Strings.uncapitalize("Package")).isEqualTo("package");
+		assertThat(Strings.uncapitalize("PreClean")).isEqualTo("preClean");
+		assertThat(Strings.uncapitalize("Prune")).isEqualTo("prune");
+		assertThat(Strings.uncapitalize("Publish")).isEqualTo("publish");
+		assertThat(Strings.uncapitalize("Start")).isEqualTo("start");
+		assertThat(Strings.uncapitalize("TestE2E")).isEqualTo("testE2E");
+		assertThat(Strings.uncapitalize("Test")).isEqualTo("test");
+	}
 }

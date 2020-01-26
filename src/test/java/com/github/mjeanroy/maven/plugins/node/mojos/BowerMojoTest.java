@@ -33,8 +33,8 @@ public class BowerMojoTest extends AbstractNpmScriptMojoTest<BowerMojo> {
 	}
 
 	@Override
-	void overrideScript(BowerMojo mojo, String script) {
-		writePrivate(mojo, "bowerScript", script);
+	String scriptParameterName() {
+		return "bowerScript";
 	}
 
 	@Override

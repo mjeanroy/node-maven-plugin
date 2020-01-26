@@ -100,11 +100,6 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	}
 
 	@Override
-	String getScriptParameterName() {
-		return "lintScript";
-	}
-
-	@Override
 	boolean shouldSkip() {
 		return skipLint;
 	}

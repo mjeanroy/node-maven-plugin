@@ -59,8 +59,8 @@ public class InstallMojoTest extends AbstractNpmScriptIncrementalMojoTest<Instal
 	}
 
 	@Override
-	void overrideScript(InstallMojo mojo, String script) {
-		writePrivate(mojo, "installScript", script);
+	String scriptParameterName() {
+		return "installScript";
 	}
 
 	@Override
