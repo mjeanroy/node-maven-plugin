@@ -29,6 +29,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
+
 /**
  * Execute command line (i.e instance of {@link Command} object.
  *
@@ -56,11 +58,13 @@ class DefaultCommandExecutor implements CommandExecutor {
 	}
 
 	@Override
-	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
+	public CommandResult execute(File workingDirectory, Command command, OutputHandler outputHandler, Map<String, String> environment) {
 		CommandLine commandLine = new CommandLine(command.getExecutable());
 		for (String argument : command.getArguments()) {
 			commandLine.addArgument(argument);
 		}
+
+		CaptureOutputHandler captureOutputHandler = new CaptureOutputHandler();
 
 		try {
 			Executor executor = new DefaultExecutor();
@@ -68,15 +72,20 @@ class DefaultCommandExecutor implements CommandExecutor {
 			executor.setExitValue(0);
 
 			// Define custom output stream
-			LogStreamHandler stream = new LogStreamHandler(logger);
-			PumpStreamHandler handler = new PumpStreamHandler(stream);
-			executor.setStreamHandler(handler);
+			LogStreamHandler stream = new LogStreamHandler(new CompositeOutputHandler(asList(
+					outputHandler,
+					captureOutputHandler
+			)));
+
+			executor.setStreamHandler(
+					new PumpStreamHandler(stream)
+			);
 
 			int status = executor.execute(commandLine, environment);
-			return new CommandResult(status);
+			return new CommandResult(status, captureOutputHandler.getOut());
 		}
 		catch (ExecuteException ex) {
-			return new CommandResult(ex.getExitValue());
+			return new CommandResult(ex.getExitValue(), captureOutputHandler.getOut());
 		}
 		catch (IOException ex) {
 			throw new CommandException(ex);

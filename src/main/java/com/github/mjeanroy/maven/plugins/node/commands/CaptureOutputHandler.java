@@ -23,37 +23,40 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import java.io.File;
-import java.util.Map;
+import com.github.mjeanroy.maven.plugins.node.commons.lang.Strings;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Execute command line (i.e instance of {@link Command} object.
- *
- * <p>
- *
- * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
+ * Handler that will capture line being processed.
  */
-class NullCommandExecutor implements CommandExecutor {
+public final class CaptureOutputHandler implements OutputHandler {
 
 	/**
-     * The command executor instance.
+	 * The lines being processed.
 	 */
-	private static final NullCommandExecutor INSTANCE = new NullCommandExecutor();
+	private final List<String> lines;
 
-    /**
-     * Get the command executor.
-	 *
-	 * @return The command executor.
-	 */
-	static NullCommandExecutor getInstance() {
-		return INSTANCE;
-	}
-
-	private NullCommandExecutor() {
+	CaptureOutputHandler() {
+		this.lines = new ArrayList<>();
 	}
 
 	@Override
-	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
-		return new CommandResult(0, "");
+	public void process(String line) {
+		lines.add(line);
+	}
+
+	/**
+	 * Get the output value.
+	 *
+	 * @return Output value.
+	 */
+	public String getOut() {
+		if (lines.isEmpty()) {
+			return "";
+		}
+
+		return Strings.join(lines, System.lineSeparator());
 	}
 }

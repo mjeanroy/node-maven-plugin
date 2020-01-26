@@ -25,9 +25,20 @@ package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
 import org.junit.Test;
 
+import java.util.Collections;
+
+import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class StringsTest {
+
+	@Test
+	public void it_should_join_inputs() {
+		assertThat(Strings.join(Collections.<String>emptyList(), ",")).isEqualTo("");
+		assertThat(Strings.join(singletonList("one"), ",")).isEqualTo("one");
+		assertThat(Strings.join(asList("one", "two", "three"), ",")).isEqualTo("one,two,three");
+	}
 
 	@Test
 	public void it_should_capitalize_input() {

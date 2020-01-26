@@ -23,7 +23,12 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
+import com.github.mjeanroy.maven.plugins.node.commons.lang.ToStringBuilder;
+
 import java.io.File;
+import java.util.Objects;
+
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 
 /**
  * Store result of a command line execution.
@@ -37,13 +42,13 @@ import java.io.File;
  * </ul>
  *
  * This class should not be instantiated explicitly, but should be obtained with
- * the result of {@link CommandExecutor#execute(File, Command, OutputHandler)}.
+ * the result of {@link CommandExecutor#execute(File, Command, OutputHandler, java.util.Map)}.
  *
  * <p>
  *
  * This class is immutable and, consequently, thread safe.
  */
-public class CommandResult {
+public final class CommandResult {
 
 	/**
 	 * Exit Status.
@@ -51,12 +56,18 @@ public class CommandResult {
 	private final int status;
 
 	/**
+	 * The command output.
+	 */
+	private final String out;
+
+	/**
 	 * Create new result object.
 	 *
 	 * @param status Status value.
 	 */
-	CommandResult(int status) {
+	public CommandResult(int status, String out) {
 		this.status = status;
+		this.out = firstNonNull(out, "");
 	}
 
 	/**
@@ -66,6 +77,15 @@ public class CommandResult {
 	 */
 	public int getStatus() {
 		return status;
+	}
+
+	/**
+	 * Get {@link #out}
+	 *
+	 * @return {@link #out}
+	 */
+	public String getOut() {
+		return out;
 	}
 
 	/**
@@ -96,7 +116,7 @@ public class CommandResult {
 
 		if (o instanceof CommandResult) {
 			CommandResult r = (CommandResult) o;
-			return status == r.status;
+			return Objects.equals(status, r.status) && Objects.equals(out, r.out);
 		}
 
 		return false;
@@ -104,11 +124,14 @@ public class CommandResult {
 
 	@Override
 	public int hashCode() {
-		return status;
+		return Objects.hash(status, out);
 	}
 
 	@Override
 	public String toString() {
-		return String.format("Status: %s", status);
+		return ToStringBuilder.builder(getClass())
+				.append("status", status)
+				.append("out", out)
+				.build();
 	}
 }

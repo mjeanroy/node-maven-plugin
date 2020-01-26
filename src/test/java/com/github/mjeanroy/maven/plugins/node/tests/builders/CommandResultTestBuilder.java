@@ -25,9 +25,6 @@ package com.github.mjeanroy.maven.plugins.node.tests.builders;
 
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
 /**
  * Fluent Builder for {@link CommandResult}
  */
@@ -43,6 +40,16 @@ public class CommandResultTestBuilder {
 	}
 
 	/**
+	 * Create {@link CommandResult} with a success status.
+	 *
+	 * @param out The command output.
+	 * @return The {@link CommandResult} instance.
+	 */
+	public static CommandResult successResult(String out) {
+		return new CommandResultTestBuilder().withSuccess().withOut(out).build();
+	}
+
+	/**
 	 * Create {@link CommandResult} with a failure status.
 	 *
 	 * @return The {@link CommandResult} instance.
@@ -55,6 +62,19 @@ public class CommandResultTestBuilder {
 	 * The result status.
 	 */
 	private boolean success;
+
+	/**
+	 * The command output.
+	 */
+	private String out;
+
+	/**
+	 * Create builder with default values.
+	 */
+	public CommandResultTestBuilder() {
+		this.success = true;
+		this.out = "";
+	}
 
 	/**
 	 * Update result status to be a success.
@@ -77,15 +97,23 @@ public class CommandResultTestBuilder {
 	}
 
 	/**
+	 * Set {@link #out}
+	 *
+	 * @param out New {@link #out}
+	 * @return The builder.
+	 */
+	public CommandResultTestBuilder withOut(String out) {
+		this.out = out;
+		return this;
+	}
+
+	/**
 	 * Build {@link CommandResult} instance.
 	 *
 	 * @return The {@link CommandResult} instance.
 	 */
 	public CommandResult build() {
-		CommandResult result = mock(CommandResult.class);
-		when(result.isSuccess()).thenReturn(success);
-		when(result.isFailure()).thenReturn(!success);
-		when(result.getStatus()).thenReturn(success ? 0 : 1);
-		return result;
+		int status = success ? 0 : 1;
+		return new CommandResult(status, out);
 	}
 }

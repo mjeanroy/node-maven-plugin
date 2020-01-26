@@ -59,6 +59,7 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isZero();
+		assertThat(result.getOut()).isEmpty();
 	}
 
 	@Test
@@ -78,6 +79,7 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isZero();
+		assertThat(result.getOut()).isEqualTo(value);
 		verify(out).process(value);
 	}
 
@@ -94,6 +96,7 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
+		assertThat(result.getOut()).isEmpty();
 	}
 
 	@Test
@@ -109,6 +112,7 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isZero();
+		assertThat(result.getOut()).isEmpty();
 	}
 
 	@Test
@@ -124,6 +128,7 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, logger, environment);
 
 		assertThat(result.getStatus()).isNotZero().isEqualTo(1);
+		assertThat(result.getOut()).isEmpty();
 	}
 
 	private static Command createUnixCommand(String script) {

@@ -25,9 +25,13 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
+import com.github.mjeanroy.maven.plugins.node.model.EngineConfig;
+import com.github.zafarkhaja.semver.Version;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.Objects;
 
@@ -55,22 +59,29 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	static final String GOAL_NAME = "check";
 
 	/**
+	 * Engine Configurations.
+	 */
+	@Parameter
+	private EngineConfig engines;
+
+	/**
 	 * Create Mojo.
 	 */
 	public CheckNodeMojo() {
 		super(newExecutor());
+		this.engines = new EngineConfig();
 	}
 
 	@Override
 	public void execute() throws MojoExecutionException {
 		Command npm = npm();
 
-		check(node());
-		check(npm);
+		runAndCheckEngine(node());
+		runAndCheckEngine(npm());
 
 		Command npmClient = npmClient();
 		if (!Objects.equals(npm.getName(), npmClient.getName())) {
-			check(npmClient);
+			runAndCheckEngine(npmClient);
 		}
 	}
 
@@ -80,17 +91,54 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 * @param cmd Command Line.
 	 * @throws MojoExecutionException In case of errors.
 	 */
-	private void check(Command cmd) throws MojoExecutionException {
+	private String check(Command cmd) throws MojoExecutionException {
 		cmd.addArgument("--version");
 
-		getLog().info("Checking " + cmd.getName() + " command");
+		getLog().info("Checking " +  cmd.getName() + " command");
 		getLog().debug("Running: " + cmd.toString());
 
 		try {
-			execute(cmd);
+			CommandResult result = execute(cmd);
+			return result.getOut();
 		}
 		catch (CommandException ex) {
 			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available. Please install it on your operating system.");
 		}
+	}
+
+	private void runAndCheckEngine(Command command) throws MojoExecutionException {
+		String out = check(command);
+		String name = command.getName();
+		String requirement = engines.getRequiredEngine(name);
+		if (requirement != null && !requirement.isEmpty() && !Objects.equals(requirement, "*")) {
+			if (!checkEngineRequirement(out, requirement)) {
+				String message = "Engine '" + name + "' with version '" + out + "' does not satisfy required version: '" + requirement + "'";
+				if (engines.isStrict()) {
+					throw new MojoExecutionException(message);
+				} else {
+					getLog().warn(message);
+				}
+			}
+		}
+	}
+
+	private boolean checkEngineRequirement(String actualVersion, String requiredVersion) throws MojoExecutionException {
+		try {
+			Version actual = Version.valueOf(fixVersionFormat(actualVersion));
+			return actual.satisfies(requiredVersion);
+		}
+		catch (Exception ex) {
+			getLog().error("An error occurred while checking for engine requirements: " + ex.getMessage());
+			throw new MojoExecutionException(ex.getMessage(), ex);
+		}
+	}
+
+	private static String fixVersionFormat(String version) {
+		if (version == null || version.isEmpty()) {
+			return version;
+		}
+
+		String trimmedVersion = version.trim().toLowerCase();
+		return trimmedVersion.charAt(0) == 'v' ? trimmedVersion.substring(1) : trimmedVersion;
 	}
 }

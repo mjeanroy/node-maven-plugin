@@ -23,37 +23,25 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import java.io.File;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * Execute command line (i.e instance of {@link Command} object.
- *
- * <p>
- *
- * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
+ * Log writer that will process output line returned by command
+ * execution process.
  */
-class NullCommandExecutor implements CommandExecutor {
+final class CompositeOutputHandler implements OutputHandler {
 
-	/**
-     * The command executor instance.
-	 */
-	private static final NullCommandExecutor INSTANCE = new NullCommandExecutor();
+	private final List<OutputHandler> handlers;
 
-    /**
-     * Get the command executor.
-	 *
-	 * @return The command executor.
-	 */
-	static NullCommandExecutor getInstance() {
-		return INSTANCE;
-	}
-
-	private NullCommandExecutor() {
+	CompositeOutputHandler(List<OutputHandler> handlers) {
+		this.handlers = new ArrayList<>(handlers);
 	}
 
 	@Override
-	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
-		return new CommandResult(0, "");
+	public void process(String line) {
+		for (OutputHandler handler : handlers) {
+			handler.process(line);
+		}
 	}
 }

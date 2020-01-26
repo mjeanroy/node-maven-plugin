@@ -28,6 +28,8 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commands.OutputHandler;
+import com.github.mjeanroy.maven.plugins.node.model.EngineConfig;
+import com.github.mjeanroy.maven.plugins.node.tests.builders.EngineConfigTestBuilder;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.assertj.core.api.ThrowableAssert.ThrowingCallable;
@@ -39,6 +41,7 @@ import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMap;
@@ -50,8 +53,10 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -65,9 +70,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo() throws Exception {
-		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
-				newMapEntry("executor", (Object) givenExecutor())
-		)));
+		CheckNodeMojo mojo = givenMojo(Collections.<String, Object>emptyMap());
 
 		mojo.execute();
 
@@ -83,8 +86,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo_with_specified_npm_client() throws Exception {
-		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("executor", (Object) givenExecutor()),
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
 				newMapEntry("npmClient", (Object) "yarn")
 		)));
 
@@ -104,8 +106,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo_with_yarn() throws Exception {
-		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("executor", (Object) givenExecutor()),
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
 				newMapEntry("yarn", (Object) true)
 		)));
 
@@ -129,7 +130,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("executor", givenExecutor("node"))
 		)));
 
-		verifyMojoExecutionException(mojo, "Node is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Node is not available. Please install it on your operating system.");
 	}
 
 	@Test
@@ -138,7 +139,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("executor", givenExecutor("npm"))
 		)));
 
-		verifyMojoExecutionException(mojo, "Npm is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Npm is not available. Please install it on your operating system.");
 	}
 
 	@Test
@@ -148,7 +149,143 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("yarn", (Object) true)
 		)));
 
-		verifyMojoExecutionException(mojo, "Yarn is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Yarn is not available. Please install it on your operating system.");
+	}
+
+	@Test
+	public void it_should_not_fail_if_all_requirement_are_ok() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v8.0.0"),
+				newMapEntry("npm", "6.0.0"),
+				newMapEntry("yarn", "1.20.1")
+		)));
+
+		EngineConfig engineConfig = new EngineConfigTestBuilder()
+				.withStrict(false)
+				.addRequirement("node", ">= 8")
+				.addRequirement("npm", ">= 6")
+				.addRequirement("yarn", "~1.20.0")
+				.build();
+
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("executor", (Object) executor),
+				newMapEntry("engines", (Object) engineConfig)
+		)));
+
+		mojo.execute();
+
+		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
+	}
+
+	@Test
+	public void it_should_warn_if_node_version_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v8.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_warn_because_engine_requirement_failure(executor, "Engine 'node' with version 'v8.0.0' does not satisfy required version: '>= 12'");
+	}
+
+	@Test
+	public void it_should_warn_if_npm_version_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "4.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_warn_because_engine_requirement_failure(executor, "Engine 'npm' with version '4.0.0' does not satisfy required version: '>= 6'");
+	}
+
+	@Test
+	public void it_should_warn_if_custom_npm_client_version_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.0.0")
+		)));
+
+		check_warn_because_engine_requirement_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
+	}
+
+	@Test
+	public void it_should_fail_if_node_version_does_not_satisfy_requirement() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v8.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_fail_because_engine_requirement_failure(executor, "Engine 'node' with version 'v8.0.0' does not satisfy required version: '>= 12'");
+	}
+
+	@Test
+	public void it_should_fail_if_npm_version_does_not_satisfy_requirement() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "4.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_fail_because_engine_requirement_failure(executor, "Engine 'npm' with version '4.0.0' does not satisfy required version: '>= 6'");
+	}
+
+	@Test
+	public void it_should_fail_if_custom_npm_client_version_does_not_satisfy_requirement() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.0.0")
+		)));
+
+		check_fail_because_engine_requirement_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
+	}
+
+	private void check_warn_because_engine_requirement_failure(CommandExecutor executor, String expectedWarn) throws Exception {
+		EngineConfig engineConfig = new EngineConfigTestBuilder()
+				.withStrict(false)
+				.addRequirement("node", ">= 12")
+				.addRequirement("npm", ">= 6")
+				.addRequirement("yarn", "~1.20.0")
+				.build();
+
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("npmClient", (Object) "yarn"),
+				newMapEntry("executor", (Object) executor),
+				newMapEntry("engines", (Object) engineConfig)
+		)));
+
+		mojo.execute();
+
+		verify(readPrivate(mojo, "log", Log.class)).warn(
+				expectedWarn
+		);
+	}
+
+	private void check_fail_because_engine_requirement_failure(CommandExecutor executor, String expectedMessage) {
+		EngineConfig engineConfig = new EngineConfigTestBuilder()
+				.withStrict(true)
+				.addRequirement("node", ">= 12")
+				.addRequirement("npm", ">= 6")
+				.addRequirement("yarn", "~1.20.0")
+				.build();
+
+		final CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("npmClient", (Object) "yarn"),
+				newMapEntry("executor", (Object) executor),
+				newMapEntry("engines", (Object) engineConfig)
+		)));
+
+		ThrowingCallable func = new ThrowingCallable() {
+			@Override
+			public void call() throws Throwable {
+				mojo.execute();
+			}
+		};
+
+		assertThatThrownBy(func).isInstanceOf(MojoExecutionException.class).hasMessage(expectedMessage);
 	}
 
 	private void verifyMojoExecution(CheckNodeMojo mojo, int numberOfCommand) {
@@ -160,7 +297,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		);
 	}
 
-	private void verifyMojoExecutionException(final CheckNodeMojo mojo, final String message) {
+	private void verify_mojo_execution_exception(final CheckNodeMojo mojo, final String message) {
 		ThrowingCallable mojoExecute = new ThrowingCallable() {
 			@Override
 			public void call() throws Throwable {
@@ -198,27 +335,26 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		}
 	}
 
-	private static class CommandExecutionSuccessAnswer implements Answer<CommandResult> {
-		@Override
-		public CommandResult answer(InvocationOnMock invocation) {
-			return successResult();
-		}
-	}
-
-	private static CommandExecutor givenExecutor() {
-		CommandExecutor executor = mock(CommandExecutor.class);
-		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(
-				new CommandExecutionSuccessAnswer()
-		);
-
-		return executor;
-	}
-
 	private static CommandExecutor givenExecutor(String cmd) {
 		CommandExecutor executor = mock(CommandExecutor.class);
 		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(
 				new CommandExecutionExceptionAnswer(cmd)
 		);
+
+		return executor;
+	}
+
+	private static CommandExecutor givenExecutor(final Map<String, String> cmds) {
+		CommandExecutor executor = mock(CommandExecutor.class);
+
+		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(new Answer<CommandResult>() {
+				@Override
+				public CommandResult answer(InvocationOnMock invocationOnMock) {
+					Command command = invocationOnMock.getArgument(1);
+					String name = command.getName();
+					return successResult(cmds.get(name));
+				}
+		});
 
 		return executor;
 	}

@@ -23,18 +23,27 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
+import com.github.mjeanroy.maven.plugins.node.commands.OutputHandler;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Rule;
+import org.mockito.ArgumentMatchers;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 
 import java.io.File;
 import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;
 import static java.util.Collections.emptyMap;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 public abstract class AbstractMojoTest<T extends AbstractNpmMojo> {
 
@@ -97,13 +106,26 @@ public abstract class AbstractMojoTest<T extends AbstractNpmMojo> {
 
 		writePrivate(mojo, "workingDirectory", baseDir);
 		writePrivate(mojo, "log", logger);
-		writePrivate(mojo, "executor", mock(CommandExecutor.class));
+		writePrivate(mojo, "executor", givenSuccessfulExecutor());
 
 		for (Map.Entry<String, ?> property : configuration.entrySet()) {
 			writePrivate(mojo, property.getKey(), property.getValue());
 		}
 
 		return mojo;
+	}
+
+	private CommandExecutor givenSuccessfulExecutor() {
+		CommandExecutor executor = mock(CommandExecutor.class);
+
+		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(new Answer<CommandResult>() {
+			@Override
+			public CommandResult answer(InvocationOnMock invocationOnMock) {
+				return successResult();
+			}
+		});
+
+		return executor;
 	}
 
 	/**

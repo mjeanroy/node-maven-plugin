@@ -23,6 +23,8 @@
 
 package com.github.mjeanroy.maven.plugins.node.commons.lang;
 
+import java.util.Collection;
+
 /**
  * Static String Utilities.
  */
@@ -30,6 +32,37 @@ public class Strings {
 
 	// Ensure non instantiation.
 	private Strings() {
+	}
+
+	/**
+	 * Join given inputs to a single output string.
+	 *
+	 * @param lines The inputs.
+	 * @param separator The join separator.
+	 * @return The output string.
+	 */
+	public static String join(Collection<String> lines, String separator) {
+		if (lines.isEmpty()) {
+			return "";
+		}
+
+		if (lines.size() == 1) {
+			return lines.iterator().next();
+		}
+
+		StringBuilder sb = new StringBuilder();
+		boolean first = true;
+		for (String line : lines) {
+			if (first) {
+				first = false;
+			} else {
+				sb.append(separator);
+			}
+
+			sb.append(line);
+		}
+
+		return sb.toString();
 	}
 
 	/**

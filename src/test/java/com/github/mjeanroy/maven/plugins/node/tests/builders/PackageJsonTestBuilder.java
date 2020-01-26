@@ -23,11 +23,11 @@
 package com.github.mjeanroy.maven.plugins.node.tests.builders;
 
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
-import com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.instantiate;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 
 /**
@@ -145,7 +145,7 @@ public class PackageJsonTestBuilder {
 	 * @return The new instance.
 	 */
 	public PackageJson build() {
-		PackageJson packageJson = ReflectTestUtils.instantiate(PackageJson.class);
+		PackageJson packageJson = instantiate(PackageJson.class);
 		writePrivate(packageJson, "name", name);
 		writePrivate(packageJson, "version", version);
 		writePrivate(packageJson, "dependencies", new LinkedHashMap<>(dependencies));

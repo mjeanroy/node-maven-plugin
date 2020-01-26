@@ -23,37 +23,27 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import java.io.File;
-import java.util.Map;
+import org.junit.Test;
 
-/**
- * Execute command line (i.e instance of {@link Command} object.
- *
- * <p>
- *
- * A factory should be used to create new executor, using {@link CommandExecutors} static methods.
- */
-class NullCommandExecutor implements CommandExecutor {
+import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-	/**
-     * The command executor instance.
-	 */
-	private static final NullCommandExecutor INSTANCE = new NullCommandExecutor();
+public class CompositeOutputHandlerTest {
 
-    /**
-     * Get the command executor.
-	 *
-	 * @return The command executor.
-	 */
-	static NullCommandExecutor getInstance() {
-		return INSTANCE;
-	}
+	@Test
+	public void it_should_compose_output_handlers() {
+		OutputHandler h1 = mock(OutputHandler.class);
+		OutputHandler h2 = mock(OutputHandler.class);
+		String line = "line";
+		CompositeOutputHandler handler = new CompositeOutputHandler(asList(
+				h1,
+				h2
+		));
 
-	private NullCommandExecutor() {
-	}
+		handler.process(line);
 
-	@Override
-	public CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment) {
-		return new CommandResult(0, "");
+		verify(h1).process(line);
+		verify(h2).process(line);
 	}
 }

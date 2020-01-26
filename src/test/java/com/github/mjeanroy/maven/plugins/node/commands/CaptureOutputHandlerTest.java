@@ -23,58 +23,21 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import nl.jqno.equalsverifier.EqualsVerifier;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-public class CommandResultTest {
+public class CaptureOutputHandlerTest {
 
 	@Test
-	public void it_should_create_result() {
-		CommandResult result = new CommandResult(0, "OUT");
-		assertThat(result.getStatus()).isZero();
-		assertThat(result.getOut()).isEqualTo("OUT");
-	}
+	public void it_should_capture_output() {
+		CaptureOutputHandler handler = new CaptureOutputHandler();
+		handler.process("one");
+		handler.process("two");
+		handler.process("three");
 
-	@Test
-	public void it_should_check_if_result_is_a_success() {
-		CommandResult r1 = new CommandResult(0, "");
-		assertThat(r1.getStatus()).isZero();
-		assertThat(r1.isSuccess()).isTrue();
-
-		CommandResult r2 = new CommandResult(1, "");
-		assertThat(r2.getStatus()).isEqualTo(1);
-		assertThat(r2.isSuccess()).isFalse();
-	}
-
-	@Test
-	public void it_should_check_if_result_is_a_failure() {
-		CommandResult r1 = new CommandResult(1, "");
-		assertThat(r1.getStatus()).isEqualTo(1);
-		assertThat(r1.isFailure()).isTrue();
-
-		CommandResult r2 = new CommandResult(0, "");
-		assertThat(r2.getStatus()).isZero();
-		assertThat(r2.isFailure()).isFalse();
-	}
-
-	@Test
-	public void it_should_display_string_representation() {
-		CommandResult result = new CommandResult(1, "OUTPUT");
-
-		// @formatter:off
-		assertThat(result).hasToString(
-				"CommandResult{" +
-						"status=1, " +
-						"out=\"OUTPUT\"" +
-				"}"
+		assertThat(handler.getOut()).isEqualTo(
+				"one" + System.lineSeparator() + "two" + System.lineSeparator() + "three"
 		);
-		// @formatter:on
-	}
-
-	@Test
-	public void it_should_implement_equals() {
-		EqualsVerifier.forClass(CommandResult.class).verify();
 	}
 }
