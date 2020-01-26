@@ -76,9 +76,13 @@ public abstract class AbstractNpmScriptIncrementalMojoTest<T extends AbstractNpm
 		return join(workingDirectory, "target", "node-maven-plugin", script());
 	}
 
-	@SuppressWarnings("rawtypes")
+	/**
+	 * Reset mojo to its initial state.
+	 *
+	 * @param mojo The mojo to reset.
+	 */
 	void resetMojo(T mojo) {
-		mojo.setPluginContext(new HashMap());
+		mojo.setPluginContext(new HashMap<>());
 		reset(
 				readPrivate(mojo, "log"),
 				readPrivate(mojo, "executor")

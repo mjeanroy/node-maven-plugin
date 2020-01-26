@@ -38,6 +38,7 @@ import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.json.Jsons.parseJson;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 
 abstract class AbstractNpmMojo extends AbstractMojo {
@@ -89,6 +90,13 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	private String npmClient;
 
 	/**
+	 * The {@code npmClient} home directory, by default it assumes that the npm
+	 * client is globally available..
+	 */
+	@Parameter(property = "npmClient.home", defaultValue = "${npm.client.home}")
+	private String npmClientHome;
+
+	/**
 	 * A list of environment variables that will be set during command executions.
 	 */
 	@Parameter(property = "environmentVariables")
@@ -130,7 +138,9 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 			return npm();
 		}
 
-		return Commands.npmClient(npmClient);
+		String cli = firstNonNull(npmClient, "npm");
+		String binary = npmClientHome != null ? new File(npmClientHome, cli).getAbsolutePath() : cli;
+		return Commands.npmClient(binary);
 	}
 
 	/**

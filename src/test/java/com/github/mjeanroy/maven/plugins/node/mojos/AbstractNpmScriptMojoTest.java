@@ -73,13 +73,13 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	private static final String YARN = "yarn";
 
 	@Test
-	public void test_should_create_mojo() throws Exception {
+	public void test_should_create_mojo() {
 		T mojo = lookupEmptyMojo("mojo");
 		assertThat(mojo).isNotNull();
 	}
 
 	@Test
-	public void test_should_create_mojo_with_configuration() throws Exception {
+	public void test_should_create_mojo_with_configuration() {
 		T mojo = lookupMojo("mojo-with-parameters");
 
 		assertThat(mojo).isNotNull();
@@ -122,19 +122,20 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_in_success_without_colors() throws Exception {
 		T mojo = lookupEmptyMojo("mojo");
 		mojo.execute();
-		verifyMojoExecution(mojo, NPM, join(defaultArguments(false, true)));
+		verify_mojo_execution(mojo, NPM, join(defaultArguments(true)));
 	}
 
 	@Test
 	public void it_should_execute_mojo_in_success_with_custom_script() throws Exception {
 		T mojo = lookupMojo("mojo-with-parameters");
+		String script = script() + ":foobar";
 
 		// Override the script name
-		overrideScript(mojo, "foobar");
+		overrideScript(mojo, script);
 
 		mojo.execute();
 
-		verifyMojoExecution(mojo, NPM, "run foobar --maven");
+		verify_mojo_execution(mojo, NPM, "run " + script + " --maven");
 	}
 
 	@Test
@@ -198,8 +199,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		String cmd = NPM + (isStandardScript() ? "" : " run") + " " + script();
-		verifyExecutorHasBeenRunOnce(mojo);
-		verifyCommandSkippedHasBeenLoggedOnce(mojo, cmd);
+		verify_executor_has_been_run_once(mojo);
+		verify_command_skipped_has_been_logged_once(mojo, cmd);
 	}
 
 	@Test
@@ -209,7 +210,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		T mojo2 = lookupMojo("mojo-fail-on-error-true");
 
 		// Share plugin context as in a "normal" build
-		Map pluginContext = new HashMap();
+		Map<?, ?> pluginContext = new HashMap<>();
 		mojo1.setPluginContext(pluginContext);
 		mojo2.setPluginContext(pluginContext);
 
@@ -217,12 +218,12 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo1.execute();
 		mojo2.execute();
 
-		verifyExecutorHasBeenRunOnce(mojo1);
-		verifyExecutorHasBeenRunOnce(mojo2);
+		verify_executor_has_been_run_once(mojo1);
+		verify_executor_has_been_run_once(mojo2);
 
 		String cmd = NPM + (isStandardScript() ? "" : " run") + " " + script();
-		verifyCommandSkippedHasNotBeenLogged(mojo1, cmd);
-		verifyCommandSkippedHasNotBeenLogged(mojo2, cmd);
+		verify_command_skipped_has_not_been_logged(mojo1, cmd);
+		verify_command_skipped_has_not_been_logged(mojo2, cmd);
 	}
 
 	@Test
@@ -235,7 +236,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		writePrivate(mojo2, "workingDirectory", new File(readPrivate(mojo1, "workingDirectory", File.class), "."));
 
 		// Share plugin context as in a "normal" build
-		Map pluginContext = new HashMap();
+		Map<?, ?> pluginContext = new HashMap<>();
 		mojo1.setPluginContext(pluginContext);
 		mojo2.setPluginContext(pluginContext);
 
@@ -243,11 +244,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo1.execute();
 		mojo2.execute();
 
-		verifyExecutorHasBeenRunOnce(mojo1);
+		verify_executor_has_been_run_once(mojo1);
 
 		String cmd = NPM + (isStandardScript() ? "" : " run") + " " + script();
-		verifyCommandSkippedHasNotBeenLogged(mojo1, cmd);
-		verifyCommandSkippedHasBeenLoggedOnce(mojo2, cmd);
+		verify_command_skipped_has_not_been_logged(mojo1, cmd);
+		verify_command_skipped_has_been_logged_once(mojo2, cmd);
 	}
 
 	@Test
@@ -258,7 +259,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyMojoErrorExecution(mojo, NPM, join(defaultArguments(true, true)));
+		verify_mojo_error_execution(mojo, NPM, join(defaultArguments(true)));
 	}
 
 	@Test
@@ -269,11 +270,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyMojoErrorExecution(mojo, YARN, join(defaultArguments(true, true)));
+		verify_mojo_error_execution(mojo, YARN, join(defaultArguments(true)));
 	}
 
 	@Test
-	public void it_should_execute_mojo_in_failure_and_throw_exception() throws Exception {
+	public void it_should_execute_mojo_in_failure_and_throw_exception() {
 		final T mojo = lookupMojo("mojo-fail-on-error-true");
 		final ThrowingCallable mojoExecute = new ThrowingCallable() {
 			@Override
@@ -328,7 +329,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
-	public void it_should_throw_exception_if_package_json_does_not_exist() throws Exception {
+	public void it_should_throw_exception_if_package_json_does_not_exist() {
 		final T mojo = lookupMojo("mojo-without-package-json");
 		final ThrowingCallable mojoExecute = new ThrowingCallable() {
 			@Override
@@ -336,7 +337,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				mojo.execute();
 			}
 		};
-
 		assertThatThrownBy(mojoExecute).isInstanceOf(PackageJsonNotFoundException.class).hasMessageEndingWith("package.json does not exist");
 	}
 
@@ -348,8 +348,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyCommandExecutionWithProxy(mojo);
-		verifyProxyLogOutput(mojo);
+		verify_command_execution_with_proxy(mojo);
+		verify_proxy_log_output(mojo);
 	}
 
 	@Test
@@ -360,32 +360,32 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		mojo.execute();
 
-		verifyCommandExecutionIgnoringProxies(mojo);
+		verify_command_execution_ignoring_proxies(mojo);
 	}
 
 	@Test
 	public void it_should_not_add_maven_argument_if_disabled() throws Exception {
 		T mojo = lookupMojo("mojo-without-maven-argument");
 		mojo.execute();
-		verifyMojoExecution(mojo, NPM, join(defaultArguments(true, false)));
+		verify_mojo_execution(mojo, NPM, join(defaultArguments(false)));
 	}
 
 	@Override
-	T lookupMojo(String projectName) throws Exception {
+	T lookupMojo(String projectName) {
 		return configureMojo(
 				super.lookupMojo(projectName)
 		);
 	}
 
 	@Override
-	T lookupEmptyMojo(String projectName) throws Exception {
+	T lookupEmptyMojo(String projectName) {
 		return configureMojo(
 				super.lookupEmptyMojo(projectName)
 		);
 	}
 
 	@Override
-	T lookupMojo(String projectName, Map<String, ?> configuration) throws Exception {
+	T lookupMojo(String projectName, Map<String, ?> configuration) {
 		return configureMojo(
 				super.lookupMojo(projectName, configuration)
 		);
@@ -436,7 +436,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		return script.equals("test") || script.equals("install") || script.equals("publish") || script.equals("start") || script.equals("prune");
 	}
 
-	private List<String> defaultArguments(boolean withColors, boolean withMaven) {
+	private List<String> defaultArguments(boolean withMaven) {
 		List<String> arguments = new ArrayList<>();
 
 		String mojoName = script();
@@ -446,10 +446,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		}
 
 		arguments.add(mojoName);
-
-		if (!withColors) {
-			arguments.add("--no-color");
-		}
 
 		// Do not forget maven flag
 		if (withMaven) {
@@ -471,8 +467,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg, Map<String, String> environmentVariables) throws Exception {
 		mojo.execute();
-		String expectedArgs = join(defaultArguments(true, true));
-		verifyMojoExecution(
+		String expectedArgs = join(defaultArguments(true));
+		verify_mojo_execution(
 				mojo,
 				pkg,
 				expectedArgs,
@@ -484,8 +480,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		execute_and_verify_successful_mojo_execution(mojo, pkg, Collections.<String, String>emptyMap());
 	}
 
-	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs) {
-		verifyMojoExecution(
+	private void verify_mojo_execution(T mojo, String pkg, String expectedArgs) {
+		verify_mojo_execution(
 				mojo,
 				pkg,
 				expectedArgs,
@@ -493,30 +489,30 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		);
 	}
 
-	private void verifyMojoExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environmentVariables) {
-		verifySuccessOutput(mojo, pkg, expectedArgs);
-		verifyCommandExecution(mojo, pkg, expectedArgs, environmentVariables);
+	private void verify_mojo_execution(T mojo, String pkg, String expectedArgs, Map<String, String> environmentVariables) {
+		verify_success_output(mojo, pkg, expectedArgs);
+		verify_command_execution(mojo, pkg, expectedArgs, environmentVariables);
 	}
 
-	private void verifyMojoErrorExecution(T mojo, String pkg, String expectedArgs) {
-		verifyErrorOutput(mojo, pkg, expectedArgs);
-		verifyCommandExecution(mojo, pkg, expectedArgs, Collections.<String, String>emptyMap());
+	private void verify_mojo_error_execution(T mojo, String pkg, String expectedArgs) {
+		verify_error_output(mojo, pkg, expectedArgs);
+		verify_command_execution(mojo, pkg, expectedArgs, Collections.<String, String>emptyMap());
 	}
 
-	private void verifySuccessOutput(T mojo, String pkg, String expectedArgs) {
+	private void verify_success_output(T mojo, String pkg, String expectedArgs) {
 		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Running: " + pkg + " " + expectedArgs);
 		verify(logger, never()).error(anyString());
 	}
 
-	private void verifyErrorOutput(T mojo, String pkg, String expectedArgs) {
+	private void verify_error_output(T mojo, String pkg, String expectedArgs) {
 		Log logger = readPrivate(mojo, "log");
 		verify(logger).error("Error during execution of: " + pkg + " " + expectedArgs);
 		verify(logger).error("Exit status: 1");
 	}
 
-	private void verifyProxyLogOutput(T mojo) {
-		String expectedArgs = join(defaultArguments(true, true));
+	private void verify_proxy_log_output(T mojo) {
+		String expectedArgs = join(defaultArguments(true));
 
 		Log logger = readPrivate(mojo, "log");
 
@@ -533,7 +529,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		);
 	}
 
-	private void verifyCommandExecutionWithProxy(T mojo) {
+	private void verify_command_execution_with_proxy(T mojo) {
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
 				any(File.class),
@@ -548,7 +544,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				.contains("--https-proxy http://mjeanroy:********@localhost:8080");
 	}
 
-	private void verifyCommandExecution(T mojo, String pkg, String expectedArgs, Map<String, String> environment) {
+	private void verify_command_execution(T mojo, String pkg, String expectedArgs, Map<String, String> environment) {
 		ArgumentCaptor<File> workingDirectoryCaptor = ArgumentCaptor.forClass(File.class);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		ArgumentCaptor<NpmLogger> npmLoggerCaptor = ArgumentCaptor.forClass(NpmLogger.class);
@@ -571,7 +567,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
 	}
 
-	private void verifyCommandExecutionIgnoringProxies(T mojo) {
+	private void verify_command_execution_ignoring_proxies(T mojo) {
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 		verify(readPrivate(mojo, "executor", CommandExecutor.class)).execute(
 				any(File.class),
@@ -586,11 +582,11 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				.doesNotContain("--https-proxy http://root:password@nginx:80");
 	}
 
-	private void verifyCommandSkippedHasNotBeenLogged(T mojo1, String cmd) {
+	private void verify_command_skipped_has_not_been_logged(T mojo1, String cmd) {
 		verify(readPrivate(mojo1, "log", Log.class), never()).info(String.format("Command %s already done, skipping.", cmd));
 	}
 
-	private void verifyExecutorHasBeenRunOnce(T mojo1) {
+	private void verify_executor_has_been_run_once(T mojo1) {
 		verify(readPrivate(mojo1, "executor", CommandExecutor.class), times(1)).execute(
 				any(File.class),
 				any(Command.class),
@@ -599,7 +595,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		);
 	}
 
-	private void verifyCommandSkippedHasBeenLoggedOnce(T mojo1, String cmd) {
+	private void verify_command_skipped_has_been_logged_once(T mojo1, String cmd) {
 		verify(readPrivate(mojo1, "log", Log.class), times(1)).info(String.format("Command %s already done, skipping.", cmd));
 	}
 

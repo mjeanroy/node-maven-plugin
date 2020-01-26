@@ -23,95 +23,58 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import org.apache.maven.plugin.logging.Log;
-import org.apache.maven.plugin.testing.MojoRule;
-import org.apache.maven.plugin.testing.resources.TestResources;
-import org.junit.Rule;
+import com.github.mjeanroy.maven.plugins.node.commands.Command;
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
+import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatchers;
 
 import java.io.File;
-import java.util.Map;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
-import static java.util.Collections.emptyMap;
-import static org.mockito.Mockito.mock;
+import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.absolutePath;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
 
-public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> {
+public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> extends AbstractMojoTest<T> {
 
-	@Rule
-	public TestResources resources = new TestResources();
-
-	@Rule
-	public MojoRule mojoRule = new MojoRule();
-
-	T lookupMojo(String projectName) throws Exception {
-		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupMojo(goal, pom);
-			}
-		});
+	@Test
+	public void it_should_run_npm_client_defaulting_to_global_npm() throws Exception {
+		T mojo = lookupEmptyMojo("mojo");
+		mojo.execute();
+		verify_command_executable(mojo, "npm");
 	}
 
-	T lookupEmptyMojo(String projectName) throws Exception {
-		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupEmptyMojo(goal, pom);
-			}
-		});
+	@Test
+	public void it_should_run_npm_client_defaulting_to_global_yarn() throws Exception {
+		T mojo = lookupMojo("mojo-with-npm-client");
+		mojo.execute();
+		verify_command_executable(mojo, "yarn");
 	}
 
-	T lookupMojo(String projectName, Map<String, ?> configuration) throws Exception {
-		return lookupAndConfigureMojo(projectName, configuration, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupEmptyMojo(goal, pom);
-			}
-		});
+	@Test
+	public void it_should_run_npm_client_using_custom_npm_client_home() throws Exception {
+		T mojo = lookupMojo("mojo-with-npm-client-home");
+		mojo.execute();
+		verify_command_executable(mojo, absolutePath("/usr/bin/yarn"));
 	}
 
-	private T lookupAndConfigureMojo(String projectName, MojoFactory<T> factory) throws Exception {
-		Map<String, Object> configuration = emptyMap();
-		return lookupAndConfigureMojo(projectName, configuration, factory);
-	}
+	private void verify_command_executable(T mojo, String executable) {
+		File workingDirectory = readPrivate(mojo, "workingDirectory", File.class);
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 
-	private T lookupAndConfigureMojo(String projectName, Map<String, ?> configuration, MojoFactory<T> factory) throws Exception {
-		File baseDir = resources.getBasedir(projectName);
-		File pom = new File(baseDir, "pom.xml");
-		Log logger = createLogger();
+		verify(readPrivate(mojo, "executor", CommandExecutor.class), atLeastOnce()).execute(
+				eq(workingDirectory),
+				cmdCaptor.capture(),
+				any(NpmLogger.class),
+				ArgumentMatchers.<String, String>anyMap()
+		);
 
-		T mojo = factory.build(mojoName(), pom);
-
-		writePrivate(mojo, "workingDirectory", baseDir);
-		writePrivate(mojo, "log", logger);
-
-		for (Map.Entry<String, ?> property : configuration.entrySet()) {
-			writePrivate(mojo, property.getKey(), property.getValue());
-		}
-
-		return mojo;
-	}
-
-	/**
-	 * Get the mojo name to test.
-	 *
-	 * @return Mojo Name.
-	 */
-	abstract String mojoName();
-
-	/**
-	 * The logger that will be injected into created mojos.
-	 *
-	 * @return The Logger.
-	 */
-	private Log createLogger() {
-		return mock(Log.class);
-	}
-
-	private interface MojoFactory<T extends AbstractNpmMojo> {
-		T build(String goal, File pom) throws Exception;
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.getName()).isEqualTo(executable);
 	}
 }

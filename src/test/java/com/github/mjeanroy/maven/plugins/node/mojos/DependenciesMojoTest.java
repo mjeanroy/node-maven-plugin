@@ -32,11 +32,11 @@ import org.mockito.InOrder;
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.inOrder;
 
-public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> {
+public class DependenciesMojoTest extends AbstractMojoTest<DependenciesMojo> {
 
 	@Override
 	String mojoName() {
@@ -44,7 +44,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> 
 	}
 
 	@Test
-	public void it_should_execute_mojo() throws Exception {
+	public void it_should_execute_mojo() {
 		DependenciesMojo mojo = lookupEmptyMojo("mojo");
 		Log logger = readPrivate(mojo, "log");
 
@@ -59,7 +59,7 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> 
 	}
 
 	@Test
-	public void it_should_execute_mojo_without_dependencies() throws Exception {
+	public void it_should_execute_mojo_without_dependencies() {
 		DependenciesMojo mojo = lookupEmptyMojo("mojo-without-dependencies");
 		Log logger = readPrivate(mojo, "log");
 
@@ -73,16 +73,17 @@ public class DependenciesMojoTest extends AbstractNpmMojoTest<DependenciesMojo> 
 	}
 
 	@Test
-	public void it_should_fail_if_package_json_does_not_exist() throws Exception {
-		final DependenciesMojo mojo = lookupEmptyMojo("mojo-with-parameters");
+	public void it_should_fail_if_package_json_does_not_exist() {
+		final DependenciesMojo mojo = lookupMojo("mojo-with-parameters", singletonMap(
+				"workingDirectory", new File(".")
+		));
+
 		final ThrowingCallable func = new ThrowingCallable() {
 			@Override
 			public void call() {
 				mojo.execute();
 			}
 		};
-
-		writePrivate(mojo, "workingDirectory", new File("."));
 
 		assertThatThrownBy(func).isInstanceOf(PackageJsonNotFoundException.class);
 	}

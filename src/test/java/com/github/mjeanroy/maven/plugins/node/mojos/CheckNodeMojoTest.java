@@ -58,8 +58,6 @@ import static org.mockito.Mockito.when;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
-	private String osName;
-
 	@Override
 	String mojoName() {
 		return "check";
@@ -126,7 +124,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	}
 
 	@Test
-	public void it_should_fail_if_node_is_not_available() throws Exception {
+	public void it_should_fail_if_node_is_not_available() {
 		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
 				newMapEntry("executor", givenExecutor("node"))
 		)));
@@ -135,7 +133,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	}
 
 	@Test
-	public void it_should_fail_if_npm_is_not_available() throws Exception {
+	public void it_should_fail_if_npm_is_not_available() {
 		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
 				newMapEntry("executor", givenExecutor("npm"))
 		)));
@@ -144,7 +142,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	}
 
 	@Test
-	public void it_should_fail_if_yarn_is_not_available() throws Exception {
+	public void it_should_fail_if_yarn_is_not_available() {
 		CheckNodeMojo mojo = givenMojo(newMap(asList(
 				newMapEntry("executor", (Object) givenExecutor("yarn")),
 				newMapEntry("yarn", (Object) true)
@@ -173,7 +171,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessage(message);
 	}
 
-	private CheckNodeMojo givenMojo(Map<String, ?> props) throws Exception {
+	private CheckNodeMojo givenMojo(Map<String, ?> props) {
 		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
 		for (Map.Entry<String, ?> prop : props.entrySet()) {
 			writePrivate(mojo, prop.getKey(), prop.getValue());

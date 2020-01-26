@@ -8,7 +8,18 @@
     "package": "gulp package",
     "bower": "gulp bower",
     "test-e2e": "gulp e2e",
-    "foobar": "gulp"
+
+    "install:foobar": "npm install",
+    "prune:foobar": "npm prune",
+    "clean:foobar": "gulp clean",
+    "lint:foobar": "gulp lint",
+    "build:foobar": "gulp build",
+    "package:foobar": "gulp package",
+    "bower:foobar": "gulp bower",
+    "test:foobar": "gulp test",
+    "test-e2e:foobar": "gulp e2e",
+    "start:foobar": "gulp serve",
+    "publish:foobar": "gulp publush"
   },
   "dependencies": {
     "react": "0.13.3",

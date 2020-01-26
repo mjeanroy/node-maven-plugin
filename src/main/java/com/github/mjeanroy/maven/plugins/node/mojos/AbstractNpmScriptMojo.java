@@ -94,7 +94,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * Flag to check if {@code npm} command should use colorization.
 	 * Default is {@code false}, since colorization is not natively supported with Maven.
 	 */
-	@Parameter(defaultValue = "false")
+	@Parameter(defaultValue = "true")
 	private boolean color;
 
 	/**
@@ -157,7 +157,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 */
 	AbstractNpmScriptMojo() {
 		super(newExecutor());
-		this.color = false;
+		this.color = true;
 		this.addMavenArgument = true;
 		this.failOnError = true;
 		this.failOnMissingScript = true;
