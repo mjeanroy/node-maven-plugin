@@ -27,12 +27,14 @@ import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.EngineConfig;
+import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import com.github.zafarkhaja.semver.Version;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
+import java.io.File;
 import java.util.Objects;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
@@ -69,7 +71,6 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 */
 	public CheckNodeMojo() {
 		super(newExecutor());
-		this.engines = new EngineConfig();
 	}
 
 	@Override
@@ -91,7 +92,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 	 * @param cmd Command Line.
 	 * @throws MojoExecutionException In case of errors.
 	 */
-	private String check(Command cmd) throws MojoExecutionException {
+	private String run(Command cmd) throws MojoExecutionException {
 		cmd.addArgument("--version");
 
 		getLog().info("Checking " +  cmd.getName() + " command");
@@ -106,14 +107,37 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		}
 	}
 
+	private EngineConfig computeEngineConfig() {
+		if (engines != null) {
+			return engines;
+		}
+
+		File packageJsonFile = lookupPackageJson(false);
+		if (packageJsonFile != null) {
+			PackageJson packageJson = parsePackageJson(packageJsonFile);
+			return new EngineConfig(packageJson.isEngineStrict(), packageJson.getEngines());
+		}
+
+		return null;
+	}
+
 	private void runAndCheckEngine(Command command) throws MojoExecutionException {
-		String out = check(command);
+		String out = run(command);
+		checkEngine(command, out);
+	}
+
+	private void checkEngine(Command command, String out) throws MojoExecutionException {
 		String name = command.getName();
-		String requirement = engines.getRequiredEngine(name);
+		EngineConfig engineConfig = computeEngineConfig();
+		if (engineConfig == null) {
+			return;
+		}
+
+		String requirement = engineConfig.getRequiredEngine(name);
 		if (requirement != null && !requirement.isEmpty() && !Objects.equals(requirement, "*")) {
 			if (!checkEngineRequirement(out, requirement)) {
 				String message = "Engine '" + name + "' with version '" + out + "' does not satisfy required version: '" + requirement + "'";
-				if (engines.isStrict()) {
+				if (engineConfig.isStrict()) {
 					throw new MojoExecutionException(message);
 				} else {
 					getLog().warn(message);

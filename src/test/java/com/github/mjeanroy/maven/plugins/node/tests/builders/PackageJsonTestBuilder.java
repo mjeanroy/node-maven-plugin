@@ -71,6 +71,20 @@ public class PackageJsonTestBuilder {
 	private final Map<String, String> scripts;
 
 	/**
+	 * Package `engineStrict` flag.
+	 *
+	 * @see PackageJson#getEngines()
+	 */
+	private boolean engineStrict;
+
+	/**
+	 * Package engines requirements.
+	 *
+	 * @see PackageJson#getEngines()
+	 */
+	private final Map<String, String> engines;
+
+	/**
 	 * Create builder with default values.
 	 */
 	public PackageJsonTestBuilder() {
@@ -79,6 +93,7 @@ public class PackageJsonTestBuilder {
 		this.dependencies = new LinkedHashMap<>();
 		this.devDependencies = new LinkedHashMap<>();
 		this.scripts = new LinkedHashMap<>();
+		this.engines = new LinkedHashMap<>();
 	}
 
 	/**
@@ -140,6 +155,29 @@ public class PackageJsonTestBuilder {
 	}
 
 	/**
+	 * Update {@link #engineStrict}.
+	 *
+	 * @param engineStrict New  {@link #engineStrict}
+	 * @return The builder.
+	 */
+	public PackageJsonTestBuilder withEngineStrict(boolean engineStrict) {
+		this.engineStrict = engineStrict;
+		return this;
+	}
+
+	/**
+	 * Add new engine requirement.
+	 *
+	 * @param name Engine name.
+	 * @param value Engine requirement.
+	 * @return The builder.
+	 */
+	public PackageJsonTestBuilder addEngine(String name, String value) {
+		this.engines.put(name, value);
+		return this;
+	}
+
+	/**
 	 * Build final {@link PackageJson} instance.
 	 *
 	 * @return The new instance.
@@ -151,6 +189,8 @@ public class PackageJsonTestBuilder {
 		writePrivate(packageJson, "dependencies", new LinkedHashMap<>(dependencies));
 		writePrivate(packageJson, "devDependencies", new LinkedHashMap<>(devDependencies));
 		writePrivate(packageJson, "scripts", new LinkedHashMap<>(scripts));
+		writePrivate(packageJson, "engineStrict", engineStrict);
+		writePrivate(packageJson, "engines", new LinkedHashMap<>(engines));
 		return packageJson;
 	}
 }

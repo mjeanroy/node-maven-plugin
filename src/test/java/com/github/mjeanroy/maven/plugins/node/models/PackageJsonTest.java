@@ -48,6 +48,8 @@ public class PackageJsonTest {
 				.addDependency("jquery", "1.0.0")
 				.addDevDependency("lodash", "1.0.0")
 				.addScript("test", "gulp test")
+				.withEngineStrict(true)
+				.addEngine("node", ">= 12")
 				.build();
 
 		// @formatter:off
@@ -57,7 +59,9 @@ public class PackageJsonTest {
 						"version=\"0.0.0\", " +
 						"devDependencies={lodash=1.0.0}, " +
 						"dependencies={jquery=1.0.0}, " +
-						"scripts={test=gulp test}" +
+						"scripts={test=gulp test}, " +
+						"engineStrict=true, " +
+						"engines={node=>= 12}" +
 				"}"
 		);
 		// @formatter:on

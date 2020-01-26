@@ -171,14 +171,30 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return The `package.json` file.
 	 */
 	final File lookupPackageJson() {
+		return lookupPackageJson(true);
+	}
+
+	/**
+	 * Lookup for `package.json` file in current working directory.
+	 *
+	 * @param failIfNotFound If {@code true}, will fail if {@code "package.json"} cannot be found.
+	 * @return The `package.json` file.
+	 */
+	final File lookupPackageJson(boolean failIfNotFound) {
 		File workingDirectory = notNull(getWorkingDirectory(), "Working Directory must not be null");
 		getLog().debug("Searching for package.json file in: " + workingDirectory);
 
 		String absolutePath = getNormalizeAbsolutePath(workingDirectory);
 		File packageJson = new File(absolutePath, "package.json");
 		if (!packageJson.exists()) {
-			getLog().error("Missing package.json file, cannot find it in: " + workingDirectory);
-			throw new PackageJsonNotFoundException(packageJson);
+			String message = "Missing package.json file, cannot find it in: " + workingDirectory;
+			if (failIfNotFound) {
+				getLog().error(message);
+				throw new PackageJsonNotFoundException(packageJson);
+			} else {
+				getLog().warn(message);
+				return null;
+			}
 		}
 
 		return packageJson;

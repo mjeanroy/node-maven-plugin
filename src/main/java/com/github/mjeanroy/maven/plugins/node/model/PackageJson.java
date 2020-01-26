@@ -25,7 +25,7 @@ package com.github.mjeanroy.maven.plugins.node.model;
 
 import com.github.mjeanroy.maven.plugins.node.commons.lang.ToStringBuilder;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -62,13 +62,18 @@ public final class PackageJson {
 	 */
 	private final Map<String, String> scripts;
 
+	private boolean engineStrict;
+
+	private final Map<String, String> engines;
+
 	/**
 	 * Create default package json representation.
 	 */
 	PackageJson() {
-		dependencies = new HashMap<>();
-		devDependencies = new HashMap<>();
-		scripts = new HashMap<>();
+		dependencies = new LinkedHashMap<>();
+		devDependencies = new LinkedHashMap<>();
+		scripts = new LinkedHashMap<>();
+		engines = new LinkedHashMap<>();
 	}
 
 	/**
@@ -117,6 +122,24 @@ public final class PackageJson {
 	}
 
 	/**
+	 * Get {@link #engineStrict}
+	 *
+	 * @return {@link #engineStrict}
+	 */
+	public boolean isEngineStrict() {
+		return engineStrict;
+	}
+
+	/**
+	 * Get {@link #engines}
+	 *
+	 * @return {@link #engines}
+	 */
+	public Map<String, String> getEngines() {
+		return engines;
+	}
+
+	/**
 	 * Check if given script command is defined in package.json file.
 	 *
 	 * @param script Script command.
@@ -138,7 +161,9 @@ public final class PackageJson {
 					&& Objects.equals(version, p.version)
 					&& Objects.equals(devDependencies, p.devDependencies)
 					&& Objects.equals(dependencies, p.dependencies)
-					&& Objects.equals(scripts, p.scripts);
+					&& Objects.equals(scripts, p.scripts)
+					&& Objects.equals(engineStrict, p.engineStrict)
+					&& Objects.equals(engines, p.engines);
 		}
 
 		return false;
@@ -146,7 +171,7 @@ public final class PackageJson {
 
 	@Override
 	public int hashCode() {
-		return Objects.hash(name, version, devDependencies, dependencies, scripts);
+		return Objects.hash(name, version, devDependencies, dependencies, scripts, engineStrict, engines);
 	}
 
 	@Override
@@ -157,6 +182,8 @@ public final class PackageJson {
 				.append("devDependencies", devDependencies)
 				.append("dependencies", dependencies)
 				.append("scripts", scripts)
+				.append("engineStrict", engineStrict)
+				.append("engines", engines)
 				.build();
 	}
 }

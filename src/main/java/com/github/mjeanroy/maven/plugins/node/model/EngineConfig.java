@@ -52,6 +52,17 @@ public final class EngineConfig {
 	}
 
 	/**
+	 * Create configuration instance.
+	 *
+	 * @param strict       {@link #strict}
+	 * @param requirements {@link #requirements}
+	 */
+	public EngineConfig(boolean strict, Map<String, String> requirements) {
+		this.strict = strict;
+		this.requirements = new LinkedHashMap<>(requirements);
+	}
+
+	/**
 	 * Get {@link #strict}
 	 *
 	 * @return {@link #strict}

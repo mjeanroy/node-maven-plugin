@@ -177,6 +177,9 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
 	}
 
+	// == ENGINE STRICT = false
+	// == Engine specified in pom.xml
+
 	@Test
 	public void it_should_warn_if_node_version_does_not_satisfy_requirement() throws Exception {
 		CommandExecutor executor = givenExecutor(newMap(asList(
@@ -210,6 +213,45 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		check_warn_because_engine_requirement_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
 	}
 
+	// == ENGINE STRICT = false
+	// == Engine specified in package.json
+
+	@Test
+	public void it_should_warn_if_node_version_specified_in_package_json_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v8.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_warn_because_engine_requirement_in_package_json_failure(executor, "Engine 'node' with version 'v8.0.0' does not satisfy required version: '>= 12'");
+	}
+
+	@Test
+	public void it_should_warn_if_npm_version_specified_in_package_json_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "4.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_warn_because_engine_requirement_in_package_json_failure(executor, "Engine 'npm' with version '4.0.0' does not satisfy required version: '>= 6'");
+	}
+
+	@Test
+	public void it_should_warn_if_custom_npm_client_version_specified_in_package_json_does_not_satisfy_requirement() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.0.0")
+		)));
+
+		check_warn_because_engine_requirement_in_package_json_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
+	}
+
+	// == ENGINE STRICT = true
+	// == Engine specified in pom.xml
+
 	@Test
 	public void it_should_fail_if_node_version_does_not_satisfy_requirement() {
 		CommandExecutor executor = givenExecutor(newMap(asList(
@@ -241,6 +283,42 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		)));
 
 		check_fail_because_engine_requirement_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
+	}
+
+	// == ENGINE STRICT = true
+	// == Engine specified in package.json
+
+	@Test
+	public void it_should_fail_if_node_version_does_not_satisfy_requirement_specified_in_package_json() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v8.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_fail_because_engine_requirement_in_package_json_failure(executor, "Engine 'node' with version 'v8.0.0' does not satisfy required version: '>= 12'");
+	}
+
+	@Test
+	public void it_should_fail_if_npm_version_does_not_satisfy_requirement_specified_in_package_json() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "4.0.0"),
+				newMapEntry("yarn", "1.20.0")
+		)));
+
+		check_fail_because_engine_requirement_in_package_json_failure(executor, "Engine 'npm' with version '4.0.0' does not satisfy required version: '>= 6'");
+	}
+
+	@Test
+	public void it_should_fail_if_custom_npm_client_version_does_not_satisfy_requirement_specified_in_package_json() {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.0.0"),
+				newMapEntry("npm", "8.0.0"),
+				newMapEntry("yarn", "1.0.0")
+		)));
+
+		check_fail_because_engine_requirement_in_package_json_failure(executor, "Engine 'yarn' with version '1.0.0' does not satisfy required version: '~1.20.0'");
 	}
 
 	private void check_warn_because_engine_requirement_failure(CommandExecutor executor, String expectedWarn) throws Exception {
@@ -288,6 +366,35 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		assertThatThrownBy(func).isInstanceOf(MojoExecutionException.class).hasMessage(expectedMessage);
 	}
 
+	private void check_warn_because_engine_requirement_in_package_json_failure(CommandExecutor executor, String expectedWarn) throws Exception {
+		CheckNodeMojo mojo = givenMojo("mojo-with-engine", newMap(asList(
+				newMapEntry("npmClient", (Object) "yarn"),
+				newMapEntry("executor", (Object) executor)
+		)));
+
+		mojo.execute();
+
+		verify(readPrivate(mojo, "log", Log.class)).warn(
+				expectedWarn
+		);
+	}
+
+	private void check_fail_because_engine_requirement_in_package_json_failure(CommandExecutor executor, String expectedMessage) {
+		final CheckNodeMojo mojo = givenMojo("mojo-with-engine-strict", newMap(asList(
+				newMapEntry("npmClient", (Object) "yarn"),
+				newMapEntry("executor", (Object) executor)
+		)));
+
+		ThrowingCallable func = new ThrowingCallable() {
+			@Override
+			public void call() throws Throwable {
+				mojo.execute();
+			}
+		};
+
+		assertThatThrownBy(func).isInstanceOf(MojoExecutionException.class).hasMessage(expectedMessage);
+	}
+
 	private void verifyMojoExecution(CheckNodeMojo mojo, int numberOfCommand) {
 		verify(readPrivate(mojo, "executor", CommandExecutor.class), times(numberOfCommand)).execute(
 				any(File.class),
@@ -308,13 +415,17 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessage(message);
 	}
 
-	private CheckNodeMojo givenMojo(Map<String, ?> props) {
-		CheckNodeMojo mojo = lookupEmptyMojo("mojo");
+	private CheckNodeMojo givenMojo(String name, Map<String, ?> props) {
+		CheckNodeMojo mojo = lookupEmptyMojo(name);
 		for (Map.Entry<String, ?> prop : props.entrySet()) {
 			writePrivate(mojo, prop.getKey(), prop.getValue());
 		}
 
 		return mojo;
+	}
+
+	private CheckNodeMojo givenMojo(Map<String, ?> props) {
+		return givenMojo("mojo", props);
 	}
 
 	private static class CommandExecutionExceptionAnswer implements Answer<CommandResult> {
