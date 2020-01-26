@@ -45,8 +45,8 @@ import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMap;
 import static com.github.mjeanroy.maven.plugins.node.tests.CollectionTestUtils.newMapEntry;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static com.github.mjeanroy.maven.plugins.node.tests.StringTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.failureResult;
 import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResultTestBuilder.successResult;

@@ -32,7 +32,7 @@ import org.junit.Rule;
 import java.io.File;
 import java.util.Map;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static java.util.Collections.emptyMap;
 import static org.mockito.Mockito.mock;
 

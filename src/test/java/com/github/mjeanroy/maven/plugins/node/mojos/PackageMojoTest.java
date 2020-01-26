@@ -23,7 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 
 public class PackageMojoTest extends AbstractNpmScriptIncrementalMojoTest<PackageMojo> {
 

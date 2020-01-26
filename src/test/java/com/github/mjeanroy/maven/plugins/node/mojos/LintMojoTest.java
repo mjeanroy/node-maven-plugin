@@ -29,8 +29,8 @@ import org.junit.Test;
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;

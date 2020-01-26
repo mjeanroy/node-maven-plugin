@@ -31,8 +31,8 @@ import org.mockito.ArgumentMatchers;
 
 import java.io.File;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static java.util.Collections.singletonMap;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;

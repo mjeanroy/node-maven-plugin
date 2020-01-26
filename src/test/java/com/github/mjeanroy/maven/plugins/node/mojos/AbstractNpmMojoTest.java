@@ -32,7 +32,7 @@ import org.mockito.ArgumentMatchers;
 import java.io.File;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.absolutePath;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;

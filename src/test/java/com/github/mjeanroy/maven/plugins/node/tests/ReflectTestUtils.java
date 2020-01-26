@@ -23,9 +23,8 @@
 
 package com.github.mjeanroy.maven.plugins.node.tests;
 
-import org.apache.commons.lang3.reflect.FieldUtils;
-
-import java.lang.reflect.Field;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 
 import static org.apache.commons.lang3.reflect.FieldUtils.readField;
 import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
@@ -33,27 +32,39 @@ import static org.apache.commons.lang3.reflect.FieldUtils.writeField;
 /**
  * Reflection Utilites, used in tests only.
  */
-public final class ReflectUtils {
+public final class ReflectTestUtils {
 
 	// Ensure non-instantiation.
-	private ReflectUtils() {
+	private ReflectTestUtils() {
 	}
 
 	/**
-	 * Write static final field on given class.
+	 * Create new instance of given class.
 	 *
 	 * @param klass The class.
-	 * @param name The field name.
-	 * @param value The new field value.
-	 * @param <T> Type of value to write.
+	 * @param <T> Type of created instances.
+	 * @return The new instance.
 	 */
-	public static <T> void writeStatic(Class<?> klass, String name, T value) {
+	public static <T> T instantiate(Class<T> klass) {
+		boolean wasNotAccessible = false;
+		Constructor<T> ctor = null;
+
 		try {
-			Field field = FieldUtils.getField(klass, name, true);
-			FieldUtils.removeFinalModifier(field);
-			FieldUtils.writeStaticField(field, value, true);
-		} catch (Exception ex) {
+			ctor = klass.getDeclaredConstructor();
+			if (!ctor.isAccessible()) {
+				wasNotAccessible = true;
+				ctor.setAccessible(true);
+			}
+
+			return ctor.newInstance();
+		}
+		catch (NoSuchMethodException | InstantiationException | IllegalAccessException | InvocationTargetException ex) {
 			throw new AssertionError(ex);
+		}
+		finally {
+			if (ctor != null && wasNotAccessible) {
+				ctor.setAccessible(true);
+			}
 		}
 	}
 
@@ -69,7 +80,8 @@ public final class ReflectUtils {
 	public static <T> T readPrivate(Object instance, String name) {
 		try {
 			return (T) readField(instance, name, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new AssertionError(ex);
 		}
 	}
@@ -99,7 +111,8 @@ public final class ReflectUtils {
 	public static <T> void writePrivate(Object instance, String name, T value) {
 		try {
 			writeField(instance, name, value, true);
-		} catch (Exception ex) {
+		}
+		catch (Exception ex) {
 			throw new AssertionError(ex);
 		}
 	}

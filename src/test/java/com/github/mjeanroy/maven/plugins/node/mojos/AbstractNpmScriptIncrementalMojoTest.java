@@ -33,7 +33,7 @@ import java.util.List;
 
 import static com.github.mjeanroy.maven.plugins.node.tests.DigestTestUtils.computeMd5;
 import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.readPrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 

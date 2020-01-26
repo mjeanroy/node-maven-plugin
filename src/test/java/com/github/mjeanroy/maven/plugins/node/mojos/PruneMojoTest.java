@@ -25,7 +25,7 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import org.junit.Test;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectUtils.writePrivate;
+import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 
 public class PruneMojoTest extends AbstractNpmScriptMojoTest<PruneMojo> {
 

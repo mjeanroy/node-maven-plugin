@@ -23,8 +23,11 @@
 
 package com.github.mjeanroy.maven.plugins.node.model;
 
+import com.github.mjeanroy.maven.plugins.node.commons.lang.ToStringBuilder;
+
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 import static java.util.Collections.unmodifiableMap;
 
@@ -32,7 +35,7 @@ import static java.util.Collections.unmodifiableMap;
  * The {@code package.json} model object (simplified model, since some properties that are not
  * explicitly needed are ignored).
  */
-public class PackageJson {
+public final class PackageJson {
 
 	/**
 	 * Npm project name.
@@ -121,5 +124,39 @@ public class PackageJson {
 	 */
 	public boolean hasScript(String script) {
 		return scripts.containsKey(script);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o == this) {
+			return true;
+		}
+
+		if (o instanceof PackageJson) {
+			PackageJson p = (PackageJson) o;
+			return Objects.equals(name, p.name)
+					&& Objects.equals(version, p.version)
+					&& Objects.equals(devDependencies, p.devDependencies)
+					&& Objects.equals(dependencies, p.dependencies)
+					&& Objects.equals(scripts, p.scripts);
+		}
+
+		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		return Objects.hash(name, version, devDependencies, dependencies, scripts);
+	}
+
+	@Override
+	public String toString() {
+		return ToStringBuilder.builder(getClass())
+				.append("name", name)
+				.append("version", version)
+				.append("devDependencies", devDependencies)
+				.append("dependencies", dependencies)
+				.append("scripts", scripts)
+				.build();
 	}
 }

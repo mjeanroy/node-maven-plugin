@@ -21,24 +21,45 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.mojos;
+package com.github.mjeanroy.maven.plugins.node.models;
 
-import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
+import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
+import com.github.mjeanroy.maven.plugins.node.tests.builders.PackageJsonTestBuilder;
+import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
+import org.junit.Test;
 
-public class BowerMojoTest extends AbstractNpmScriptMojoTest<BowerMojo> {
+import static org.assertj.core.api.Assertions.assertThat;
 
-	@Override
-	String mojoName() {
-		return "bower";
+public class PackageJsonTest {
+
+	@Test
+	public void it_should_implement_equals_hash_code() {
+		EqualsVerifier.forClass(PackageJson.class)
+				.suppress(Warning.NONFINAL_FIELDS)
+				.verify();
 	}
 
-	@Override
-	void overrideScript(BowerMojo mojo, String script) {
-		writePrivate(mojo, "bowerScript", script);
-	}
+	@Test
+	public void it_should_implement_to_string() {
+		PackageJson packageJson = new PackageJsonTestBuilder()
+				.withName("pkg")
+				.withVersion("0.0.0")
+				.addDependency("jquery", "1.0.0")
+				.addDevDependency("lodash", "1.0.0")
+				.addScript("test", "gulp test")
+				.build();
 
-	@Override
-	void enableSkip(BowerMojo mojo) {
-		writePrivate(mojo, "skipBower", true);
+		// @formatter:off
+		assertThat(packageJson).hasToString(
+				"PackageJson{" +
+						"name=\"pkg\", " +
+						"version=\"0.0.0\", " +
+						"devDependencies={lodash=1.0.0}, " +
+						"dependencies={jquery=1.0.0}, " +
+						"scripts={test=gulp test}" +
+				"}"
+		);
+		// @formatter:on
 	}
 }
