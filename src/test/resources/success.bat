@@ -1,1 +1,2 @@
-exit 0
+@echo off
+EXIT /B 0
