@@ -27,6 +27,7 @@ import org.apache.commons.exec.*;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -81,7 +82,7 @@ class DefaultCommandExecutor implements CommandExecutor {
 					new PumpStreamHandler(stream)
 			);
 
-			int status = executor.execute(commandLine, environment);
+			int status = executor.execute(commandLine, computeEnvironment(environment));
 			return new CommandResult(status, captureOutputHandler.getOut());
 		}
 		catch (ExecuteException ex) {
@@ -90,5 +91,27 @@ class DefaultCommandExecutor implements CommandExecutor {
 		catch (IOException ex) {
 			throw new CommandException(ex);
 		}
+	}
+
+	/**
+	 * Compute the environment that will be used to execute given command:
+	 *
+	 * <ul>
+	 *   <li>If no custom environment is provided, {@code null} will be returned, meaning that the command should run with process environment.</li>
+	 *   <li>Otherwise, a custom environment will be computed using process environmenent, overridden with custom env.</li>
+	 * </ul>
+	 *
+	 * @param customEnv The custom environment to use.
+	 * @return The command environment that will be used.
+	 */
+	private Map<String, String> computeEnvironment(Map<String, String> customEnv) {
+		if (customEnv == null || customEnv.isEmpty()) {
+			return null;
+		}
+
+		Map<String, String> env = new LinkedHashMap<>();
+		env.putAll(System.getenv());
+		env.putAll(customEnv);
+		return env;
 	}
 }

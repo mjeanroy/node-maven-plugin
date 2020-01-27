@@ -75,10 +75,11 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
+		Command node = node();
 		Command npm = npm();
 
-		runAndCheckEngine(node());
-		runAndCheckEngine(npm());
+		runAndCheckEngine(node);
+		runAndCheckEngine(npm);
 
 		Command npmClient = npmClient();
 		if (!Objects.equals(npm.getName(), npmClient.getName())) {

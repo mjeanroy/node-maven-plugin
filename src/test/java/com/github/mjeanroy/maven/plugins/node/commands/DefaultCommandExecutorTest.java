@@ -35,7 +35,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assume.assumeFalse;
 import static org.junit.Assume.assumeTrue;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 
 public class DefaultCommandExecutorTest {
 
@@ -66,7 +65,7 @@ public class DefaultCommandExecutorTest {
 	public void it_should_execute_command_on_unix_with_environment_variable() {
 		assumeFalse(isWindows());
 
-		String script = "success.sh";
+		String script = "env.sh";
 		String value = "node-maven-plugin";
 
 		Command command = createUnixCommand(script);
@@ -79,8 +78,14 @@ public class DefaultCommandExecutorTest {
 		CommandResult result = commandExecutor.execute(workingDirectory, command, out, environment);
 
 		assertThat(result.getStatus()).isZero();
-		assertThat(result.getOut()).isEqualTo(value);
-		verify(out).process(value);
+		assertThat(result.getOut()).isNotEmpty();
+
+		String[] lines = result.getOut().split(System.lineSeparator());
+		assertThat(lines).hasSize(2)
+			.containsExactly(
+					System.getenv("PATH"),
+					value
+			);
 	}
 
 	@Test
