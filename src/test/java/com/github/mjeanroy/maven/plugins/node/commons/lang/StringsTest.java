@@ -34,6 +34,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class StringsTest {
 
 	@Test
+	public void it_should_trim_value() {
+		assertThat(Strings.trim(null)).isNull();
+		assertThat(Strings.trim("")).isEqualTo("");
+		assertThat(Strings.trim(" value ")).isEqualTo("value");
+	}
+
+	@Test
 	public void it_should_join_inputs() {
 		assertThat(Strings.join(Collections.<String>emptyList(), ",")).isEqualTo("");
 		assertThat(Strings.join(singletonList("one"), ",")).isEqualTo("one");

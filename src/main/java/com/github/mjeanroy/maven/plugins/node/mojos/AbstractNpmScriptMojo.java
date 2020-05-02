@@ -45,6 +45,7 @@ import java.util.*;
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.trim;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
 import static java.util.Arrays.asList;
 import static java.util.Collections.*;
@@ -168,16 +169,31 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
+		Log log = getLog();
+
 		String scriptToRun = getScriptToRun(false);
 		Command cmd = npmClient();
 
-		if (needRunScript(scriptToRun)) {
+		String[] parts = scriptToRun.split(" ");
+		String cmdToRun = parts[0];
+		boolean addRunScript = needRunScript(cmdToRun);
+
+		if (addRunScript) {
+			log.debug("Adding run prefix for custom script command");
 			cmd.addArgument("run");
 		}
 
-		cmd.addArgument(scriptToRun);
+		log.debug("Using '" + cmdToRun + "' command");
+		cmd.addArgument(cmdToRun);
 
-		Log log = getLog();
+		// Add custom arguments
+		for (int i = 1; i < parts.length; ++i) {
+			String arg = trim(parts[i]);
+			if (arg != null && !arg.isEmpty()) {
+				cmd.addArgument(arg);
+				log.debug("Adding custom argument: " + arg);
+			}
+		}
 
 		// Should skip?
 		if (skip || shouldSkip()) {
@@ -205,7 +221,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		File packageJsonFile = lookupPackageJson();
 		PackageJson packageJson = parsePackageJson(packageJsonFile);
-		if (needRunScript(scriptToRun) && !packageJson.hasScript(scriptToRun)) {
+		if (addRunScript && !packageJson.hasScript(cmdToRun)) {
 			handleMissingNpmScript(cmd, packageJsonFile);
 			return;
 		}

@@ -57,9 +57,7 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.singletonMap;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -135,6 +133,21 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verify_mojo_execution(mojo, NPM, "run " + script + " --maven");
+	}
+
+	@Test
+	public void it_should_execute_mojo_in_success_with_script_with_options() throws Exception {
+		String script = script();
+		String cmd = script + " --force";
+		boolean addRun = !isStandardScript();
+
+		T mojo = lookupMojo("mojo-with-parameters", singletonMap(
+				scriptParameterName(), cmd
+		));
+
+		mojo.execute();
+
+		verify_mojo_execution(mojo, NPM, (addRun ? "run " : "") + cmd + " --maven");
 	}
 
 	@Test

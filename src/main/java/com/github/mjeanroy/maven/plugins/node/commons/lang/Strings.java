@@ -35,6 +35,16 @@ public class Strings {
 	}
 
 	/**
+	 * Trim value in a null-safe way.
+	 *
+	 * @param value Value to trim.
+	 * @return Trimmed value, maybe {@code null}.
+	 */
+	public static String trim(String value) {
+		return value == null ? value : value.trim();
+	}
+
+	/**
 	 * Join given inputs to a single output string.
 	 *
 	 * @param lines The inputs.
