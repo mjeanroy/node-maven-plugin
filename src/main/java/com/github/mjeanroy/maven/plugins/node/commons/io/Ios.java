@@ -25,15 +25,24 @@ package com.github.mjeanroy.maven.plugins.node.commons.io;
 
 import com.github.mjeanroy.maven.plugins.node.exceptions.FileAccessException;
 import com.github.mjeanroy.maven.plugins.node.exceptions.Md5Exception;
+import com.github.mjeanroy.maven.plugins.node.exceptions.UrlEncodeException;
+import org.codehaus.plexus.util.Base64;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
+import java.net.URLEncoder;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import static java.nio.charset.StandardCharsets.UTF_8;
+import static org.codehaus.plexus.util.Base64.encodeBase64;
 
 /**
  * Static I/O Utilities.
@@ -42,6 +51,22 @@ public final class Ios {
 
 	// Ensure non instantiation.
 	private Ios() {
+	}
+
+	/**
+	 * Encode given value in a null-safe way.
+	 *
+	 * @param value Value to encode.
+	 * @return Encoded value.
+	 */
+	public static String urlEncode(String value) {
+		try {
+			return value == null ? null : URLEncoder.encode(value, UTF_8.name());
+		}
+		catch (UnsupportedEncodingException ex) {
+			// Should not happen but rethrow exception if something very bad happen.
+			throw new UrlEncodeException(ex);
+		}
 	}
 
 	/**

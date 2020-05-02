@@ -23,8 +23,12 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import org.apache.commons.codec.binary.Base64;
+
 import java.io.File;
+import java.net.URLEncoder;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.util.Collection;
 import java.util.Collections;
@@ -34,6 +38,7 @@ import java.util.List;
 import static com.github.mjeanroy.maven.plugins.node.tests.DigestTestUtils.computeMd5;
 import static com.github.mjeanroy.maven.plugins.node.tests.FileTestUtils.join;
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.readPrivate;
+import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.reset;
 
@@ -73,7 +78,8 @@ public abstract class AbstractNpmScriptIncrementalMojoTest<T extends AbstractNpm
 	 */
 	File stateFile(T mojo) {
 		File workingDirectory = readPrivate(mojo, "workingDirectory");
-		return join(workingDirectory, "target", "node-maven-plugin", script());
+		String fName = script();
+		return join(workingDirectory, "target", "node-maven-plugin", fName);
 	}
 
 	/**

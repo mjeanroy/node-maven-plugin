@@ -44,6 +44,7 @@ import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
+import static com.github.mjeanroy.maven.plugins.node.commons.io.Ios.urlEncode;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.trim;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
@@ -589,7 +590,9 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * @return The input state file.
 	 */
 	private File getInputStateFile() {
-		return Files.join(getWorkingDirectory(), "target", "node-maven-plugin", getScriptToRun(true));
+		String fName = getScriptToRun(true);
+		String encodedName = urlEncode(fName);
+		return Files.join(getWorkingDirectory(), "target", "node-maven-plugin", encodedName);
 	}
 
 	/**
