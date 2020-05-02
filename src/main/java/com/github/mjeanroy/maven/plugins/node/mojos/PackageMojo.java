@@ -38,12 +38,12 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  *
  * <p>
  *
- * This mojo will run automatically during the compile phase and does not
+ * This mojo will run automatically during the package phase and does not
  * require online connection.
  */
 @Mojo(
 	name = PackageMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PREPARE_PACKAGE
+	defaultPhase = LifecyclePhase.PACKAGE
 )
 public class PackageMojo extends AbstractNpmScriptMojo {
 
