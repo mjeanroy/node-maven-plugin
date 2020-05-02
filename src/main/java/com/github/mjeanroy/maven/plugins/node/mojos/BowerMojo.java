@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.util.Collection;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.bowerAssets;
 import static java.util.Arrays.asList;
 
 /**
@@ -100,9 +101,6 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
-		return asList(
-				"**/bower.json",
-				"**/.bowerrc"
-		);
+		return bowerAssets();
 	}
 }

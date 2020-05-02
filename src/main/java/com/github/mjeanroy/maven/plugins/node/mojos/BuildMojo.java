@@ -28,9 +28,14 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.*;
 import static java.util.Arrays.asList;
+import static java.util.Collections.unmodifiableCollection;
 
 /**
  * Build Mojo.
@@ -98,82 +103,15 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
-		return asList(
-				"**/package.json",
-				"**/package-lock.json",
-				"**/yarn.lock",
-				"**/bower.json",
-				"**/lerna.json",
-				"**/.browserslistrc",
-				"**/browserslistrc",
-				"**/.babelrc*",
-
-				// JS
-				"**/*.js",
-				"**/*.cjs",
-				"**/*.mjs",
-				"**/*.jsx",
-				"**/*.vue",
-
-				// TS
-				"**/*.ts",
-				"**/*.tsx",
-
-				// CSS/SASS/LESS
-				"**/*.css",
-				"**/*.sass",
-				"**/*.scss",
-				"**/*.less",
-
-				// Templates
-				"**/*.html",
-				"**/*.htm",
-				"**/*.hbs",
-				"**/*.mustache",
-
-				// Static Resources
-				"**/*.svg",
-				"**/*.png",
-				"**/*.jpg",
-				"**/*.jpeg",
-				"**/*.gif",
-				"**/*.ico",
-
-				// Fonts
-				"**/*.otf",
-				"**/*.eot",
-				"**/*.ttf",
-				"**/*.woff",
-				"**/*.woff2",
-
-				// Others
-				"**/*.json",
-				"**/*.yml",
-				"**/*.yaml",
-				"**/*.xml",
-				"**/*.env",
-				"**/*.graphql"
-		);
+		return buildAssets();
 	}
 
 	@Override
 	Collection<String> getDefaultIncrementalBuildExcludes() {
-		return asList(
-				"**/pom.xml",
-
-				"**/*.spec.js",
-				"**/*.test.js",
-				"**/*.spec.ts",
-				"**/*.test.ts",
-				"**/*.test.json",
-				"**/*.spec.json",
-
-				"**/__tests__/*.js",
-				"**/__tests__/*.ts",
-
-				"**/tslint*",
-				"**/eslint*",
-				"**/jshint*"
-		);
+		Set<String> assets = new LinkedHashSet<>();
+		assets.add("**/pom.xml");
+		assets.addAll(testAssets());
+		assets.addAll(linterAssets());
+		return unmodifiableCollection(assets);
 	}
 }

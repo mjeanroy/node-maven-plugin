@@ -30,6 +30,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 import java.util.Collection;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
+import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.lintAssets;
 import static java.util.Arrays.asList;
 
 /**
@@ -106,29 +107,6 @@ public class LintMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
-		return asList(
-				// Config and/or dependency
-				"**/package.json",
-				"**/package-lock.json",
-				"**/yarn.lock",
-				"**/bower.json",
-				"**/lerna.json",
-
-				// TypeScript
-				"**/tslint*",
-				"**/*.ts",
-				"**/*.tsx",
-
-				// JS
-				"**/.eslint*",
-				"**/.jshint*",
-				"**/*.js",
-				"**/*.jsx",
-				"**/*.cjs",
-				"**/*.mjs",
-
-				// Other
-				"**/*.vue"
-		);
+		return lintAssets();
 	}
 }
