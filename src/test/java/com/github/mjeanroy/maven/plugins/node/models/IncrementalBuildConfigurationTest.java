@@ -54,7 +54,7 @@ public class IncrementalBuildConfigurationTest {
 		// @formatter:off
 		assertThat(c).hasToString(
 				"IncrementalBuildConfiguration{" +
-					"enabled=false, " +
+					"enabled=true, " +
 					"useDefaultExcludes=true, " +
 					"useDefaultIncludes=true, " +
 					"excludeBackendSources=true, " +

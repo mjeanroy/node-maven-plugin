@@ -101,7 +101,7 @@ public final class IncrementalBuildConfiguration {
 	private IncrementalBuildGoalConfiguration preClean;
 
 	public IncrementalBuildConfiguration() {
-		this.enabled = false;
+		this.enabled = true;
 		this.useDefaultIncludes = true;
 		this.useDefaultExcludes = true;
 		this.excludeBackendSources = true;
