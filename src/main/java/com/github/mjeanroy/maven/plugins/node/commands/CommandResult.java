@@ -64,6 +64,7 @@ public final class CommandResult {
 	 * Create new result object.
 	 *
 	 * @param status Status value.
+	 * @param out Command output.
 	 */
 	public CommandResult(int status, String out) {
 		this.status = status;

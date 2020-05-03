@@ -41,6 +41,7 @@ public interface CommandExecutor {
 	 * @param workingDirectory Working directory (i.e where the command line is executed).
 	 * @param command Command, containing executable path with arguments.
 	 * @param logger Logger to use to log command output.
+	 * @param environment Environment variables.
 	 * @return Command result object.
 	 */
 	CommandResult execute(File workingDirectory, Command command, OutputHandler logger, Map<String, String> environment);

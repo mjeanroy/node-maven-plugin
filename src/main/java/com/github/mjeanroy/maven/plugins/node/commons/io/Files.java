@@ -89,6 +89,7 @@ public final class Files {
 	 *
 	 * @param out The file.
 	 * @param charset The charset to use.
+	 * @return File lines.
 	 * @throws FileAccessException If file cannot be read on disk.
 	 */
 	public static List<String> readLines(File out, Charset charset) {
