@@ -4,7 +4,7 @@
 
 	<groupId>com.github.mjeanroy</groupId>
 	<artifactId>node-maven-plugin</artifactId>
-	<version>0.7.1</version>
+	<version>0.7.2-SNAPSHOT</version>
 	<name>node-maven-plugin</name>
 	<packaging>maven-plugin</packaging>
 	<url>https://github.com/mjeanroy/node-maven-plugin</url>
@@ -34,7 +34,7 @@
 		<connection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</connection>
 		<developerConnection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</developerConnection>
 		<url>https://github.com/mjeanroy/node-maven-plugin</url>
-	  <tag>node-maven-plugin-0.7.1</tag>
+	  <tag>HEAD</tag>
   </scm>
 
 	<distributionManagement>
