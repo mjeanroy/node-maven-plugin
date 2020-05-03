@@ -252,6 +252,20 @@ final class Assets {
 	}
 
 	/**
+	 * List of files that may be scanned in build assets but should be ignore because
+	 * it is not really involved in a build step (test sources for example).
+	 *
+	 * @return List of assets to analyze.
+	 */
+	static Collection<String> buildIgnoreAssets() {
+		Set<String> assets = new LinkedHashSet<>();
+		assets.add("**/pom.xml");
+		assets.addAll(testAssets());
+		assets.addAll(linterAssets());
+		return unmodifiableCollection(assets);
+	}
+
+	/**
 	 * List of files that may involved during tests.
 	 *
 	 * @return List of assets to analyze.

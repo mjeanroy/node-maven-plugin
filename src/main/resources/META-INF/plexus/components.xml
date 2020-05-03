@@ -28,6 +28,7 @@
 							</process-sources>
 							<process-resources>
 								org.apache.maven.plugins:maven-resources-plugin:resources
+								com.github.mjeanroy:node-maven-plugin:${project.version}:prepare
 							</process-resources>
 							<process-test-resources>
 								org.apache.maven.plugins:maven-resources-plugin:testResources

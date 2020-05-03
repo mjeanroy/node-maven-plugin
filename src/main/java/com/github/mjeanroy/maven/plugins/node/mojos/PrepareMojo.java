@@ -28,17 +28,15 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.*;
-import static java.util.Arrays.asList;
 import static java.util.Collections.unmodifiableCollection;
 
 /**
- * Build Mojo.
+ * Prepare Mojo.
  *
  * <p>
  *
@@ -46,43 +44,43 @@ import static java.util.Collections.unmodifiableCollection;
  *
  * <p>
  *
- * This mojo will run automatically during the compile phase and does not
+ * This mojo will run automatically during the prepare-resoyrces phase (i.e just before the compile phase) and does not
  * require online connection.
  */
 @Mojo(
-	name = BuildMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.COMPILE
+	name = PrepareMojo.GOAL_NAME,
+	defaultPhase = LifecyclePhase.PROCESS_RESOURCES
 )
-public class BuildMojo extends AbstractNpmScriptMojo {
+public class PrepareMojo extends AbstractNpmScriptMojo {
 
 	/**
 	 * The maven goal name.
 	 * This is the name that will be used in the {@code pom.xml} file.
 	 */
-	static final String GOAL_NAME = "build";
+	static final String GOAL_NAME = "prepare";
 
 	/**
 	 * The default {@code npm} script command (default is the maven goal name).
-	 * @see BuildMojo#GOAL_NAME
+	 * @see PrepareMojo#GOAL_NAME
 	 */
 	private static final String DEFAULT_SCRIPT = GOAL_NAME;
 
 	/**
-	 * Set {@code build} mojo to custom npm script.
+	 * Set {@code prepare} mojo to custom npm script.
 	 */
-	@Parameter(defaultValue = "${npm.script.build}")
-	private String buildScript;
+	@Parameter(defaultValue = "${npm.script.prepare}")
+	private String prepareScript;
 
 	/**
 	 * Flag to skip mojo execution.
 	 */
-	@Parameter(defaultValue = "${npm.skip.build}")
-	private boolean skipBuild;
+	@Parameter(defaultValue = "${npm.skip.prepare}")
+	private boolean skipPrepare;
 
 	/**
 	 * Create Mojo.
 	 */
-	public BuildMojo() {
+	public PrepareMojo() {
 		super();
 	}
 
@@ -93,12 +91,12 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	String getScript() {
-		return firstNonNull(buildScript, DEFAULT_SCRIPT);
+		return firstNonNull(prepareScript, DEFAULT_SCRIPT);
 	}
 
 	@Override
 	boolean shouldSkip() {
-		return skipBuild;
+		return skipPrepare;
 	}
 
 	@Override

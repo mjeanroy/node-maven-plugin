@@ -4,6 +4,7 @@
   "scripts": {
     "clean": "gulp clean",
     "lint": "gulp lint",
+    "prepare": "gulp prepare",
     "build": "gulp build",
     "package": "gulp package",
     "bower": "gulp bower",
@@ -13,6 +14,7 @@
     "prune:foobar": "npm prune",
     "clean:foobar": "gulp clean",
     "lint:foobar": "gulp lint",
+    "prepare:foobar": "gulp prepare",
     "build:foobar": "gulp build",
     "package:foobar": "gulp package",
     "bower:foobar": "gulp bower",
