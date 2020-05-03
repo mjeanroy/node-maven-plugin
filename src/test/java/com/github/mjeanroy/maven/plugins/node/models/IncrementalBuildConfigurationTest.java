@@ -81,6 +81,13 @@ public class IncrementalBuildConfigurationTest {
 						"includes=[], " +
 						"excludes=[]" +
 					"}, " +
+					"prepare=IncrementalBuildGoalConfiguration{" +
+						"enabled=true, " +
+						"useDefaultIncludes=true, " +
+						"useDefaultExcludes=true, " +
+						"includes=[], " +
+						"excludes=[]" +
+					"}, " +
 					"build=IncrementalBuildGoalConfiguration{" +
 						"enabled=true, " +
 						"useDefaultIncludes=true, " +

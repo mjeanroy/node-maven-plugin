@@ -91,6 +91,11 @@ public final class IncrementalBuildConfiguration {
 	private IncrementalBuildGoalConfiguration lint;
 
 	/**
+	 * The specific configuration for the PREPARE goal.
+	 */
+	private IncrementalBuildGoalConfiguration prepare;
+
+	/**
 	 * The specific configuration for the BUILD goal.
 	 */
 	private IncrementalBuildGoalConfiguration build;
@@ -112,6 +117,7 @@ public final class IncrementalBuildConfiguration {
 		this.install = new IncrementalBuildGoalConfiguration();
 		this.bower = new IncrementalBuildGoalConfiguration();
 		this.lint = new IncrementalBuildGoalConfiguration();
+		this.prepare = new IncrementalBuildGoalConfiguration();
 		this.build = new IncrementalBuildGoalConfiguration();
 		this.preClean = new IncrementalBuildGoalConfiguration();
 	}
@@ -222,6 +228,24 @@ public final class IncrementalBuildConfiguration {
 	 */
 	public void setLint(IncrementalBuildGoalConfiguration lint) {
 		this.lint = lint;
+	}
+
+	/**
+	 * Get {@link #prepare}
+	 *
+	 * @return {@link #prepare}
+	 */
+	public IncrementalBuildGoalConfiguration getPrepare() {
+		return prepare;
+	}
+
+	/**
+	 * Set {@link #prepare}
+	 *
+	 * @param prepare New {@link #prepare}
+	 */
+	public void setPrepare(IncrementalBuildGoalConfiguration prepare) {
+		this.prepare = prepare;
 	}
 
 	/**
@@ -404,6 +428,10 @@ public final class IncrementalBuildConfiguration {
 			return lint;
 		}
 
+		if (Objects.equals(goal, "prepare")) {
+			return prepare;
+		}
+
 		if (Objects.equals(goal, "build")) {
 			return build;
 		}
@@ -432,6 +460,7 @@ public final class IncrementalBuildConfiguration {
 					&& Objects.equals(install, c.install)
 					&& Objects.equals(bower, c.bower)
 					&& Objects.equals(lint, c.lint)
+					&& Objects.equals(prepare, c.prepare)
 					&& Objects.equals(build, c.build)
 					&& Objects.equals(preClean, c.preClean);
 		}
@@ -451,6 +480,7 @@ public final class IncrementalBuildConfiguration {
 				install,
 				bower,
 				lint,
+				prepare,
 				build,
 				preClean
 		);
@@ -468,6 +498,7 @@ public final class IncrementalBuildConfiguration {
 				.append("install", install)
 				.append("bower", bower)
 				.append("lint", lint)
+				.append("prepare", prepare)
 				.append("build", build)
 				.append("preClean", preClean)
 				.build();
