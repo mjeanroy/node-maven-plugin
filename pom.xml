@@ -92,7 +92,7 @@
 		<commons-lang3.version>3.8.1</commons-lang3.version>
 		<logback.version>1.2.3</logback.version>
 		<equalsverifier.version>2.5.2</equalsverifier.version>
-		<commons-codec.version>1.13</commons-codec.version>
+		<commons-codec.version>1.14</commons-codec.version>
 	</properties>
 
 	<dependencies>
