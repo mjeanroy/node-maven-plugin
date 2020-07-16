@@ -28,7 +28,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.model.EngineConfig;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
-import com.github.zafarkhaja.semver.Version;
+import com.vdurmont.semver4j.Semver;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -149,8 +149,8 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	private boolean checkEngineRequirement(String actualVersion, String requiredVersion) throws MojoExecutionException {
 		try {
-			Version actual = Version.valueOf(fixVersionFormat(actualVersion));
-			return actual.satisfies(requiredVersion);
+			Semver semver = new Semver(actualVersion, Semver.SemverType.NPM);
+			return semver.satisfies(requiredVersion);
 		}
 		catch (Exception ex) {
 			getLog().error("An error occurred while checking for engine requirements: " + ex.getMessage());

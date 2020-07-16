@@ -177,6 +177,29 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
 	}
 
+	@Test
+	public void it_should_not_fail_with_given_semver_pattern() throws Exception {
+		CommandExecutor executor = givenExecutor(newMap(asList(
+				newMapEntry("node", "v12.14.0"),
+				newMapEntry("npm", "6.0.0"),
+				newMapEntry("yarn", "1.20.1")
+		)));
+
+		EngineConfig engineConfig = new EngineConfigTestBuilder()
+				.withStrict(false)
+				.addRequirement("node", ">=12.14.0 <13.0.0")
+				.build();
+
+		CheckNodeMojo mojo = givenMojo(newMap(asList(
+				newMapEntry("executor", (Object) executor),
+				newMapEntry("engines", (Object) engineConfig)
+		)));
+
+		mojo.execute();
+
+		verify(readPrivate(mojo, "log", Log.class), never()).warn(anyString());
+	}
+
 	// == ENGINE STRICT = false
 	// == Engine specified in pom.xml
 
