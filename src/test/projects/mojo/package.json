@@ -12,7 +12,7 @@
     "foobar": "gulp"
   },
   "dependencies": {
-    "react": "0.13.3",
+    "react": "16.13.1",
     "jquery": "2.11"
   },
   "devDependencies": {
