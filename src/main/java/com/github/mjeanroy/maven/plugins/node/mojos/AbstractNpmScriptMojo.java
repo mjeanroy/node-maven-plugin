@@ -650,7 +650,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		Set<String> excludes = new LinkedHashSet<>();
 
 		// NPM/YARN dependencies
-		excludes.add("node_modules/**/*");
+		excludes.add("**/node_modules/**/*");
 
 		// Backend Source Files (main or test)
 		if (incrementalBuild.isExcludeBackendSources()) {
@@ -661,7 +661,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 
 		// Build output
-		excludes.add("/target/**/*");
+		excludes.add("**/target/**/*");
 
 		String goal = getGoalName();
 		if (incrementalBuild.useDefaultExcludes(goal)) {
