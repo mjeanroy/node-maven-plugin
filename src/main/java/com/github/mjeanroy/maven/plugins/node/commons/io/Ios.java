@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.commons.io;
 
+import com.github.mjeanroy.maven.plugins.node.commons.lang.Strings;
 import com.github.mjeanroy.maven.plugins.node.exceptions.FileAccessException;
 import com.github.mjeanroy.maven.plugins.node.exceptions.Md5Exception;
 import com.github.mjeanroy.maven.plugins.node.exceptions.UrlEncodeException;
@@ -41,6 +42,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.leftPad;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.codehaus.plexus.util.Base64.encodeBase64;
 
@@ -79,7 +81,8 @@ public final class Ios {
 		MessageDigest md5 = getMd5Digest();
 		byte[] bytes = read(file);
 		byte[] hash = md5.digest(bytes);
-		return new BigInteger(1, hash).toString(16);
+		String hexHash = new BigInteger(1, hash).toString(16);
+		return leftPad(hexHash, 32, '0');
 	}
 
 	/**

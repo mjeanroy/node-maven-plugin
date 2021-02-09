@@ -76,4 +76,13 @@ public class StringsTest {
 		assertThat(Strings.uncapitalize("TestE2E")).isEqualTo("testE2E");
 		assertThat(Strings.uncapitalize("Test")).isEqualTo("test");
 	}
+
+	@Test
+	public void it_should_left_pad() {
+		assertThat(Strings.leftPad(null, 5, '0')).isEqualTo("00000");
+		assertThat(Strings.leftPad("", 5, '0')).isEqualTo("00000");
+		assertThat(Strings.leftPad("123456", 5, '0')).isEqualTo("123456");
+		assertThat(Strings.leftPad("12345", 5, '0')).isEqualTo("12345");
+		assertThat(Strings.leftPad("1234", 5, '0')).isEqualTo("01234");
+	}
 }

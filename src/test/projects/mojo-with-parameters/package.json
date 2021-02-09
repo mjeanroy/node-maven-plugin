@@ -8,6 +8,7 @@
     "build": "gulp build",
     "package": "gulp package",
     "bower": "gulp bower",
+    "verify": "gulp verify",
     "test-e2e": "gulp e2e",
 
     "install:foobar": "npm install",
@@ -22,6 +23,7 @@
     "test-e2e:foobar": "gulp e2e",
     "start:foobar": "gulp serve",
     "publish:foobar": "gulp publish",
+    "verify:foobar": "gulp verify",
     "foobar": "gulp foobar"
   },
   "dependencies": {

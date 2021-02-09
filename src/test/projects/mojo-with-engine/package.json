@@ -9,6 +9,7 @@
     "package": "gulp package",
     "bower": "gulp bower",
     "test-e2e": "gulp e2e",
+    "verify": "gulp verify",
     "foobar": "gulp"
   },
   "dependencies": {

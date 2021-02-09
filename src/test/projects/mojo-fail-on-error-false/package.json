@@ -8,7 +8,8 @@
     "build": "gulp build",
     "package": "gulp package",
     "bower": "gulp bower",
-    "test-e2e": "gulp e2e"
+    "test-e2e": "gulp e2e",
+    "verify": "gulp verify"
   },
   "dependencies": {
     "react": "0.13.3",

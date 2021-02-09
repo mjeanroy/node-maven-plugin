@@ -102,4 +102,30 @@ public class Strings {
 
 		return Character.toLowerCase(text.charAt(0)) + text.substring(1);
 	}
+
+	/**
+	 * Put given placeholder at the left of the string, until it gets the required size.
+	 *
+	 * @param input Input string.
+	 * @param length Required length.
+	 * @param placeholder Placeholder.
+	 * @return The output string.
+	 */
+	public static String leftPad(String input, int length, char placeholder) {
+		int size = input == null ? 0 : input.length();
+		if (size >= length) {
+			return input;
+		}
+
+		StringBuilder sb = new StringBuilder(length);
+		while (sb.length() < length - size) {
+			sb.append(placeholder);
+		}
+
+		if (input != null) {
+			sb.append(input);
+		}
+
+		return sb.toString();
+	}
 }
