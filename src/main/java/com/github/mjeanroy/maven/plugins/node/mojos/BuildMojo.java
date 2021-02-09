@@ -51,7 +51,7 @@ import static java.util.Collections.unmodifiableCollection;
  */
 @Mojo(
 	name = BuildMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.COMPILE
+	defaultPhase = LifecyclePhase.GENERATE_RESOURCES
 )
 public class BuildMojo extends AbstractNpmScriptMojo {
 
