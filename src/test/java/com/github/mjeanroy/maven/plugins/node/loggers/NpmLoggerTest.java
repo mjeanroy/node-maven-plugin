@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.mojos;
+package com.github.mjeanroy.maven.plugins.node.loggers;
 
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;

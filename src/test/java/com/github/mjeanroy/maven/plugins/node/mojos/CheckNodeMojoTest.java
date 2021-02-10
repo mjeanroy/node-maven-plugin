@@ -28,6 +28,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandException;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commands.OutputHandler;
+import com.github.mjeanroy.maven.plugins.node.loggers.NpmLogger;
 import com.github.mjeanroy.maven.plugins.node.model.EngineConfig;
 import com.github.mjeanroy.maven.plugins.node.tests.builders.EngineConfigTestBuilder;
 import org.apache.maven.plugin.MojoExecutionException;

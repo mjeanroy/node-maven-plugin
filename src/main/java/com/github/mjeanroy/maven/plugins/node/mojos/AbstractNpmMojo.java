@@ -23,11 +23,10 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
-import com.github.mjeanroy.maven.plugins.node.commands.Command;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
-import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
-import com.github.mjeanroy.maven.plugins.node.commands.Commands;
+import com.github.mjeanroy.maven.plugins.node.commands.*;
 import com.github.mjeanroy.maven.plugins.node.exceptions.PackageJsonNotFoundException;
+import com.github.mjeanroy.maven.plugins.node.loggers.NpmLogger;
+import com.github.mjeanroy.maven.plugins.node.loggers.SystemOutLogger;
 import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -109,6 +108,12 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	private boolean skip;
 
 	/**
+	 * Use maven logger, or output directly to the console.
+	 */
+	@Parameter(defaultValue = "true", readonly = true)
+	private boolean useMavenLogger;
+
+	/**
 	 * The command executor.
 	 */
 	private final CommandExecutor executor;
@@ -117,6 +122,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * Default Constructor.
 	 */
 	AbstractNpmMojo(CommandExecutor executor) {
+		this.useMavenLogger = true;
 		this.executor = executor;
 		this.environmentVariables = new LinkedHashMap<>();
 	}
@@ -223,7 +229,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return The execution result.
 	 */
 	final CommandResult execute(Command cmd) {
-		return executor.execute(workingDirectory, cmd, npmLogger(), environmentVariables);
+		return executor.execute(workingDirectory, cmd, logger(), environmentVariables);
 	}
 
 	/**
@@ -258,7 +264,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 *
 	 * @return NPM Logger.
 	 */
-	private NpmLogger npmLogger() {
-		return NpmLogger.npmLogger(getLog());
+	private OutputHandler logger() {
+		return useMavenLogger ? NpmLogger.npmLogger(getLog()) : SystemOutLogger.systemOutLogger();
 	}
 }

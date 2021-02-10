@@ -21,7 +21,7 @@
  * CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-package com.github.mjeanroy.maven.plugins.node.mojos;
+package com.github.mjeanroy.maven.plugins.node.loggers;
 
 import com.github.mjeanroy.maven.plugins.node.commands.OutputHandler;
 import org.apache.maven.plugin.logging.Log;
@@ -40,46 +40,7 @@ import org.apache.maven.plugin.logging.Log;
  *   <li>Otherwise, the level {@code INFO} is used by default.</li>
  * </ul>
  */
-class NpmLogger implements OutputHandler {
-
-	/**
-	 * The {@code npm} warn prefix used when warning are displayed by
-	 * npm script.
-	 */
-	private static final String NPM_WARN_PREFIX = "npm WARN ";
-
-	/**
-	 * The {@code npm} error prefix used when errors are displayed by
-	 * npm script.
-	 */
-	private static final String NPM_ERROR_PREFIX = "npm ERR! ";
-
-	/**
-	 * The {@code npm} warn prefix used when warning are displayed by
-	 * npm script.
-	 */
-	private static final String YARN_WARN_PREFIX = "warning ";
-
-	/**
-	 * The {@code yarn} error prefix used when errors are displayed by
-	 * yarn script.
-	 */
-	private static final String YARN_ERROR_PREFIX = "error ";
-
-	/**
-	 * The {@code webpack} prefix to display a warning.
-	 * For example:
-	 * <ul>
-	 *   <li>{@code "WARNING in webpack performance recommendations:"}</li>
-	 *   <li>{@code "WARNING in entrypoint size limit:"}</li>
-	 * </ul>
-	 */
-	public static final String WARNING_PREFIX = "WARNING ";
-
-	/**
-	 * A deprecation warning displayed when npm detects a deprecated dependency.
-	 */
-	public static final String DEPRECATION_WARNING = "DeprecationWarning: ";
+public class NpmLogger extends AbstractNpmLogger implements OutputHandler {
 
 	/**
 	 * Create new NPM logger using an existing maven logger.
@@ -87,7 +48,7 @@ class NpmLogger implements OutputHandler {
 	 * @param logger Maven logger.
 	 * @return The NPM logger.
 	 */
-	static NpmLogger npmLogger(Log logger) {
+	public static NpmLogger npmLogger(Log logger) {
 		return new NpmLogger(logger);
 	}
 
@@ -106,25 +67,17 @@ class NpmLogger implements OutputHandler {
 	}
 
 	@Override
-	public void process(String line) {
-		if (shouldWarn(line)) {
-			log.warn(line);
-		} else if (line.startsWith(NPM_ERROR_PREFIX) || line.startsWith(YARN_ERROR_PREFIX)) {
-			log.error(line);
-		} else {
-			log.info(line);
-		}
+	void warn(String line) {
+		log.warn(line);
 	}
 
-	private static boolean shouldWarn(String line) {
-		if (line.startsWith(NPM_WARN_PREFIX) || line.startsWith(YARN_WARN_PREFIX)) {
-			return true;
-		}
+	@Override
+	void error(String line) {
+		log.error(line);
+	}
 
-		if (line.startsWith(WARNING_PREFIX)) {
-			return true;
-		}
-
-		return line.contains(DEPRECATION_WARNING);
+	@Override
+	void info(String line) {
+		log.info(line);
 	}
 }

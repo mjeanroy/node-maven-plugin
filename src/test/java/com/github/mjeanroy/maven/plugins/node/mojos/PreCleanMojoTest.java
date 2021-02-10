@@ -26,6 +26,7 @@ package com.github.mjeanroy.maven.plugins.node.mojos;
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
+import com.github.mjeanroy.maven.plugins.node.loggers.NpmLogger;
 import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildConfiguration;
 import com.github.mjeanroy.maven.plugins.node.tests.builders.IncrementalBuildConigurationTestBuilder;
 import org.apache.maven.plugin.logging.Log;
