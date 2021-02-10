@@ -140,7 +140,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("executor", givenExecutor("node"))
 		)));
 
-		verify_mojo_execution_exception(mojo, "Node is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Executable node is not available. Please install it on your operating system.");
 	}
 
 	@Test
@@ -149,7 +149,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("executor", givenExecutor("npm"))
 		)));
 
-		verify_mojo_execution_exception(mojo, "Npm is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Executable npm is not available. Please install it on your operating system.");
 	}
 
 	@Test
@@ -159,7 +159,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				newMapEntry("yarn", (Object) true)
 		)));
 
-		verify_mojo_execution_exception(mojo, "Yarn is not available. Please install it on your operating system.");
+		verify_mojo_execution_exception(mojo, "Executable yarn is not available. Please install it on your operating system.");
 	}
 
 	@Test

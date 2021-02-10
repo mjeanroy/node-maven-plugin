@@ -109,7 +109,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 			return result.getOut();
 		}
 		catch (CommandException ex) {
-			throw new MojoExecutionException(capitalize(cmd.getName()) + " is not available. Please install it on your operating system.");
+			throw new MojoExecutionException("Executable " + cmd.getName() + " is not available. Please install it on your operating system.");
 		}
 	}
 
