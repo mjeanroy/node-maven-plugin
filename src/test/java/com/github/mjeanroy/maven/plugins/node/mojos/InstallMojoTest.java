@@ -70,6 +70,30 @@ public class InstallMojoTest extends AbstractNpmScriptIncrementalMojoTest<Instal
 	}
 
 	@Test
+	public void it_should_execute_mojo_using_ci_command() throws Exception {
+		InstallMojo mojo = lookupMojo("mojo", singletonMap(
+				"installScript", "ci"
+		));
+
+		CommandResult result = successResult();
+		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap())).thenReturn(result);
+
+		mojo.execute();
+
+		Log logger = (Log) readField(mojo, "log", true);
+		verify(logger).info("Running: npm ci --maven");
+		verify(logger, never()).error(anyString());
+
+		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
+		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
+
+		Command cmd = cmdCaptor.getValue();
+		assertThat(cmd).isNotNull();
+		assertThat(cmd.toString()).isEqualTo("npm ci --maven");
+	}
+
+	@Test
 	public void it_should_execute_mojo_using_yarn_to_install_dependencies() throws Exception {
 		InstallMojo mojo = lookupMojo("mojo-with-npm-client");
 

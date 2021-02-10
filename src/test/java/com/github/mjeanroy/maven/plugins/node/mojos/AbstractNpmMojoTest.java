@@ -60,10 +60,14 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> extends Abs
 	public void it_should_run_npm_client_using_custom_npm_client_home() throws Exception {
 		T mojo = lookupMojo("mojo-with-npm-client-home");
 		mojo.execute();
-		verify_command_executable(mojo, absolutePath("/usr/bin/yarn"));
+		verify_command_executable(mojo, absolutePath("/usr/bin/yarn"), "yarn");
 	}
 
 	private void verify_command_executable(T mojo, String executable) {
+		verify_command_executable(mojo, executable, executable);
+	}
+
+	private void verify_command_executable(T mojo, String executable, String name) {
 		File workingDirectory = readPrivate(mojo, "workingDirectory", File.class);
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
 
@@ -76,6 +80,7 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> extends Abs
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();
-		assertThat(cmd.getName()).isEqualTo(executable);
+		assertThat(cmd.getName()).isEqualTo(name);
+		assertThat(cmd.getBin()).isEqualTo(executable);
 	}
 }

@@ -58,13 +58,19 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private static final String NPM_PUBLISH = "publish";
 	private static final String NPM_START = "start";
 	private static final String NPM_PRUNE = "prune";
+	private static final String NPM_CI = "ci";
 
 	/**
-	 * Store standard {@code nom} commands.
+	 * Store standard commands.
 	 * Theses commands do not need to be prefixed by {@code "run"}
 	 * argument.
 	 */
 	private static final Set<String> BASIC_COMMANDS;
+
+	/**
+	 * Specific standard commands for given npm client.
+	 */
+	private static final Map<String, Set<String>> CLIENT_BASIC_COMMANDS;
 
 	/**
 	 * The separator used to split file name and hash signature in persisted file.
@@ -73,24 +79,38 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 	// Initialize commands
 	static {
-		BASIC_COMMANDS = unmodifiableSet(new HashSet<String>(asList(
+		BASIC_COMMANDS = unmodifiableSet(new HashSet<>(asList(
 			NPM_INSTALL,
 			NPM_TEST,
 			NPM_PUBLISH,
 			NPM_START,
 			NPM_PRUNE
 		)));
+
+		CLIENT_BASIC_COMMANDS = Collections.singletonMap(
+				"npm", singleton(NPM_CI)
+		);
 	}
 
 	/**
-	 * Check if given command need to be prefixed by {@code "run"}
-	 * argument.
+	 * Check if given command need to be prefixed by {@code "run"} argument.
 	 *
 	 * @param command Command to check.
 	 * @return {@code true} if command si a custom command and need to be prefixed by {@code "run"} argument, {@code false} otherwise.
 	 */
-	private static boolean needRunScript(String command) {
-		return !BASIC_COMMANDS.contains(command);
+	private static boolean needRunScript(String executable, String command) {
+		if (BASIC_COMMANDS.contains(command)) {
+			return false;
+		}
+
+		if (executable != null && !executable.isEmpty()) {
+			String npmClient = executable.toLowerCase();
+			if (CLIENT_BASIC_COMMANDS.containsKey(npmClient) && CLIENT_BASIC_COMMANDS.get(npmClient).contains(command)) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	/**
@@ -171,7 +191,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		String[] parts = scriptToRun.split(" ");
 		String cmdToRun = parts[0];
-		boolean addRunScript = needRunScript(cmdToRun);
+		boolean addRunScript = needRunScript(cmd.getName(), cmdToRun);
 
 		if (addRunScript) {
 			log.debug("Adding run prefix for custom script command");

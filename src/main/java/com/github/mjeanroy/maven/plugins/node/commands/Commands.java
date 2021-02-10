@@ -113,6 +113,11 @@ public final class Commands {
 		}
 
 		@Override
+		public String getBin() {
+			return cmd.getBin();
+		}
+
+		@Override
 		public void addArgument(CommandArg argument) {
 			cmd.addArgument(argument);
 		}

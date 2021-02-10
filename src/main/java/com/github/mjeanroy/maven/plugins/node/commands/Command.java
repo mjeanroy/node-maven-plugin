@@ -23,11 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.commands;
 
-import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.StringCommandArg.arg;
 
@@ -87,7 +83,7 @@ public class Command {
 	}
 
 	/**
-	 * Get executable path.
+	 * Get executable path, can be used to execute command.
 	 *
 	 * @return Executable path.
 	 */
@@ -101,6 +97,18 @@ public class Command {
 	 * @return Executable name.
 	 */
 	public String getName() {
+		String separator = "\\\\|/";
+		String[] parts = executable.split(separator);
+		return parts[parts.length - 1];
+	}
+
+	/**
+	 * Get bin executable path, should not be used to execute command, as windows requires
+	 * to use msdos wrapper.
+	 *
+	 * @return Bin path.
+	 */
+	public String getBin() {
 		return executable;
 	}
 
