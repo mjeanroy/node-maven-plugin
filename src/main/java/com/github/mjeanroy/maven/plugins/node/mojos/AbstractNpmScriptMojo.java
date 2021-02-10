@@ -138,12 +138,6 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private Settings settings;
 
 	/**
-	 * Skip NPM script globally.
-	 */
-	@Parameter(defaultValue = "${npm.skip}")
-	private boolean skip;
-
-	/**
 	 * Set {@code clean} mojo to custom npm script.
 	 *
 	 * @deprecated
@@ -197,7 +191,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 
 		// Should skip?
-		if (skip || shouldSkip()) {
+		if (shouldSkipGlobally() || shouldSkip()) {
 			log.info(getSkippedMessage(cmd));
 			return;
 		}

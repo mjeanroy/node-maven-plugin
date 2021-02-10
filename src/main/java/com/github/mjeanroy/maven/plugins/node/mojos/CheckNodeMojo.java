@@ -75,6 +75,11 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 
 	@Override
 	public void execute() throws MojoExecutionException {
+		if (shouldSkipGlobally()) {
+			getLog().info("Goal 'check' is skipped.");
+			return;
+		}
+
 		Command node = node();
 		Command npm = npm();
 

@@ -103,6 +103,12 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	private Map<String, String> environmentVariables;
 
 	/**
+	 * Skip NPM script globally.
+	 */
+	@Parameter(defaultValue = "${npm.skip}")
+	private boolean skip;
+
+	/**
 	 * The command executor.
 	 */
 	private final CommandExecutor executor;
@@ -218,6 +224,15 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	final CommandResult execute(Command cmd) {
 		return executor.execute(workingDirectory, cmd, npmLogger(), environmentVariables);
+	}
+
+	/**
+	 * Get {@link #skip}
+	 *
+	 * @return {@link #skip}
+	 */
+	final boolean shouldSkipGlobally() {
+		return skip;
 	}
 
 	/**

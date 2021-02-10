@@ -54,12 +54,7 @@ import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.inOrder;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
@@ -82,6 +77,21 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		inOrder.verify(logger).debug("Running: node --version");
 		inOrder.verify(logger).info("Checking npm command");
 		inOrder.verify(logger).debug("Running: npm --version");
+	}
+
+	@Test
+	public void it_should_skip_mojo() throws Exception {
+		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
+				newMapEntry("skip", true)
+		)));
+
+		mojo.execute();
+
+		verifyZeroInteractions(readPrivate(mojo, "executor"));
+
+		Log logger = readPrivate(mojo, "log");
+		verify(logger).info("Goal 'check' is skipped.");
+		verifyNoMoreInteractions(logger);
 	}
 
 	@Test
