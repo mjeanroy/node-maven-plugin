@@ -49,7 +49,8 @@ import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.n
  */
 @Mojo(
 	name = CheckNodeMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.VALIDATE
+	defaultPhase = LifecyclePhase.VALIDATE,
+	threadSafe = true
 )
 public class CheckNodeMojo extends AbstractNpmMojo {
 

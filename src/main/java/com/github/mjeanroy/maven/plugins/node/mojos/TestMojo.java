@@ -24,6 +24,7 @@
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
 import com.github.mjeanroy.maven.plugins.node.commands.Command;
+
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -53,7 +54,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  */
 @Mojo(
 	name = TestMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.TEST
+	defaultPhase = LifecyclePhase.TEST,
+	threadSafe = true
 )
 public class TestMojo extends AbstractNpmScriptMojo {
 
@@ -127,5 +129,10 @@ public class TestMojo extends AbstractNpmScriptMojo {
 	@Override
 	String getSkippedMessage(Command cmd) {
 		return "Tests are skipped.";
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

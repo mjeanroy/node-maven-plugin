@@ -43,7 +43,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  */
 @Mojo(
 	name = VerifyMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.VERIFY
+	defaultPhase = LifecyclePhase.VERIFY,
+	threadSafe = true
 )
 public class VerifyMojo extends AbstractNpmScriptMojo {
 
@@ -91,5 +92,10 @@ public class VerifyMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipVerify;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

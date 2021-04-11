@@ -42,7 +42,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  * require online connection.
  */
 @Mojo(
-	name = PruneMojo.GOAL_NAME
+	name = PruneMojo.GOAL_NAME,
+	threadSafe = true
 )
 public class PruneMojo extends AbstractNpmScriptMojo {
 
@@ -84,5 +85,10 @@ public class PruneMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return false;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.WRITE;
 	}
 }

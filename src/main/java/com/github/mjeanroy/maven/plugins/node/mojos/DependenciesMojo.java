@@ -43,7 +43,8 @@ import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.n
  * This mojo will not run by default and does not require online connection.
  */
 @Mojo(
-	name = DependenciesMojo.GOAL_NAME
+	name = DependenciesMojo.GOAL_NAME,
+	threadSafe = true
 )
 public class DependenciesMojo extends AbstractNpmMojo {
 

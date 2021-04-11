@@ -46,7 +46,8 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.*;
  */
 @Mojo(
 	name = BuildMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.GENERATE_RESOURCES
+	defaultPhase = LifecyclePhase.GENERATE_RESOURCES,
+	threadSafe = true
 )
 public class BuildMojo extends AbstractNpmScriptMojo {
 
@@ -104,5 +105,10 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildExcludes() {
 		return buildIgnoreAssets();
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

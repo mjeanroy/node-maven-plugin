@@ -43,7 +43,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  */
 @Mojo(
 	name = PackageMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PACKAGE
+	defaultPhase = LifecyclePhase.PACKAGE,
+	threadSafe = true
 )
 public class PackageMojo extends AbstractNpmScriptMojo {
 
@@ -91,5 +92,10 @@ public class PackageMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipPackage;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

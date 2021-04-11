@@ -52,7 +52,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  */
 @Mojo(
 	name = TestE2EMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.INTEGRATION_TEST
+	defaultPhase = LifecyclePhase.INTEGRATION_TEST,
+	threadSafe = true
 )
 public class TestE2EMojo extends AbstractNpmScriptMojo {
 
@@ -121,5 +122,10 @@ public class TestE2EMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return mavenTestSkip || mavenTestSkipExec || skipITs || skipTestE2E;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

@@ -49,7 +49,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
 @Mojo(
 	name = PublishMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.DEPLOY,
-	requiresOnline = true
+	requiresOnline = true,
+	threadSafe = true
 )
 public class PublishMojo extends AbstractNpmScriptMojo {
 
@@ -97,5 +98,10 @@ public class PublishMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipPublish;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

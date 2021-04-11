@@ -57,7 +57,8 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.installAssets;
 @Mojo(
 	name = InstallMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.INITIALIZE,
-	requiresOnline = true
+	requiresOnline = true,
+	threadSafe = true
 )
 public class InstallMojo extends AbstractNpmScriptMojo {
 
@@ -110,5 +111,10 @@ public class InstallMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
 		return installAssets();
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.WRITE;
 	}
 }

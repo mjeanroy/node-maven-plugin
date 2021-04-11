@@ -41,12 +41,13 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.*;
  *
  * <p>
  *
- * This mojo will run automatically during the prepare-resoyrces phase (i.e just before the compile phase) and does not
+ * This mojo will run automatically during the prepare-resources phase (i.e just before the compile phase) and does not
  * require online connection.
  */
 @Mojo(
 	name = PrepareMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PROCESS_RESOURCES
+	defaultPhase = LifecyclePhase.PROCESS_RESOURCES,
+	threadSafe = true
 )
 public class PrepareMojo extends AbstractNpmScriptMojo {
 
@@ -104,5 +105,10 @@ public class PrepareMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildExcludes() {
 		return buildIgnoreAssets();
+	}
+	@Override
+
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

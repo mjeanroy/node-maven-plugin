@@ -53,7 +53,8 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.installAssets;
 @Mojo(
 	name = PreCleanMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.PRE_CLEAN,
-	requiresOnline = true
+	requiresOnline = true,
+	threadSafe = true
 )
 public class PreCleanMojo extends AbstractNpmScriptMojo {
 
@@ -106,5 +107,10 @@ public class PreCleanMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
 		return installAssets();
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.WRITE;
 	}
 }

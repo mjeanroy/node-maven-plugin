@@ -42,7 +42,10 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  * This mojo will not run automatically and does not
  * require online connection.
  */
-@Mojo(name = StartMojo.GOAL_NAME)
+@Mojo(
+	name = StartMojo.GOAL_NAME,
+	threadSafe = true
+)
 @Execute(phase = LifecyclePhase.PROCESS_CLASSES)
 public class StartMojo extends AbstractNpmScriptMojo {
 
@@ -84,5 +87,10 @@ public class StartMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return false;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

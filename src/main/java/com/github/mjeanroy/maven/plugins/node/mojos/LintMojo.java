@@ -54,7 +54,8 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.lintAssets;
  */
 @Mojo(
 	name = LintMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.PROCESS_SOURCES
+	defaultPhase = LifecyclePhase.PROCESS_SOURCES,
+	threadSafe = true
 )
 public class LintMojo extends AbstractNpmScriptMojo {
 
@@ -107,5 +108,10 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
 		return lintAssets();
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

@@ -44,7 +44,8 @@ import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstN
  */
 @Mojo(
 	name = CleanMojo.GOAL_NAME,
-	defaultPhase = LifecyclePhase.CLEAN
+	defaultPhase = LifecyclePhase.CLEAN,
+	threadSafe = true
 )
 @Execute(
 	lifecycle = "pre-clean",
@@ -96,5 +97,10 @@ public class CleanMojo extends AbstractNpmScriptMojo {
 	@Override
 	boolean shouldSkip() {
 		return skipClean;
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.READ;
 	}
 }

@@ -48,7 +48,8 @@ import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.bowerAssets;
 @Mojo(
 	name = BowerMojo.GOAL_NAME,
 	defaultPhase = LifecyclePhase.INITIALIZE,
-	requiresOnline = true
+	requiresOnline = true,
+	threadSafe = true
 )
 public class BowerMojo extends AbstractNpmScriptMojo {
 
@@ -101,5 +102,10 @@ public class BowerMojo extends AbstractNpmScriptMojo {
 	@Override
 	Collection<String> getDefaultIncrementalBuildIncludes() {
 		return bowerAssets();
+	}
+
+	@Override
+	LockStrategy lockStrategy() {
+		return LockStrategy.WRITE;
 	}
 }

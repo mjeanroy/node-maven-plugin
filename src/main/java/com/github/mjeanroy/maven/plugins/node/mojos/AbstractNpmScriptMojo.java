@@ -41,6 +41,9 @@ import java.io.File;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
@@ -52,6 +55,8 @@ import static java.util.Arrays.asList;
 import static java.util.Collections.*;
 
 abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
+
+	private static final ReadWriteLock lock = new ReentrantReadWriteLock(true);
 
 	private static final String NPM_INSTALL = "install";
 	private static final String NPM_TEST = "test";
@@ -96,7 +101,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	 * Check if given command need to be prefixed by {@code "run"} argument.
 	 *
 	 * @param command Command to check.
-	 * @return {@code true} if command si a custom command and need to be prefixed by {@code "run"} argument, {@code false} otherwise.
+	 * @return {@code true} if command is a custom command and need to be prefixed by {@code "run"} argument, {@code false} otherwise.
 	 */
 	private static boolean needRunScript(String executable, String command) {
 		if (BASIC_COMMANDS.contains(command)) {
@@ -111,6 +116,24 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 
 		return true;
+	}
+
+	static enum LockStrategy {
+		WRITE {
+			@Override
+			Lock getLock(ReadWriteLock lock) {
+				return lock.writeLock();
+			}
+		},
+
+		READ {
+			@Override
+			Lock getLock(ReadWriteLock lock) {
+				return lock.readLock();
+			}
+		};
+
+		abstract Lock getLock(ReadWriteLock lock);
 	}
 
 	/**
@@ -170,6 +193,12 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	private IncrementalBuildConfiguration incrementalBuild;
 
 	/**
+	 * Should be forced to use the write lock?
+	 */
+	@Parameter(defaultValue = "false")
+	private boolean forceExclusiveLock;
+
+	/**
 	 * Default Constructor.
 	 */
 	AbstractNpmScriptMojo() {
@@ -180,10 +209,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		this.failOnMissingScript = true;
 		this.ignoreProxies = true;
 		this.incrementalBuild = new IncrementalBuildConfiguration();
+		this.forceExclusiveLock = false;
 	}
 
 	@Override
-	public void execute() throws MojoExecutionException {
+	public final void execute() throws MojoExecutionException {
 		Log log = getLog();
 
 		String scriptToRun = getScriptToRun(false);
@@ -260,8 +290,29 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 			}
 		}
 
-		doExecute(cmd, newState);
+		// Try to be smart here: some goal, such as install, needs to acquire an exclusive lock as in a workspace
+		// project (with yarn, pnpm or npm >= 7), the install goal must never be run in parallel, otherwise it may triggers
+		// unexpected results.
+		// The goal that must not be run in parallel are:
+		// - Install
+		// - PreClean, as it runs npm install
+		// - Bower, as it also install dependencies.
+		// For all the other goal, it should be ok to be run in parallel (except if force in configuration),
+		// as it should only alter file of the current maven module.
+		LockStrategy lockStrategy = forceExclusiveLock ? LockStrategy.WRITE : lockStrategy();
+		Lock acquiredLock = lockStrategy.getLock(lock);
+
+		acquiredLock.lock();
+
+		try {
+			doExecute(cmd, newState);
+		}
+		finally {
+			acquiredLock.unlock();
+		}
 	}
+
+	abstract LockStrategy lockStrategy();
 
 	/**
 	 * Get the goal name.
