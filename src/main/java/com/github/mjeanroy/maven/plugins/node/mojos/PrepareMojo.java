@@ -28,12 +28,9 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import java.util.Collection;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.*;
-import static java.util.Collections.unmodifiableCollection;
 
 /**
  * Prepare Mojo.

@@ -31,7 +31,6 @@ import java.util.Collection;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.lintAssets;
-import static java.util.Arrays.asList;
 
 /**
  * Lint Mojo.

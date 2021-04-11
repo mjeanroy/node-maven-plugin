@@ -38,7 +38,6 @@ import java.io.File;
 import java.util.Objects;
 
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
-import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.capitalize;
 
 /**
  * Check Mojo.
@@ -161,14 +160,5 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 			getLog().error("An error occurred while checking for engine requirements: " + ex.getMessage());
 			throw new MojoExecutionException(ex.getMessage(), ex);
 		}
-	}
-
-	private static String fixVersionFormat(String version) {
-		if (version == null || version.isEmpty()) {
-			return version;
-		}
-
-		String trimmedVersion = version.trim().toLowerCase();
-		return trimmedVersion.charAt(0) == 'v' ? trimmedVersion.substring(1) : trimmedVersion;
 	}
 }

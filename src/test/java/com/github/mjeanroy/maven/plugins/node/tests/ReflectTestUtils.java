@@ -107,7 +107,6 @@ public final class ReflectTestUtils {
 	 * @param value Field value.
 	 * @param <T> Type of value to read.
 	 */
-	@SuppressWarnings("unchcked")
 	public static <T> void writePrivate(Object instance, String name, T value) {
 		try {
 			writeField(instance, name, value, true);

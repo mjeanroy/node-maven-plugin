@@ -23,19 +23,15 @@
 
 package com.github.mjeanroy.maven.plugins.node.commons.io;
 
-import com.github.mjeanroy.maven.plugins.node.commons.lang.Strings;
 import com.github.mjeanroy.maven.plugins.node.exceptions.FileAccessException;
 import com.github.mjeanroy.maven.plugins.node.exceptions.Md5Exception;
 import com.github.mjeanroy.maven.plugins.node.exceptions.UrlEncodeException;
-import org.codehaus.plexus.util.Base64;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
 import java.net.URLEncoder;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
@@ -44,7 +40,6 @@ import java.util.Map;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.leftPad;
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.codehaus.plexus.util.Base64.encodeBase64;
 
 /**
  * Static I/O Utilities.

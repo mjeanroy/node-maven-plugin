@@ -31,7 +31,6 @@ import java.util.Collection;
 
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.mojos.Assets.installAssets;
-import static java.util.Arrays.asList;
 
 /**
  * Install Mojo.
