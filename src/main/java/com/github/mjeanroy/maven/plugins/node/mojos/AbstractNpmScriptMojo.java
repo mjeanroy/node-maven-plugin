@@ -28,9 +28,7 @@ import com.github.mjeanroy.maven.plugins.node.commands.CommandResult;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Files;
 import com.github.mjeanroy.maven.plugins.node.commons.io.Ios;
 import com.github.mjeanroy.maven.plugins.node.commons.lang.Strings;
-import com.github.mjeanroy.maven.plugins.node.model.IncrementalBuildConfiguration;
-import com.github.mjeanroy.maven.plugins.node.model.PackageJson;
-import com.github.mjeanroy.maven.plugins.node.model.ProxyConfig;
+import com.github.mjeanroy.maven.plugins.node.model.*;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.logging.Log;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -48,6 +46,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import static com.github.mjeanroy.maven.plugins.node.commands.CommandExecutors.newExecutor;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Files.getNormalizeAbsolutePath;
 import static com.github.mjeanroy.maven.plugins.node.commons.io.Ios.urlEncode;
+import static com.github.mjeanroy.maven.plugins.node.commons.lang.Objects.firstNonNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.PreConditions.notNull;
 import static com.github.mjeanroy.maven.plugins.node.commons.lang.Strings.trim;
 import static com.github.mjeanroy.maven.plugins.node.commons.mvn.MvnUtils.findHttpActiveProfiles;
@@ -118,24 +117,6 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		return true;
 	}
 
-	static enum LockStrategy {
-		WRITE {
-			@Override
-			Lock getLock(ReadWriteLock lock) {
-				return lock.writeLock();
-			}
-		},
-
-		READ {
-			@Override
-			Lock getLock(ReadWriteLock lock) {
-				return lock.readLock();
-			}
-		};
-
-		abstract Lock getLock(ReadWriteLock lock);
-	}
-
 	/**
 	 * Flag to check if {@code npm} command should use colorization.
 	 * Default is {@code false}, since colorization is not natively supported with Maven.
@@ -192,11 +173,8 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 	@Parameter
 	private IncrementalBuildConfiguration incrementalBuild;
 
-	/**
-	 * Should be forced to use the write lock?
-	 */
-	@Parameter(defaultValue = "false")
-	private boolean forceExclusiveLock;
+	@Parameter
+	private LockStrategyConfiguration lockStrategies;
 
 	/**
 	 * Default Constructor.
@@ -209,7 +187,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		this.failOnMissingScript = true;
 		this.ignoreProxies = true;
 		this.incrementalBuild = new IncrementalBuildConfiguration();
-		this.forceExclusiveLock = false;
+		this.lockStrategies = new LockStrategyConfiguration();
 	}
 
 	@Override
@@ -299,7 +277,15 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		// - Bower, as it also install dependencies.
 		// For all the other goal, it should be ok to be run in parallel (except if force in configuration),
 		// as it should only alter file of the current maven module.
-		LockStrategy lockStrategy = forceExclusiveLock ? LockStrategy.WRITE : lockStrategy();
+		getLog().debug("Getting lock strategy, according to configuration: " + lockStrategies);
+
+		LockStrategy lockStrategy = firstNonNull(
+				lockStrategies.getStrategy(getGoalName()),
+				lockStrategy()
+		);
+
+		getLog().debug("Acquiring lock with strategy: " + lockStrategy);
+
 		Lock acquiredLock = lockStrategy.getLock(lock);
 
 		acquiredLock.lock();
@@ -312,6 +298,11 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		}
 	}
 
+	/**
+	 * Get the default lock strategy to use in this mojo.
+	 *
+	 * @return Lock Strategy, never {@code null}.
+	 */
 	abstract LockStrategy lockStrategy();
 
 	/**

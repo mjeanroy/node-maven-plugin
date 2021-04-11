@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.model.LockStrategy;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -63,7 +64,7 @@ public class LintMojo extends AbstractNpmScriptMojo {
 	 * The maven goal name.
 	 * This is the name that will be used in the {@code pom.xml} file.
 	 */
-	static final String GOAL_NAME = "lint";
+	public static final String GOAL_NAME = "lint";
 
 	/**
 	 * The default {@code npm} script command (default is the maven goal name).
@@ -112,6 +113,8 @@ public class LintMojo extends AbstractNpmScriptMojo {
 
 	@Override
 	LockStrategy lockStrategy() {
-		return LockStrategy.READ;
+		// Use a write lock, since some tools may autofix files, so avoid writing on the same files, or
+		// avoid conflict with install goal.
+		return LockStrategy.WRITE;
 	}
 }

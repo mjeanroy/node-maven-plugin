@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.model.LockStrategy;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -55,7 +56,7 @@ public class BuildMojo extends AbstractNpmScriptMojo {
 	 * The maven goal name.
 	 * This is the name that will be used in the {@code pom.xml} file.
 	 */
-	static final String GOAL_NAME = "build";
+	public static final String GOAL_NAME = "build";
 
 	/**
 	 * The default {@code npm} script command (default is the maven goal name).
