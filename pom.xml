@@ -72,7 +72,7 @@
 		<commons-exec.version>1.3</commons-exec.version>
 		<maven.version>3.5.0</maven.version>
 		<maven-core.version>3.8.7</maven-core.version>
-		<maven-compat.version>3.8.7</maven-compat.version>
+		<maven-compat.version>3.9.2</maven-compat.version>
 		<maven-model.version>3.8.7</maven-model.version>
 		<maven-aether-provider.version>3.3.9</maven-aether-provider.version>
 
