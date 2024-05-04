@@ -105,6 +105,9 @@ public final class IncrementalBuildConfiguration {
 	 */
 	private IncrementalBuildGoalConfiguration preClean;
 
+	/**
+	 * Create configuration with default settings.
+	 */
 	public IncrementalBuildConfiguration() {
 		this.enabled = true;
 		this.useDefaultIncludes = true;
@@ -380,7 +383,7 @@ public final class IncrementalBuildConfiguration {
 		return configuration == null ? Collections.<String>emptyList() : configuration.getIncludes();
 	}
 
-	public List<String> goalExcludes(String goal) {
+	private List<String> goalExcludes(String goal) {
 		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
 		return configuration == null ? Collections.<String>emptyList() : configuration.getExcludes();
 	}

@@ -59,6 +59,9 @@ public final class IncrementalBuildGoalConfiguration {
 	 */
 	private boolean useDefaultExcludes;
 
+	/**
+	 * Create configuration with default settings.
+	 */
 	public IncrementalBuildGoalConfiguration() {
 		this.enabled = true;
 		this.includes = new ArrayList<>();

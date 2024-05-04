@@ -31,6 +31,9 @@ import java.util.concurrent.locks.ReadWriteLock;
  */
 public enum LockStrategy {
 
+	/**
+	 * Read strategy: acquire a read lock.
+	 */
 	READ {
 		@Override
 		public Lock getLock(ReadWriteLock rwLock) {
@@ -38,6 +41,9 @@ public enum LockStrategy {
 		}
 	},
 
+	/**
+	 * Write strategy: acquire a write lock.
+	 */
 	WRITE {
 		@Override
 		public Lock getLock(ReadWriteLock rwLock) {
@@ -45,5 +51,11 @@ public enum LockStrategy {
 		}
 	};
 
+	/**
+	 * Acquire lock, given "this" strategy.
+	 *
+	 * @param rwLock The lock.
+	 * @return The lock.
+	 */
 	public abstract Lock getLock(ReadWriteLock rwLock);
 }

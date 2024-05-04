@@ -46,6 +46,9 @@ public final class EngineConfig {
 	 */
 	private Map<String, String> requirements;
 
+	/**
+	 * Create default config.
+	 */
 	public EngineConfig() {
 		this.strict = false;
 		this.requirements = new LinkedHashMap<>();

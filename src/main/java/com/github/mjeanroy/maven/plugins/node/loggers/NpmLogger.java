@@ -30,7 +30,7 @@ import org.apache.maven.plugin.logging.Log;
  * Create a logger that process {@code npm} command output and redirect
  * the line to a maven logger with the appropriate log level.
  *
- * <h3>How is the log level detected?</h3>
+ * <h2>How is the log level detected?</h2>
  *
  * The log level is detected using {@code npm} output:
  *
