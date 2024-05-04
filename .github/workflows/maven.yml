@@ -11,6 +11,9 @@ jobs:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
         java: [ 8, 11, 17, 19 ]
+        include:
+          - os: ubuntu-latest
+            java: 7
 
     steps:
     - uses: actions/checkout@v4.1.4
