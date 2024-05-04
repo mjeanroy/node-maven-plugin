@@ -28,10 +28,10 @@ name: Release
 on:
   workflow_dispatch:
     inputs:
-      releaseVersion:
+      release_version:
         description: "Release version"
         required: true
-      developmentVersion:
+      development_version:
         description: "Snapshot version"
         required: true
       dry_run:
@@ -56,6 +56,25 @@ jobs:
           java-version: 17
           distribution: 'temurin'
           cache: 'maven'
+
+      # Pre-Checks
+      - name: java -version
+        run: java -version
+      - name: mvn -version
+        run: ./mvnw -version
+      - name: Build
+        run: ./mvnw -B package -DskipTests
+      - name: Test
+        run: ./mvnw -B verify
+
+      # Quick Summary
+      - name: Output Settings
+        run: |
+          echo "Release version: ${{ inputs.release_version }}"
+          echo "Snapshot version: ${{ inputs.development_version }}"
+          echo "Dry-Run: ${{ inputs.dry_run }}"
+
+      # Do the release
       - name: Configure Git User
         run: |
           git config user.email "mickael.jeanroy@gmail.com"
@@ -72,8 +91,8 @@ jobs:
             release:perform \
             -DdryRun=${{ inputs.dry_run }} \
             -Dgpg.passphrase=${{ secrets.MAVEN_GPG_PASSPHRASE }} \
-            -DreleaseVersion=${{ github.event.inputs.releaseVersion }} \
-            -DdevelopmentVersion=${{ github.event.inputs.developmentVersion }} \
+            -DreleaseVersion=${{ inputs.release_version }} \
+            -DdevelopmentVersion=${{ inputs.development_version }} \
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
