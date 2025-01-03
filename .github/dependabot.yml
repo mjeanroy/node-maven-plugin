@@ -35,3 +35,6 @@ updates:
     # mockito-core >= 3.0.0 requires Java 8
     - dependency-name: org.mockito:mockito-core
       update-types: [ "version-update:semver-major" ]
+    # maven-settings >= 3.9.0 requires Java 8
+    - dependency-name: org.apache.maven:maven-settings
+      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
