@@ -52,6 +52,9 @@ updates:
     # maven-compat >= 3.9.0 requires Java 8
     - dependency-name: org.apache.maven:maven-compat
       update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+    # maven-core >= 3.9.0 requires Java 8
+    - dependency-name: org.apache.maven:maven-core
+      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
     # maven-enforcer-plugin >= 2.0.0 requires Java 8
     - dependency-name: org.apache.maven.plugins:maven-enforcer-plugin
       update-types: [ "version-update:semver-major" ]
