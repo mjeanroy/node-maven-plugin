@@ -58,3 +58,6 @@ updates:
     # maven-enforcer-plugin >= 2.0.0 requires Java 8
     - dependency-name: org.apache.maven.plugins:maven-enforcer-plugin
       update-types: [ "version-update:semver-major" ]
+    # maven-surefire-plugin >= 3.0.0 requires Java 8
+    - dependency-name: org.apache.maven.plugins:maven-surefire-plugin
+      update-types: [ "version-update:semver-major" ]
