@@ -32,7 +32,7 @@ on:
         description: "Release version"
         required: true
       development_version:
-        description: "Snapshot version"
+        description: "Snapshot version (without -SNAPSHOT suffix)"
         required: true
       dry_run:
         description: Run dry-run release
