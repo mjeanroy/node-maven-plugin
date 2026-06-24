@@ -34,10 +34,21 @@ jobs:
     strategy:
       matrix:
         os: [ windows-latest, ubuntu-latest, macos-latest ]
-        java: [ 8, 11, 17, 19 ]
+        java: [ 11, 17, 19 ]
+        distribution: [ 'temurin' ]
         include:
+          - os: windows-latest
+            java: '8'
+            distribution: 'zulu'
+          - os: ubuntu-latest
+            java: '8'
+            distribution: 'zulu'
+          - os: macos-latest
+            java: '8'
+            distribution: 'zulu'
           - os: ubuntu-latest
             java: 7
+            distribution: 'zulu'
 
     steps:
     - name: Checkout
@@ -50,7 +61,7 @@ jobs:
       uses: actions/setup-java@ad2b38190b15e4d6bdf0c97fb4fca8412226d287 # v5.3.0
       with:
         java-version: ${{ matrix.java }}
-        distribution: 'zulu'
+        distribution: ${{ matrix.distribution }}
         cache: 'maven'
 
     - name: Set up GCS Maven Central mirror
