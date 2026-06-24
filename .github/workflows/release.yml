@@ -62,15 +62,15 @@ jobs:
           distribution: 'temurin'
           cache: 'maven'
 
-      # Pre-Checks
-      - name: java -version
-        run: java -version
-      - name: mvn -version
-        run: ./mvnw -version
       - name: Build
-        run: ./mvnw -B package -DskipTests
+        run: |
+          ./mvnw -version
+          ./mvnw -B --color always package -DskipTests
+
       - name: Test
-        run: ./mvnw -B verify
+        run: |
+          ./mvnw -version
+          ./mvnw -B --color always verify
 
       # Quick Summary
       - name: Output Settings
