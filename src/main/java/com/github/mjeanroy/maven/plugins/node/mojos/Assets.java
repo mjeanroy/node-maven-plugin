@@ -57,14 +57,6 @@ final class Assets {
 	);
 
 	/**
-	 * Files related to bower.
-	 */
-	private static final List<String> BOWER_ASSETS = asList(
-			"**/bower.json",
-			"**/.bowerrc"
-	);
-
-	/**
 	 * Files related to LERNA.
 	 */
 	private static final List<String> LERNA_ASSETS = asList(
@@ -183,7 +175,6 @@ final class Assets {
 		Set<String> assets = new LinkedHashSet<>();
 		assets.addAll(NPM_ASSETS);
 		assets.addAll(YARN_ASSETS);
-		assets.addAll(BOWER_ASSETS);
 		assets.addAll(LERNA_ASSETS);
 		return unmodifiableCollection(assets);
 	}
