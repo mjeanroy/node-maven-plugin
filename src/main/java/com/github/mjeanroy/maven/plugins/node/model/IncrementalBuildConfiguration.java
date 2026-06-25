@@ -81,11 +81,6 @@ public final class IncrementalBuildConfiguration {
 	private IncrementalBuildGoalConfiguration install;
 
 	/**
-	 * The specific configuration for the BOWER goal.
-	 */
-	private IncrementalBuildGoalConfiguration bower;
-
-	/**
 	 * The specific configuration for the LINT goal.
 	 */
 	private IncrementalBuildGoalConfiguration lint;
@@ -118,7 +113,6 @@ public final class IncrementalBuildConfiguration {
 		this.excludes = new ArrayList<>();
 
 		this.install = new IncrementalBuildGoalConfiguration();
-		this.bower = new IncrementalBuildGoalConfiguration();
 		this.lint = new IncrementalBuildGoalConfiguration();
 		this.prepare = new IncrementalBuildGoalConfiguration();
 		this.build = new IncrementalBuildGoalConfiguration();
@@ -195,24 +189,6 @@ public final class IncrementalBuildConfiguration {
 	 */
 	public void setInstall(IncrementalBuildGoalConfiguration install) {
 		this.install = install;
-	}
-
-	/**
-	 * Get {@link #bower}
-	 *
-	 * @return {@link #bower}
-	 */
-	public IncrementalBuildGoalConfiguration getBower() {
-		return bower;
-	}
-
-	/**
-	 * Set {@link #bower}
-	 *
-	 * @param bower New {@link #bower}
-	 */
-	public void setBower(IncrementalBuildGoalConfiguration bower) {
-		this.bower = bower;
 	}
 
 	/**
@@ -423,10 +399,6 @@ public final class IncrementalBuildConfiguration {
 			return install;
 		}
 
-		if (Objects.equals(goal, "bower")) {
-			return bower;
-		}
-
 		if (Objects.equals(goal, "lint")) {
 			return lint;
 		}
@@ -461,7 +433,6 @@ public final class IncrementalBuildConfiguration {
 					&& Objects.equals(includes, c.includes)
 					&& Objects.equals(excludes, c.excludes)
 					&& Objects.equals(install, c.install)
-					&& Objects.equals(bower, c.bower)
 					&& Objects.equals(lint, c.lint)
 					&& Objects.equals(prepare, c.prepare)
 					&& Objects.equals(build, c.build)
@@ -481,7 +452,6 @@ public final class IncrementalBuildConfiguration {
 				includes,
 				excludes,
 				install,
-				bower,
 				lint,
 				prepare,
 				build,
@@ -499,7 +469,6 @@ public final class IncrementalBuildConfiguration {
 				.append("includes", includes)
 				.append("excludes", excludes)
 				.append("install", install)
-				.append("bower", bower)
 				.append("lint", lint)
 				.append("prepare", prepare)
 				.append("build", build)

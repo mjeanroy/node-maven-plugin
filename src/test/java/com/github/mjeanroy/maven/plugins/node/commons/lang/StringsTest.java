@@ -63,7 +63,6 @@ public class StringsTest {
 		assertThat(Strings.uncapitalize("X")).isEqualTo("x");
 		assertThat(Strings.uncapitalize("test")).isEqualTo("test");
 
-		assertThat(Strings.uncapitalize("Bower")).isEqualTo("bower");
 		assertThat(Strings.uncapitalize("Build")).isEqualTo("build");
 		assertThat(Strings.uncapitalize("Clean")).isEqualTo("clean");
 		assertThat(Strings.uncapitalize("Install")).isEqualTo("install");

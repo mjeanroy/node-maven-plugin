@@ -67,13 +67,6 @@ public class IncrementalBuildConfigurationTest {
 						"includes=[**/*.json], " +
 						"excludes=[]" +
 					"}, " +
-					"bower=IncrementalBuildGoalConfiguration{" +
-						"enabled=true, " +
-						"useDefaultIncludes=true, " +
-						"useDefaultExcludes=true, " +
-						"includes=[], " +
-						"excludes=[]" +
-					"}, " +
 					"lint=IncrementalBuildGoalConfiguration{" +
 						"enabled=true, " +
 						"useDefaultIncludes=true, " +
