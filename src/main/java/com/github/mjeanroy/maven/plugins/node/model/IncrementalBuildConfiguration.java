@@ -356,12 +356,12 @@ public final class IncrementalBuildConfiguration {
 
 	private List<String> goalIncludes(String goal) {
 		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
-		return configuration == null ? Collections.<String>emptyList() : configuration.getIncludes();
+		return configuration == null ? Collections.emptyList() : configuration.getIncludes();
 	}
 
 	private List<String> goalExcludes(String goal) {
 		IncrementalBuildGoalConfiguration configuration = getGoalConfiguration(goal);
-		return configuration == null ? Collections.<String>emptyList() : configuration.getExcludes();
+		return configuration == null ? Collections.emptyList() : configuration.getExcludes();
 	}
 
 	/**

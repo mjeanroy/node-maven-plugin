@@ -113,7 +113,7 @@ public final class ProxyConfig implements CommandArg {
 	 * @return True if proxy is secure, false otherwise.
 	 */
 	public boolean isSecure() {
-		return protocol.toLowerCase().equals("https");
+		return protocol.equalsIgnoreCase("https");
 	}
 
 	@Override

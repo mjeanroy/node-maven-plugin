@@ -80,7 +80,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 
 		CommandResult result = successResult();
 		CommandExecutor executor = (CommandExecutor) readField(mojo, "executor", true);
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap())).thenReturn(result);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.anyMap())).thenReturn(result);
 
 		mojo.execute();
 
@@ -89,7 +89,7 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 		verify(logger, never()).error(anyString());
 
 		ArgumentCaptor<Command> cmdCaptor = ArgumentCaptor.forClass(Command.class);
-		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
+		verify(executor).execute(any(File.class), cmdCaptor.capture(), any(NpmLogger.class), ArgumentMatchers.anyMap());
 
 		Command cmd = cmdCaptor.getValue();
 		assertThat(cmd).isNotNull();

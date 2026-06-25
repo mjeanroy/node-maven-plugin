@@ -102,7 +102,7 @@ public class CheckNodeMojo extends AbstractNpmMojo {
 		cmd.addArgument("--version");
 
 		getLog().info("Checking " +  cmd.getName() + " command");
-		getLog().debug("Running: " + cmd.toString());
+		getLog().debug("Running: " + cmd);
 
 		try {
 			CommandResult result = execute(cmd);

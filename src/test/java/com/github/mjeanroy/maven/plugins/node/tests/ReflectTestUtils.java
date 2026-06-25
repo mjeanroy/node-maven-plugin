@@ -96,7 +96,7 @@ public final class ReflectTestUtils {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <T> T readPrivate(Object instance, String name, Class<T> klass) {
-		return (T) readPrivate(instance, name);
+		return readPrivate(instance, name);
 	}
 
 	/**

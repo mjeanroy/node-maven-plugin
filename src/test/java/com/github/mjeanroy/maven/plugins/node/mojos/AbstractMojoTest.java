@@ -32,7 +32,6 @@ import org.apache.maven.plugin.testing.MojoRule;
 import org.apache.maven.plugin.testing.resources.TestResources;
 import org.junit.Rule;
 import org.mockito.ArgumentMatchers;
-import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 import java.io.File;
@@ -53,34 +52,25 @@ public abstract class AbstractMojoTest<T extends AbstractNpmMojo> {
 	@Rule
 	public MojoRule mojoRule = new MojoRule();
 
+	@SuppressWarnings("unchecked")
 	T lookupMojo(String projectName) {
-		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupMojo(goal, pom);
-			}
-		});
+		return lookupAndConfigureMojo(projectName, (goal, pom) ->
+			(T) mojoRule.lookupMojo(goal, pom)
+		);
 	}
 
+	@SuppressWarnings("unchecked")
 	T lookupEmptyMojo(String projectName) {
-		return lookupAndConfigureMojo(projectName, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupEmptyMojo(goal, pom);
-			}
-		});
+		return lookupAndConfigureMojo(projectName, (goal, pom) ->
+			(T) mojoRule.lookupEmptyMojo(goal, pom)
+		);
 	}
 
+	@SuppressWarnings("unchecked")
 	T lookupMojo(String projectName, Map<String, ?> configuration) {
-		return lookupAndConfigureMojo(projectName, configuration, new MojoFactory<T>() {
-			@SuppressWarnings("unchecked")
-			@Override
-			public T build(String goal, File pom) throws Exception {
-				return (T) mojoRule.lookupEmptyMojo(goal, pom);
-			}
-		});
+		return lookupAndConfigureMojo(projectName, configuration, (goal, pom) ->
+			(T) mojoRule.lookupEmptyMojo(goal, pom)
+		);
 	}
 
 	private T lookupAndConfigureMojo(String projectName, MojoFactory<T> factory) {
@@ -118,12 +108,9 @@ public abstract class AbstractMojoTest<T extends AbstractNpmMojo> {
 	private CommandExecutor givenSuccessfulExecutor() {
 		CommandExecutor executor = mock(CommandExecutor.class);
 
-		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(new Answer<CommandResult>() {
-			@Override
-			public CommandResult answer(InvocationOnMock invocationOnMock) {
-				return successResult();
-			}
-		});
+		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.anyMap())).thenAnswer((Answer<CommandResult>)
+			invocationOnMock -> successResult()
+		);
 
 		return executor;
 	}

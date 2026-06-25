@@ -48,7 +48,7 @@ public class IncrementalBuildConfigurationTest {
 	@Test
 	public void it_should_implement_to_string() {
 		IncrementalBuildConfiguration c = new IncrementalBuildConfiguration();
-		c.setInstall(givenConfiguration(singletonList("**/*.json"), Collections.<String>emptyList()));
+		c.setInstall(givenConfiguration(singletonList("**/*.json"), Collections.emptyList()));
 		c.setBuild(givenConfiguration(singletonList("**/*.js"), asList("**/*.css", "**/*.scss")));
 
 		// @formatter:off

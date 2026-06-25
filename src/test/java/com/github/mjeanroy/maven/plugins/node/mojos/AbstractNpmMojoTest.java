@@ -75,7 +75,7 @@ public abstract class AbstractNpmMojoTest<T extends AbstractNpmMojo> extends Abs
 				eq(workingDirectory),
 				cmdCaptor.capture(),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 
 		Command cmd = cmdCaptor.getValue();

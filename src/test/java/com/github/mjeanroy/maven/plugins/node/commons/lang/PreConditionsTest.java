@@ -42,12 +42,7 @@ public class PreConditionsTest {
 	public void it_should_fail_with_null() {
 		final String input = null;
 		final String message = "message";
-		final ThrowingCallable func = new ThrowingCallable() {
-			@Override
-			public void call() {
-				PreConditions.notNull(input, message);
-			}
-		};
+		final ThrowingCallable func = () -> PreConditions.notNull(input, message);
 
 		assertThatThrownBy(func).isInstanceOf(NullPointerException.class).hasMessage(message);
 	}

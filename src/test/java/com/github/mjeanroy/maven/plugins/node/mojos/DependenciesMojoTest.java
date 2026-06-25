@@ -78,12 +78,7 @@ public class DependenciesMojoTest extends AbstractMojoTest<DependenciesMojo> {
 				"workingDirectory", new File(".")
 		));
 
-		final ThrowingCallable func = new ThrowingCallable() {
-			@Override
-			public void call() {
-				mojo.execute();
-			}
-		};
+		final ThrowingCallable func = mojo::execute;
 
 		assertThatThrownBy(func).isInstanceOf(PackageJsonNotFoundException.class);
 	}

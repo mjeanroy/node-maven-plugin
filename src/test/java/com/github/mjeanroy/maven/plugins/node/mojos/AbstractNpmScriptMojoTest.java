@@ -96,8 +96,8 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	public void it_should_execute_mojo_given_environment_variables() throws Exception {
 		Map<String, String> environmentVariables = singletonMap("maven", "true");
 		T mojo = lookupMojo("mojo-with-parameters", newMap(asList(
-				newMapEntry("environmentVariables", (Object) environmentVariables),
-				newMapEntry("color", (Object) true)
+				newMapEntry("environmentVariables", environmentVariables),
+				newMapEntry("color", true)
 		)));
 
 		execute_and_verify_successful_mojo_execution(mojo, NPM, environmentVariables);
@@ -270,12 +270,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_execute_mojo_in_failure_and_throw_exception() {
 		final T mojo = lookupMojo("mojo-fail-on-error-true");
-		final ThrowingCallable mojoExecute = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		final ThrowingCallable mojoExecute = mojo::execute;
 
 		givenFailExecutor(mojo);
 
@@ -285,12 +280,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	@Test
 	public void it_should_throw_exception_if_scripts_does_not_exist() throws Throwable {
 		final T mojo = lookupMojo("mojo-without-scripts-fail");
-		final ThrowingCallable mojoExecute = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		final ThrowingCallable mojoExecute = mojo::execute;
 
 		if (isStandardScript()) {
 			mojoExecute.call();
@@ -318,19 +308,14 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				any(File.class),
 				any(Command.class),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 	}
 
 	@Test
 	public void it_should_throw_exception_if_package_json_does_not_exist() {
 		final T mojo = lookupMojo("mojo-without-package-json");
-		final ThrowingCallable mojoExecute = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		final ThrowingCallable mojoExecute = mojo::execute;
 		assertThatThrownBy(mojoExecute).isInstanceOf(PackageJsonNotFoundException.class).hasMessageEndingWith("package.json does not exist");
 	}
 
@@ -470,7 +455,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void execute_and_verify_successful_mojo_execution(T mojo, String pkg) throws Exception {
-		execute_and_verify_successful_mojo_execution(mojo, pkg, Collections.<String, String>emptyMap());
+		execute_and_verify_successful_mojo_execution(mojo, pkg, Collections.emptyMap());
 	}
 
 	private void verify_mojo_execution(T mojo, String pkg, String expectedArgs) {
@@ -478,7 +463,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				mojo,
 				pkg,
 				expectedArgs,
-				Collections.<String, String>emptyMap()
+				Collections.emptyMap()
 		);
 	}
 
@@ -489,7 +474,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 	private void verify_mojo_error_execution(T mojo, String pkg, String expectedArgs) {
 		verify_error_output(mojo, pkg, expectedArgs);
-		verify_command_execution(mojo, pkg, expectedArgs, Collections.<String, String>emptyMap());
+		verify_command_execution(mojo, pkg, expectedArgs, Collections.emptyMap());
 	}
 
 	private void verify_success_output(T mojo, String pkg, String expectedArgs) {
@@ -528,7 +513,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				any(File.class),
 				cmdCaptor.capture(),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 
 		Command command = cmdCaptor.getValue();
@@ -566,7 +551,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				any(File.class),
 				cmdCaptor.capture(),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 
 		Command command = cmdCaptor.getValue();
@@ -584,7 +569,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 				any(File.class),
 				any(Command.class),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 	}
 
@@ -616,7 +601,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private CommandExecutor givenExecutor(CommandExecutor executor, CommandResult result) {
-		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap())).thenReturn(result);
+		when(executor.execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.anyMap())).thenReturn(result);
 		return executor;
 	}
 }

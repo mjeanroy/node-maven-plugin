@@ -53,8 +53,6 @@ import static com.github.mjeanroy.maven.plugins.node.tests.builders.CommandResul
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
 public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
@@ -66,7 +64,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	@Test
 	public void it_should_execute_mojo() throws Exception {
-		CheckNodeMojo mojo = givenMojo(Collections.<String, Object>emptyMap());
+		CheckNodeMojo mojo = givenMojo(Collections.emptyMap());
 
 		mojo.execute();
 
@@ -149,8 +147,8 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				.build();
 
 		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("executor", (Object) executor),
-				newMapEntry("engines", (Object) engineConfig)
+				newMapEntry("executor", executor),
+				newMapEntry("engines", engineConfig)
 		)));
 
 		mojo.execute();
@@ -172,8 +170,8 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				.build();
 
 		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("executor", (Object) executor),
-				newMapEntry("engines", (Object) engineConfig)
+				newMapEntry("executor", executor),
+				newMapEntry("engines", engineConfig)
 		)));
 
 		mojo.execute();
@@ -334,9 +332,9 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				.build();
 
 		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("npmClient", (Object) "yarn"),
-				newMapEntry("executor", (Object) executor),
-				newMapEntry("engines", (Object) engineConfig)
+				newMapEntry("npmClient", "yarn"),
+				newMapEntry("executor", executor),
+				newMapEntry("engines", engineConfig)
 		)));
 
 		mojo.execute();
@@ -355,25 +353,20 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				.build();
 
 		final CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("npmClient", (Object) "yarn"),
-				newMapEntry("executor", (Object) executor),
-				newMapEntry("engines", (Object) engineConfig)
+				newMapEntry("npmClient", "yarn"),
+				newMapEntry("executor", executor),
+				newMapEntry("engines", engineConfig)
 		)));
 
-		ThrowingCallable func = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		ThrowingCallable func = mojo::execute;
 
 		assertThatThrownBy(func).isInstanceOf(MojoExecutionException.class).hasMessage(expectedMessage);
 	}
 
 	private void check_warn_because_engine_requirement_in_package_json_failure(CommandExecutor executor, String expectedWarn) throws Exception {
 		CheckNodeMojo mojo = givenMojo("mojo-with-engine", newMap(asList(
-				newMapEntry("npmClient", (Object) "yarn"),
-				newMapEntry("executor", (Object) executor)
+				newMapEntry("npmClient", "yarn"),
+				newMapEntry("executor", executor)
 		)));
 
 		mojo.execute();
@@ -385,16 +378,11 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	private void check_fail_because_engine_requirement_in_package_json_failure(CommandExecutor executor, String expectedMessage) {
 		final CheckNodeMojo mojo = givenMojo("mojo-with-engine-strict", newMap(asList(
-				newMapEntry("npmClient", (Object) "yarn"),
-				newMapEntry("executor", (Object) executor)
+				newMapEntry("npmClient", "yarn"),
+				newMapEntry("executor", executor)
 		)));
 
-		ThrowingCallable func = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		ThrowingCallable func = mojo::execute;
 
 		assertThatThrownBy(func).isInstanceOf(MojoExecutionException.class).hasMessage(expectedMessage);
 	}
@@ -404,17 +392,12 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 				any(File.class),
 				any(Command.class),
 				any(NpmLogger.class),
-				ArgumentMatchers.<String, String>anyMap()
+				ArgumentMatchers.anyMap()
 		);
 	}
 
 	private void verify_mojo_execution_exception(final CheckNodeMojo mojo, final String message) {
-		ThrowingCallable mojoExecute = new ThrowingCallable() {
-			@Override
-			public void call() throws Throwable {
-				mojo.execute();
-			}
-		};
+		ThrowingCallable mojoExecute = mojo::execute;
 
 		assertThatThrownBy(mojoExecute).isInstanceOf(MojoExecutionException.class).hasMessage(message);
 	}
@@ -452,7 +435,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 	private static CommandExecutor givenExecutor(String cmd) {
 		CommandExecutor executor = mock(CommandExecutor.class);
-		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(
+		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.anyMap())).thenAnswer(
 				new CommandExecutionExceptionAnswer(cmd)
 		);
 
@@ -462,13 +445,10 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	private static CommandExecutor givenExecutor(final Map<String, String> cmds) {
 		CommandExecutor executor = mock(CommandExecutor.class);
 
-		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.<String, String>anyMap())).thenAnswer(new Answer<CommandResult>() {
-				@Override
-				public CommandResult answer(InvocationOnMock invocationOnMock) {
-					Command command = invocationOnMock.getArgument(1);
-					String name = command.getName();
-					return successResult(cmds.get(name));
-				}
+		when(executor.execute(any(File.class), any(Command.class), any(OutputHandler.class), ArgumentMatchers.anyMap())).thenAnswer((Answer<CommandResult>) invocationOnMock -> {
+			Command command = invocationOnMock.getArgument(1);
+			String name = command.getName();
+			return successResult(cmds.get(name));
 		});
 
 		return executor;

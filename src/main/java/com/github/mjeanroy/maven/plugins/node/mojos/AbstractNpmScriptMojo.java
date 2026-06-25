@@ -109,9 +109,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		if (executable != null && !executable.isEmpty()) {
 			String npmClient = executable.toLowerCase();
-			if (CLIENT_BASIC_COMMANDS.containsKey(npmClient) && CLIENT_BASIC_COMMANDS.get(npmClient).contains(command)) {
-				return false;
-			}
+			return !CLIENT_BASIC_COMMANDS.containsKey(npmClient) || !CLIENT_BASIC_COMMANDS.get(npmClient).contains(command);
 		}
 
 		return true;
@@ -226,7 +224,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 
 		// Command already done during build?
 		if (hasBeenRunPreviously()) {
-			log.info("Command " + cmd.toString() + " already done, skipping.");
+			log.info("Command " + cmd + " already done, skipping.");
 			return;
 		}
 
@@ -235,7 +233,7 @@ abstract class AbstractNpmScriptMojo extends AbstractNpmMojo {
 		Map<String, String> newState = readCurrentState();
 
 		if (!previousState.isEmpty() && Objects.equals(previousState, newState)) {
-			log.info("Command " + cmd.toString() + " already done, no changes detected, skipping.");
+			log.info("Command " + cmd + " already done, no changes detected, skipping.");
 			return;
 		}
 		else if (log.isDebugEnabled()) {

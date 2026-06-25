@@ -42,7 +42,7 @@ public class StringsTest {
 
 	@Test
 	public void it_should_join_inputs() {
-		assertThat(Strings.join(Collections.<String>emptyList(), ",")).isEqualTo("");
+		assertThat(Strings.join(Collections.emptyList(), ",")).isEqualTo("");
 		assertThat(Strings.join(singletonList("one"), ",")).isEqualTo("one");
 		assertThat(Strings.join(asList("one", "two", "three"), ",")).isEqualTo("one,two,three");
 	}

@@ -96,7 +96,7 @@ public class TestE2EMojoTest extends AbstractNpmScriptMojoTest<TestE2EMojo> {
 
 	private void verifyExecutorNotRunned(TestE2EMojo mojo) {
 		CommandExecutor executor = readPrivate(mojo, "executor");
-		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.<String, String>anyMap());
+		verify(executor, never()).execute(any(File.class), any(Command.class), any(NpmLogger.class), ArgumentMatchers.anyMap());
 	}
 
 	private void verifySkipTestOutput(TestE2EMojo mojo) {
