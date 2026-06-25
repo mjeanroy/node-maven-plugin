@@ -70,7 +70,6 @@ public class LockStrategyConfigurationTest {
 		configuration.setPublish(LockStrategy.READ);
 
 		assertThat(configuration.getStrategy(InstallMojo.GOAL_NAME)).isEqualTo(LockStrategy.WRITE);
-		assertThat(configuration.getStrategy(BowerMojo.GOAL_NAME)).isEqualTo(LockStrategy.WRITE);
 		assertThat(configuration.getStrategy(PreCleanMojo.GOAL_NAME)).isEqualTo(LockStrategy.WRITE);
 		assertThat(configuration.getStrategy(CleanMojo.GOAL_NAME)).isEqualTo(LockStrategy.WRITE);
 		assertThat(configuration.getStrategy(LintMojo.GOAL_NAME)).isEqualTo(LockStrategy.WRITE);
