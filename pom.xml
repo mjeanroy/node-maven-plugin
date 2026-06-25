@@ -31,8 +31,8 @@
 	</prerequisites>
 
 	<scm>
-		<connection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</connection>
-		<developerConnection>scm:git:git@github.com:mjeanroy/node-maven-plugin.git</developerConnection>
+		<connection>scm:git:https://github.com/mjeanroy/node-maven-plugin.git</connection>
+		<developerConnection>scm:git:https://github.com/mjeanroy/node-maven-plugin.git</developerConnection>
 		<url>https://github.com/mjeanroy/node-maven-plugin</url>
 	  <tag>HEAD</tag>
   </scm>
