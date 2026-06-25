@@ -189,15 +189,6 @@ final class Assets {
 	}
 
 	/**
-	 * List of files that may involved during a bower installation.
-	 *
-	 * @return List of assets to analyze.
-	 */
-	static Collection<String> bowerAssets() {
-		return unmodifiableCollection(BOWER_ASSETS);
-	}
-
-	/**
 	 * List of files that may involved during a linting.
 	 *
 	 * @return List of assets to analyze.
