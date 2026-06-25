@@ -26,6 +26,8 @@ name: Java CI
 
 on: [push]
 
+permissions: {}
+
 jobs:
   build:
 

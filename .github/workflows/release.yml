@@ -25,6 +25,8 @@
 
 name: Release
 
+permissions: {}
+
 on:
   workflow_dispatch:
     inputs:
