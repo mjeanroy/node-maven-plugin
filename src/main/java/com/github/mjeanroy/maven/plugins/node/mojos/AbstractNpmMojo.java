@@ -68,13 +68,6 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	private String npmPath;
 
 	/**
-	 * Get npm path.
-	 * The path should point to the npm executable file.
-	 */
-	@Parameter(property = "yarn.path")
-	private String yarnPath;
-
-	/**
 	 * Flag to check if yarn command should be used instead of npm to install dependencies.
 	 * Default is false, since yarn may not be installed.
 	 */
@@ -142,7 +135,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return NPM Client.
 	 */
 	final Command npmClient() {
-		if (yarn || yarnPath != null) {
+		if (yarn) {
 			return yarn();
 		}
 
@@ -251,11 +244,7 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 			getLog().warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
 		}
 
-		if (yarnPath != null) {
-			getLog().warn("Parameter 'yarnPath' is deprecated, please use 'npmClient' instead.");
-		}
-
-		return Commands.yarn(yarnPath);
+		return Commands.yarn();
 	}
 
 	/**
