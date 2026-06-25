@@ -61,6 +61,6 @@ updates:
     # maven-surefire-plugin >= 3.0.0 requires Java 8
     - dependency-name: org.apache.maven.plugins:maven-surefire-plugin
       update-types: [ "version-update:semver-major" ]
-    # logback-classic >= 1.3.0 requires Java 8
+    # logback-classic >= 1.4.0 requires Java 11
     - dependency-name: ch.qos.logback:logback-classic
       update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
