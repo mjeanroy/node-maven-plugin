@@ -41,11 +41,6 @@ public final class LockStrategyConfiguration {
 	private LockStrategy install;
 
 	/**
-	 * Lock to use on {@code bower} goal.
-	 */
-	private LockStrategy bower;
-
-	/**
 	 * Lock to use on {@code preClean} goal.
 	 */
 	private LockStrategy preClean;
@@ -122,24 +117,6 @@ public final class LockStrategyConfiguration {
 	 */
 	public void setInstall(LockStrategy install) {
 		this.install = install;
-	}
-
-	/**
-	 * Get {@link #bower}
-	 *
-	 * @return {@link #bower}
-	 */
-	public LockStrategy getBower() {
-		return bower;
-	}
-
-	/**
-	 * Set {@link #bower}
-	 *
-	 * @param bower New {@link #bower}
-	 */
-	public void setBower(LockStrategy bower) {
-		this.bower = bower;
 	}
 
 	/**
@@ -353,7 +330,6 @@ public final class LockStrategyConfiguration {
 	private Map<String, LockStrategy> toMap() {
 		Map<String, LockStrategy> map = new HashMap<>();
 		map.put("install", install);
-		map.put("bower", bower);
 		map.put("pre-clean", preClean);
 		map.put("clean", clean);
 		map.put("lint", lint);
@@ -377,7 +353,6 @@ public final class LockStrategyConfiguration {
 		if (o instanceof LockStrategyConfiguration) {
 			LockStrategyConfiguration c = (LockStrategyConfiguration) o;
 			return Objects.equals(install, c.install)
-					&& Objects.equals(bower, c.bower)
 					&& Objects.equals(preClean, c.preClean)
 					&& Objects.equals(clean, c.clean)
 					&& Objects.equals(lint, c.lint)
@@ -398,7 +373,6 @@ public final class LockStrategyConfiguration {
 	public int hashCode() {
 		return Objects.hash(
 				install,
-				bower,
 				preClean,
 				clean,
 				lint,
@@ -417,7 +391,6 @@ public final class LockStrategyConfiguration {
 	public String toString() {
 		return ToStringBuilder.builder(getClass())
 				.append("install", install)
-				.append("bower", bower)
 				.append("preClean", preClean)
 				.append("clean", clean)
 				.append("lint", lint)

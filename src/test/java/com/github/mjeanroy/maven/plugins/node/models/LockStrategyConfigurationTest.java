@@ -38,7 +38,6 @@ public class LockStrategyConfigurationTest {
 	public void it_should_create_default_configuration() {
 		LockStrategyConfiguration configuration = new LockStrategyConfiguration();
 		assertThat(configuration.getInstall()).isNull();
-		assertThat(configuration.getBower()).isNull();
 		assertThat(configuration.getPreClean()).isNull();
 		assertThat(configuration.getClean()).isNull();
 		assertThat(configuration.getLint()).isNull();
@@ -56,7 +55,6 @@ public class LockStrategyConfigurationTest {
 	public void it_should_get_strategy_of_given_goal() {
 		LockStrategyConfiguration configuration = new LockStrategyConfiguration();
 		configuration.setInstall(LockStrategy.WRITE);
-		configuration.setBower(LockStrategy.WRITE);
 		configuration.setPreClean(LockStrategy.WRITE);
 		configuration.setClean(LockStrategy.WRITE);
 		configuration.setLint(LockStrategy.WRITE);
@@ -97,7 +95,6 @@ public class LockStrategyConfigurationTest {
 	public void it_should_implement_to_string() {
 		LockStrategyConfiguration configuration = new LockStrategyConfiguration();
 		configuration.setInstall(LockStrategy.WRITE);
-		configuration.setBower(LockStrategy.WRITE);
 		configuration.setPreClean(LockStrategy.WRITE);
 		configuration.setClean(LockStrategy.WRITE);
 		configuration.setLint(LockStrategy.WRITE);
@@ -114,7 +111,6 @@ public class LockStrategyConfigurationTest {
 		assertThat(configuration).hasToString(
 				"LockStrategyConfiguration{" +
 					"install=WRITE, " +
-					"bower=WRITE, " +
 					"preClean=WRITE, " +
 					"clean=WRITE, " +
 					"lint=WRITE, " +
