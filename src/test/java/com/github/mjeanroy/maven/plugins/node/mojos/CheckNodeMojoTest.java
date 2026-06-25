@@ -116,26 +116,6 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 	}
 
 	@Test
-	public void it_should_execute_mojo_with_yarn() throws Exception {
-		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
-				newMapEntry("yarn", (Object) true)
-		)));
-
-		mojo.execute();
-
-		verifyMojoExecution(mojo, 3);
-
-		Log logger = readPrivate(mojo, "log");
-		InOrder inOrder = inOrder(logger);
-		inOrder.verify(logger).info("Checking node command");
-		inOrder.verify(logger).debug("Running: node --version");
-		inOrder.verify(logger).info("Checking npm command");
-		inOrder.verify(logger).debug("Running: npm --version");
-		inOrder.verify(logger).info("Checking yarn command");
-		inOrder.verify(logger).debug("Running: yarn --version");
-	}
-
-	@Test
 	public void it_should_fail_if_node_is_not_available() {
 		CheckNodeMojo mojo = givenMojo(newMap(singletonList(
 				newMapEntry("executor", givenExecutor("node"))
@@ -151,16 +131,6 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 		)));
 
 		verify_mojo_execution_exception(mojo, "Executable npm is not available. Please install it on your operating system.");
-	}
-
-	@Test
-	public void it_should_fail_if_yarn_is_not_available() {
-		CheckNodeMojo mojo = givenMojo(newMap(asList(
-				newMapEntry("executor", (Object) givenExecutor("yarn")),
-				newMapEntry("yarn", (Object) true)
-		)));
-
-		verify_mojo_execution_exception(mojo, "Executable yarn is not available. Please install it on your operating system.");
 	}
 
 	@Test

@@ -104,13 +104,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	@Test
-	public void it_should_execute_mojo_with_yarn_in_success() throws Exception {
-		T mojo = lookupMojo("mojo-with-yarn");
-		execute_and_verify_successful_mojo_execution(mojo, YARN);
-		verify(readPrivate(mojo, "log", Log.class)).warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
-	}
-
-	@Test
 	public void it_should_execute_mojo_with_custom_npm_client_in_success() throws Exception {
 		T mojo = lookupMojo("mojo-with-npm-client");
 		execute_and_verify_successful_mojo_execution(mojo, YARN);
@@ -186,21 +179,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verifySkippedMojo(mojo);
-	}
-
-	@Test
-	public void it_should_skip_individual_mojo_execution_with_yarn() throws Exception {
-		T mojo = lookupMojo("mojo-with-parameters");
-
-		// Enable yarn
-		writePrivate(mojo, "yarn", true);
-
-		// Enable individual skip.
-		enableSkip(mojo);
-
-		mojo.execute();
-
-		verifySkippedMojo(mojo, "yarn");
 	}
 
 	@Test
@@ -287,17 +265,6 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 		mojo.execute();
 
 		verify_mojo_error_execution(mojo, NPM, join(defaultArguments(true)));
-	}
-
-	@Test
-	public void it_should_execute_yarn_mojo_in_failure() throws Exception {
-		T mojo = lookupMojo("mojo-yarn-fail-on-error-false");
-
-		givenFailExecutor(mojo);
-
-		mojo.execute();
-
-		verify_mojo_error_execution(mojo, YARN, join(defaultArguments(true)));
 	}
 
 	@Test

@@ -71,13 +71,6 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * Flag to check if yarn command should be used instead of npm to install dependencies.
 	 * Default is false, since yarn may not be installed.
 	 */
-	@Parameter(property = "yarn")
-	private boolean yarn;
-
-	/**
-	 * Flag to check if yarn command should be used instead of npm to install dependencies.
-	 * Default is false, since yarn may not be installed.
-	 */
 	@Parameter(property = "npmClient", defaultValue = "${npm.client}")
 	private String npmClient;
 
@@ -135,10 +128,6 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 * @return NPM Client.
 	 */
 	final Command npmClient() {
-		if (yarn) {
-			return yarn();
-		}
-
 		if (npmPath != null) {
 			return npm();
 		}
@@ -232,19 +221,6 @@ abstract class AbstractNpmMojo extends AbstractMojo {
 	 */
 	final boolean shouldSkipGlobally() {
 		return skip;
-	}
-
-	/**
-	 * Create new yarn command instance.
-	 *
-	 * @return Yarn Command.
-	 */
-	private Command yarn() {
-		if (yarn) {
-			getLog().warn("Parameter 'yarn' is deprecated, please use 'npmClient' instead.");
-		}
-
-		return Commands.yarn();
 	}
 
 	/**

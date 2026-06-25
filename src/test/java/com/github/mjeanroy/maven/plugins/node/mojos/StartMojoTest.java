@@ -57,13 +57,6 @@ public class StartMojoTest extends AbstractNpmScriptMojoTest<StartMojo> {
 
 	@Test
 	@Override
-	public void it_should_skip_individual_mojo_execution_with_yarn() {
-		// This mojo cannot be skipped.
-		// Nothing to do here.
-	}
-
-	@Test
-	@Override
 	public void it_should_skip_individual_mojo_execution_with_custom_npm_client() {
 		// This mojo cannot be skipped.
 		// Nothing to do here.
