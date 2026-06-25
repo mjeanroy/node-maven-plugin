@@ -37,30 +37,6 @@ updates:
     # mockito-core >= 5.0.0 requires Java 11
     - dependency-name: org.mockito:mockito-core
       update-types: [ "version-update:semver-major" ]
-    # commons-codec >= 1.16 requires Java 8
-    - dependency-name: commons-codec:commons-codec
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-settings >= 3.9.0 requires Java 8
-    - dependency-name: org.apache.maven:maven-settings
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-plugin-api >= 3.9.0 requires Java 8
-    - dependency-name: org.apache.maven:maven-plugin-api
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-model >= 3.9.0 requires Java 8
-    - dependency-name: org.apache.maven:maven-model
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-compat >= 3.9.0 requires Java 8
-    - dependency-name: org.apache.maven:maven-compat
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-core >= 3.9.0 requires Java 8
-    - dependency-name: org.apache.maven:maven-core
-      update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
-    # maven-enforcer-plugin >= 2.0.0 requires Java 8
-    - dependency-name: org.apache.maven.plugins:maven-enforcer-plugin
-      update-types: [ "version-update:semver-major" ]
-    # maven-surefire-plugin >= 3.0.0 requires Java 8
-    - dependency-name: org.apache.maven.plugins:maven-surefire-plugin
-      update-types: [ "version-update:semver-major" ]
     # logback-classic >= 1.4.0 requires Java 11
     - dependency-name: ch.qos.logback:logback-classic
       update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
