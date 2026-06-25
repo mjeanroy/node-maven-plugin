@@ -51,12 +51,6 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_with_custom_path_on_linux() {
-		useLinux();
-		verify_npm_command_with_custom_path_on_unix();
-	}
-
-	@Test
 	public void it_should_create_yarn_command_on_linux() {
 		useLinux();
 		verify_yarn_command_on_unix();
@@ -90,28 +84,13 @@ public class CommandsTest {
 	public void it_should_create_npm_command_on_windows() {
 		useWindows();
 
-		final String executable = null;
 		final String arg = "--no-color";
 
-		Command npm = npm(executable);
+		Command npm = npm();
 		npm.addArgument(arg);
 
 		assertThat(npm.getExecutable()).isEqualTo("cmd");
 		assertThat(npm.getArguments()).containsExactly("/C", "npm", arg);
-	}
-
-	@Test
-	public void it_should_create_npm_command_on_windows_with_custom_path() {
-		useWindows();
-
-		final String executable = "./npm-cli";
-		final String arg = "--no-color";
-
-		Command npm = npm(executable);
-		npm.addArgument(arg);
-
-		assertThat(npm.getExecutable()).isEqualTo("cmd");
-		assertThat(npm.getArguments()).containsExactly("/C", executable, arg);
 	}
 
 	@Test
@@ -190,12 +169,6 @@ public class CommandsTest {
 	}
 
 	@Test
-	public void it_should_create_npm_command_with_custom_path_on_mac_os_x() {
-		useMacOsX();
-		verify_npm_command_with_custom_path_on_unix();
-	}
-
-	@Test
 	public void it_should_create_yarn_command_on_mac_os_x() {
 		useMacOsX();
 		verify_yarn_command_on_unix();
@@ -208,24 +181,12 @@ public class CommandsTest {
 	}
 
 	private void verify_npm_command_on_unix() {
-		final String executable = null;
 		final String arg = "--no-color";
 
-		Command npm = npm(executable);
+		Command npm = npm();
 		npm.addArgument(arg);
 
 		assertThat(npm.getExecutable()).isEqualTo("npm");
-		assertThat(npm.getArguments()).containsExactly(arg);
-	}
-
-	private void verify_npm_command_with_custom_path_on_unix() {
-		final String executable = "./npm-cli";
-		final String arg = "--no-color";
-
-		Command npm = npm(executable);
-		npm.addArgument(arg);
-
-		assertThat(npm.getExecutable()).isEqualTo(executable);
 		assertThat(npm.getArguments()).containsExactly(arg);
 	}
 

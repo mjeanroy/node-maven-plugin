@@ -44,14 +44,10 @@ public final class Commands {
 	 *
 	 * <p>
 	 *
-	 * Executable path (should be given as the first argument).
-	 * If {@code path} is {@code null}, then {@code npm} executable should be globally available.
-	 *
-	 * @param path Path to {@code npm} executable file (optional, can be {@code null}).
 	 * @return New npm command.
 	 */
-	public static Command npm(String path) {
-		return wrap(new Command(firstNonNull(path, "npm")));
+	public static Command npm() {
+		return wrap(new Command("npm"));
 	}
 
 	/**
