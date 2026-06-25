@@ -34,7 +34,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.read
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static java.util.Arrays.asList;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class BuildMojoTest extends AbstractNpmScriptIncrementalMojoTest<BuildMojo> {
 
@@ -90,6 +90,6 @@ public class BuildMojoTest extends AbstractNpmScriptIncrementalMojoTest<BuildMoj
 		mojo.execute();
 
 		verify(readPrivate(mojo, "log", Log.class)).info("Command npm run build already done, no changes detected, skipping.");
-		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
+		verifyNoInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 	}
 }

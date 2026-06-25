@@ -31,7 +31,7 @@ import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.read
 import static com.github.mjeanroy.maven.plugins.node.tests.ReflectTestUtils.writePrivate;
 import static java.util.Collections.singletonMap;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 
 public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
@@ -95,7 +95,7 @@ public class TestMojoTest extends AbstractNpmScriptMojoTest<TestMojo> {
 
 	private void verifyExecutorNotRunned(TestMojo mojo) {
 		CommandExecutor executor = readPrivate(mojo, "executor");
-		verifyZeroInteractions(executor);
+		verifyNoInteractions(executor);
 	}
 
 	private void verifySkipMessageOutput(TestMojo mojo) {

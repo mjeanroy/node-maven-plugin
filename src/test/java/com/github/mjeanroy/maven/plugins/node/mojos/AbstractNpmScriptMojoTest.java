@@ -63,7 +63,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo> extends AbstractNpmMojoTest<T> {
@@ -434,7 +434,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifySkippedMojo(T mojo, String npmClient) {
-		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
+		verifyNoInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 		verify(readPrivate(mojo, "log", Log.class)).info(skipMessage(npmClient));
 	}
 

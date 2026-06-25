@@ -49,7 +49,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCleanMojo> {
@@ -147,6 +147,6 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 		mojo.execute();
 
 		verify(readPrivate(mojo, "log", Log.class)).info("Command npm install already done, no changes detected, skipping.");
-		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
+		verifyNoInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 	}
 }

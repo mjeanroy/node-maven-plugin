@@ -34,7 +34,7 @@ updates:
   cooldown:
     default-days: 2
   ignore:
-    # mockito-core >= 3.0.0 requires Java 8
+    # mockito-core >= 5.0.0 requires Java 11
     - dependency-name: org.mockito:mockito-core
       update-types: [ "version-update:semver-major" ]
     # commons-codec >= 1.16 requires Java 8
