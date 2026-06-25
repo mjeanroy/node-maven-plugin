@@ -88,7 +88,7 @@ public class CheckNodeMojoTest extends AbstractNpmMojoTest<CheckNodeMojo> {
 
 		mojo.execute();
 
-		verifyZeroInteractions(readPrivate(mojo, "executor"));
+		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 
 		Log logger = readPrivate(mojo, "log");
 		verify(logger).info("Goal 'check' is skipped.");

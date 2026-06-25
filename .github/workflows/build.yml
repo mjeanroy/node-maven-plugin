@@ -48,9 +48,6 @@ jobs:
           - os: macos-latest
             java: '8'
             distribution: 'zulu'
-          - os: ubuntu-latest
-            java: 7
-            distribution: 'zulu'
 
     steps:
     - name: Checkout

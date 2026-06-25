@@ -449,7 +449,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 	}
 
 	private void verifySkippedMojo(T mojo, String npmClient) {
-		verifyZeroInteractions(readPrivate(mojo, "executor"));
+		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 		verify(readPrivate(mojo, "log", Log.class)).info(skipMessage(npmClient));
 	}
 
@@ -555,7 +555,7 @@ public abstract class AbstractNpmScriptMojoTest<T extends AbstractNpmScriptMojo>
 
 		assertThat(workingDirectory).isEqualTo(readPrivate(mojo, "workingDirectory"));
 		assertThat(npmLogger).isNotNull();
-		assertThat(readPrivate(npmLogger, "log")).isEqualTo(readPrivate(mojo, "log"));
+		assertThat((Log) readPrivate(npmLogger, "log")).isEqualTo(readPrivate(mojo, "log"));
 		assertThat(cmd).isNotNull();
 		assertThat(cmd.toString()).isEqualTo(pkg + " " + expectedArgs);
 	}

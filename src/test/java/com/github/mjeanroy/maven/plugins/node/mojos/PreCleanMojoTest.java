@@ -147,6 +147,6 @@ public class PreCleanMojoTest extends AbstractNpmScriptIncrementalMojoTest<PreCl
 		mojo.execute();
 
 		verify(readPrivate(mojo, "log", Log.class)).info("Command npm install already done, no changes detected, skipping.");
-		verifyZeroInteractions(readPrivate(mojo, "executor"));
+		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 	}
 }

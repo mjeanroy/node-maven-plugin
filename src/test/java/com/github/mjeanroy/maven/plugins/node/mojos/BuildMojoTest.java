@@ -23,6 +23,7 @@
 
 package com.github.mjeanroy.maven.plugins.node.mojos;
 
+import com.github.mjeanroy.maven.plugins.node.commands.CommandExecutor;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Test;
 
@@ -89,6 +90,6 @@ public class BuildMojoTest extends AbstractNpmScriptIncrementalMojoTest<BuildMoj
 		mojo.execute();
 
 		verify(readPrivate(mojo, "log", Log.class)).info("Command npm run build already done, no changes detected, skipping.");
-		verifyZeroInteractions(readPrivate(mojo, "executor"));
+		verifyZeroInteractions(readPrivate(mojo, "executor", CommandExecutor.class));
 	}
 }

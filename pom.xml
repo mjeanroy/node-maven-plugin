@@ -47,8 +47,7 @@
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<java.source.version>1.7</java.source.version>
-		<java.target.version>1.7</java.target.version>
+		<java.version>8</java.version>
 
 		<maven-compiler-plugin.version>3.8.1</maven-compiler-plugin.version>
 		<maven-release-plugin.version>3.3.1</maven-release-plugin.version>
@@ -231,7 +230,7 @@
 				<artifactId>maven-javadoc-plugin</artifactId>
 				<version>${maven-javadoc-plugin.version}</version>
 				<configuration>
-					<source>${java.source.version}</source>
+					<source>${java.version}</source>
 				</configuration>
 			</plugin>
 			<plugin>
@@ -310,8 +309,8 @@
 				<configuration>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<compilerVersion>${java.version}</compilerVersion>
-					<source>${java.source.version}</source>
-					<target>${java.target.version}</target>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
 				</configuration>
 			</plugin>
 
@@ -451,7 +450,7 @@
 							</execution>
 						</executions>
 						<configuration>
-							<source>${java.source.version}</source>
+							<source>${java.version}</source>
 						</configuration>
 					</plugin>
 				</plugins>
