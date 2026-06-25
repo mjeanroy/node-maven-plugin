@@ -51,15 +51,6 @@ public final class Commands {
 	}
 
 	/**
-	 * Create new `yarn` command.
-	 *
-	 * @return New yarn command.
-	 */
-	public static Command yarn() {
-		return wrap(new Command("yarn"));
-	}
-
-	/**
 	 * Create new npm client command with
 	 *
 	 * Executable path should be given as the first argument.
