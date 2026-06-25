@@ -6,12 +6,10 @@
 
 This plugin allow you to run `npm` commands into your maven project.
 
-Since version 0.2.0, this plugin can also use `yarn` instead of `npm`.
-
 ### Why?
 
 Most npm project are standards and define some classic phase:
-- Dependencies installation (npm/yarn and maybe bower dependencies).
+- Dependencies installation (npm/yarn/pnpm).
 - Clean previous build files (using `rimraf`, `del`, etc.).
 - Linting (using tools such as `jshint`, `eslint`, `csslint`, etc.).
 - Tests (using `karma`, `jest` or anything else).
@@ -23,7 +21,6 @@ These steps can be easily integrated into the build lifecycle of maven:
 | Maven Phase        | Plugin goal      |
 |--------------------|------------------|
 | initialize         | node:install     |
-| initialize         | node:bower       |
 | clean              | node:clean       |
 | process-sources    | node:lint        |
 | compile            | node:build       |
@@ -63,7 +60,6 @@ It can be used very easily:
               <goal>check</goal>
               <goal>pre-clean</goal>
               <goal>install</goal>
-              <goal>bower</goal>
               <goal>clean</goal>
               <goal>lint</goal>
               <goal>test</goal>
@@ -110,22 +106,21 @@ If you want to bound each phase, here is a configuration using `extensions` flag
 
 Here is a short description of each goal:
 
-| Goal         | Phase              |                                                                   |
-|--------------|--------------------|-------------------------------------------------------------------|
-| check        | `validate`         | Check that `node` and `npm` are available (and `yarn if enabled). |
-| pre-clean    | `pre-clean`        | Run `npm install` (or `yarn install`).                            |
-| install      | `initialize`       | Run `npm install` (or `yarn install`).                            |
-| bower        | `initialize`       | Run `npm run bower` (or `yarn run bower`).                        |
-| lint         | `process-sources`  | Run `npm run lint` (or `yarn run lint`).                          |
-| clean        | `clean`            | Run `npm run clean` (or `yarn run clean`).                        |
-| build        | `compile`          | Run `npm run build` (or `yarn run build`).                        |
-| test         | `test`             | Run `npm test` (or `yarn test`).                                  |
-| test-e2e     | `integration-test` | Run `npm run test-e2e` (or `yarn run test-e2e`).                  |
-| publish      | `deploy`           | Run `npm publish` (or `yarn publish`).                            |
-| start        | `process-classes`  | Run `npm start` (or `yarn start`).                                |
-| dependencies |                    | Display `npm` (or `yarn`) dependencies.                           |
+| Goal         | Phase              |                                                                        |
+|--------------|--------------------|------------------------------------------------------------------------|
+| check        | `validate`         | Check that `node` and `npm` are available (and npm.client if enabled). |
+| pre-clean    | `pre-clean`        | Run `npm install` (or `${npm.client} install`).                        |
+| install      | `initialize`       | Run `npm install` (or `${npm.client} install`).                        |
+| lint         | `process-sources`  | Run `npm run lint` (or `${npm.client} run lint`).                      |
+| clean        | `clean`            | Run `npm run clean` (or `${npm.client} run clean`).                    |
+| build        | `compile`          | Run `npm run build` (or `${npm.client} run build`).                    |
+| test         | `test`             | Run `npm test` (or `${npm.client} test`).                              |
+| test-e2e     | `integration-test` | Run `npm run test-e2e` (or `${npm.client} run test-e2e`).              |
+| publish      | `deploy`           | Run `npm publish` (or `${npm.client} publish`).                        |
+| start        | `process-classes`  | Run `npm start` (or `${npm.client} start`).                            |
+| dependencies |                    | Display `npm` (or `${npm.client}`) dependencies.                       |
 
-*Important*: `npm install` (or `yarn install`) is run during `pre-clean` phase **and** `initialize` phase because each phase is
+*Important*: `npm install` (or `${npm.client} install`) is run during `pre-clean` phase **and** `initialize` phase because each phase is
 bound to a different step, and there's good chances that you need to install npm dependencies before
 running clean script (no worry, it will run one time only during the build).
 
@@ -137,7 +132,6 @@ Note that each script should be defined in `package.json` file:
   "version": "0.1.0-SNAPSHOT",
   "scripts": {
     "clean": "gulp clean",
-    "bower": "bower install",
     "test": "gulp test",
     "test-e2e": "gulp test-e2e",
     "build": "gulp build",
@@ -150,18 +144,16 @@ Note that each script should be defined in `package.json` file:
 
 Plugin can use these options:
 
-| Option               | Default              |                                                                                                                                                        |
-|----------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| workingDirectory     | `${project.basedir}` | Directory where package.json should be available.                                                                                                      |
-| yarn                 | `false`              | If set to `true`, `yarn` will be used instead of `npm` to install dependencies and run scripts.                                                        |
-| node.path            | `node`               | Path to `node` executable (by default, node should be available globally)                                                                              |
-| npm.path             | `npm`                | Path to `npm` executable (by default, npm should be available globally)                                                                                |
-| yarn.path            | `yarn`               | Path to `yarn` executable (by default, yarn should be available globally)                                                                              |
-| color                | `false`              | If set to `true` (default), argument `--no-color` is appended to each script command.                                                                  |
-| failOnError          | `true`               | If set to `true`, build will not fail if npm command fail.                                                                                             |
-| failOnMissingScript  | `true`               | If set to `true`, missing npm command will not fail the build.                                                                                         |
-| ignoreProxies        | `true`               | If set to `false` , maven proxy settings will be appended to npm commands (default is `true`, since proxies should probably defined in `.npmrc` file). |
-| addMavenArgument     | `true`               | If set to `true` , add `--maven` argument to each npm/yarn command                                                                                     |
+| Option              | Default              |                                                                                                                                                        |
+|---------------------|----------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| workingDirectory    | `${project.basedir}` | Directory where package.json should be available.                                                                                                      |
+| node.path           | `node`               | Path to `node` executable (by default, node should be available globally)                                                                              |
+| npm.client          | `npm`                | Path to `npm` client executable (by default, npm should be available globally). Npm client can be yarn, pnpm, or path to npm client.                   |
+| color               | `false`              | If set to `true` (default), argument `--no-color` is appended to each script command.                                                                  |
+| failOnError         | `true`               | If set to `true`, build will not fail if npm command fail.                                                                                             |
+| failOnMissingScript | `true`               | If set to `true`, missing npm command will not fail the build.                                                                                         |
+| ignoreProxies       | `true`               | If set to `false` , maven proxy settings will be appended to npm commands (default is `true`, since proxies should probably defined in `.npmrc` file). |
+| addMavenArgument    | `true`               | If set to `true` , add `--maven` argument to each npm command                                                                                          |
 
 *Important*: Argument `--maven` is automatically appended to each script command (any script can check this argument to set default options on different plugins).
 
