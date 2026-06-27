@@ -47,6 +47,16 @@ final class Assets {
 	);
 
 	/**
+	 * Files related to PNPM installation.
+	 */
+	private static final List<String> PNPM_ASSETS = asList(
+		"**/package.json",
+		"**/pnpm-lock.yaml",
+		"**/pnpm-workspace.yaml",
+		"**/.npmrc"
+	);
+
+	/**
 	 * Files related to YARN and YARN installation.
 	 */
 	private static final List<String> YARN_ASSETS = asList(
@@ -176,6 +186,7 @@ final class Assets {
 		assets.addAll(NPM_ASSETS);
 		assets.addAll(YARN_ASSETS);
 		assets.addAll(LERNA_ASSETS);
+		assets.addAll(PNPM_ASSETS);
 		return unmodifiableCollection(assets);
 	}
 
@@ -199,6 +210,7 @@ final class Assets {
 		// In case of a dependency update, or a script update.
 		assets.addAll(NPM_ASSETS);
 		assets.addAll(YARN_ASSETS);
+		assets.addAll(PNPM_ASSETS);
 
 		// Linters configuration.
 		assets.addAll(LINTER_ASSETS);
