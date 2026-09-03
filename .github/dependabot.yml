@@ -40,3 +40,6 @@ updates:
     # logback-classic >= 1.4.0 requires Java 11
     - dependency-name: ch.qos.logback:logback-classic
       update-types: [ "version-update:semver-major", "version-update:semver-minor" ]
+    # equalsverifier >= 4 requires Java 11
+    - dependency-name: nl.jqno.equalsverifier:equalsverifier
+      update-types: [ "version-update:semver-major" ]
